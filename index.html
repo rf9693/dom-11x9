@@ -830,62 +830,48 @@ function kRGB(K){const t=K/100;let r,g,b;if(t<=66){r=255;g=99.4708025861*Math.lo
 
 /* Группы света */
 const LG=[];
-const EI={desk:2.6,winled:2.8,spot:2.4,led:2.6,track:2.2,chand:2.2,bra:2.2,kitchen:2.6,curtain:2.4,wline:2.4,float:2.4,shadow:2.6,steps:1.6};
-const LI={desk:.5,winled:.55,spot:.6,led:.8,track:.85,chand:1.0,bra:.45,kitchen:.6,curtain:.4,wline:.5};
+const EI={desk:2.6,winled:2.8,spot:2.4,led:2.6,track:2.2,chand:2.2,bra:2.2,kitchen:2.6,curtain:2.4,wline:2.4,float:2.4,shadow:2.6,steps:1.6,strip:2.6};
+const LI={desk:.5,winled:.55,spot:.6,led:.8,track:.85,chand:1.0,bra:.45,kitchen:.6,curtain:.4,wline:.5,strip:.5};
 function G(room,k,code,name,type,o){const g=Object.assign({room,k,code,name,type,on:false,L:[]},o||{});
   g.mat=new THREE.MeshStandardMaterial({color:type==="spot"||type==="track"||type==="chand"?0xF2F0EB:0xE9E4DA,emissive:0xFFCF8F,emissiveIntensity:0,roughness:.35});
   LG.push(g);return g}
 // Кухня-гостиная
 G("liv","spots","C19","Споты, 12 шт","spot",{pts:P2("liv",[[168,487],[132,599],[380,543],[403,543],[607,543],[630,543],[153,835],[175,835],[380,835],[403,835],[607,835],[630,835]])});
-G("liv","led","","LED-контур потолка","led",{cont:"liv"});
 G("liv","t1","C18","Трек перед диваном","track",{pts:P2("liv",[[388,797],[616,797]])});
 G("liv","t2","C17","Трек у правой стены","track",{pts:P2("liv",[[743,585],[743,812]])});
 G("liv","chand","C16","Люстра над столом","chand",{pts:P2("liv",[[293,679]])});
 G("liv","bra","C21","Бра","bra",{pts:[[1185,8760]],face:"-z"});
-const gKit=G("liv","kit","","Подсветка рабочей зоны кухни","kitchen");
-G("liv","curt","","Подсветка экрана-шторы","curtain",{seg:[1850,5750,8760,-1]});
+G("liv","l20","L20","Лента CCT в откосе окна 3200","winled",{wins:[{ax:"h",a:2200,b:5400,lo:0,hi:2500,face:8760,dir:-1}],cct:3000});
+const gKit=G("liv","kit","L15","Лента под верхними шкафами кухни","kitchen");
 
-G("liv","shadow","","Теневой профиль с лентой","shadow",{only:"B"});
-G("liv","float","","Парящий профиль","float",{only:"A"});
 // Детская
-G("kid","led","C11","LED-контур","led",{cont:"kid"});
-G("kid","spots","","Споты, 6 шт","spot",{pts:P2("kid",[[185,118],[385,118],[185,228],[385,228],[185,350],[385,350]])});
+G("kid","spots","C11","Споты, 6 шт","spot",{pts:P2("kid",[[185,118],[385,118],[185,228],[385,228],[185,350],[385,350]])});
 G("kid","c12","C12","Спот у окна","spot",{pts:P2("kid",[[210,75]])});
 G("kid","c13","C13","Спот у стола","spot",{pts:P2("kid",[[93,213]])});
-G("kid","desk","","Линейный светильник над столом, 4000 K","desk",{pts:[[830,2175],[2030,2175]],y:1450,cct:4000});
-G("kid","float","","Парящий профиль","float",{only:"A"});
+G("kid","l14","L14","Лента CCT в откосах обоих окон","winled",{wins:[{ax:"h",a:530,b:2680,lo:900,hi:2500,face:360,dir:1},{ax:"v",a:600,b:2720,lo:900,hi:2500,face:340,dir:1}],cct:4000});
 // Санузел
-G("bath","led","C10","LED-контур","led",{cont:"bath"});
-const gBathS=G("bath","spots","","Споты, 4 шт","spot",{pts:P2("bath",[[605,228],[778,228],[605,350],[778,350]])});
+const gBathS=G("bath","spots","C10","Споты, 4 шт","spot",{pts:P2("bath",[[605,228],[778,228],[605,350],[778,350]])});
 G("bath","c8","C8","Спот над унитазом","spot",{pts:P2("bath",[[605,118]])});
 G("bath","c7","C7","Спот над душем","spot",{pts:P2("bath",[[770,118]])});
-G("bath","mirror","","Подсветка зеркала, 2 светильника","bra",{pts:[[4990,1190],[4990,2110]],face:"+x",y:1550,hh:300,dp:50,cct:3000});
-G("bath","float","","Парящий профиль","float",{only:"A"});
+G("bath","mirror","L9","Лента подсветки зеркала","bra",{pts:[[4990,1190],[4990,2110]],face:"+x",y:1550,hh:300,dp:50,cct:3000});
 // Спальня
-G("bed","led","C3","LED-контур над кроватью","led",{cont:"bed"});
-G("bed","spots","","Споты, 5 шт","spot",{pts:P2("bed",[[915,123],[1027,123],[1137,123],[915,312],[1137,312]])});
-G("bed","c2","C2","Линия и 3 спота у шкафа","wline",{pts:P2("bed",[[915,505],[1027,505],[1137,505]])});
-G("bed","bra","C5","Бра для чтения у изголовья, 2 шт","bra",{pts:[[7620,810],[7620,3310]],face:"+x",y:1500,cct:2700});
-G("bed","curt","","Подсветка штор","curtain",{seg:[7620,10750,360,1]});
-G("bed","float","","Парящий профиль","float",{only:"A"});
+G("bed","spots","C3","Споты, 5 шт","spot",{pts:P2("bed",[[915,123],[1027,123],[1137,123],[915,312],[1137,312]])});
+G("bed","c2","C2","Споты у шкафа, 3 шт","spot",{pts:P2("bed",[[915,505],[1027,505],[1137,505]])});
+G("bed","bra","C5","Бра в углу у окна","bra",{pts:[[10750,620]],face:"-x",y:1600,cct:2700});
+G("bed","curt","L4","Лента в нише штор у окна","curtain",{seg:[7620,10750,360,1]});
+G("bed","l6","L6","Лента над изголовьем, свет на стену","strip",{strip:{x1:7632,x2:7690,z1:1020,z2:3100,y:1150},cct:2700});
 // Прихожая
-const gHallL=G("hall","led","C1","LED-контур","led",{cont:"hall"});
-const gHallS=G("hall","spots","","Споты, 4 шт","spot",{pts:P2("hall",[[932,727],[932,913],[1130,727],[1130,913]])});
-G("hall","float","","Парящий профиль","float",{only:"A"});
+const gHallS=G("hall","spots","C1","Споты, 4 шт","spot",{pts:P2("hall",[[932,727],[932,913],[1130,727],[1130,913]])});
 // Фасад, со стороны террасы
 G("out","c22","C22","Бра на фасаде","bra",{pts:[[0,4063]],face:"-x",y:2150});
 G("out","c23","C23","Бра над дверью на террасу","bra",{pts:[[0,7800]],face:"-x",y:2480});
-// Подсветка окон: лента CCT 24 В в профиле в откосе, по верху и бокам окна; у каждого окна своя температура 2700–6500 K
-[["kid","Окно 2150","h",530,2680,900,2500,360,1],["kid","Окно 2120","v",600,2720,900,2500,340,1],["bath","Окно 600","h",5600,6200,0,2500,360,1],
- ["bed","Окно в пол 2150","h",8340,10490,0,2500,360,1],["liv","Окно в пол 3200","h",2200,5400,0,2500,8760,-1],["liv","Окно в пол 1700","v",6700,8400,0,2500,340,1],
- ["hall","Окно 700","h",9700,10400,900,2500,8760,-1]].forEach((w,i)=>G(w[0],"win"+i,"",w[1]+", лента CCT","winled",{win:{ax:w[2],a:w[3],b:w[4],lo:w[5],hi:w[6],face:w[7],dir:w[8]},cct:3000}));
 LG.forEach(g=>{if(g.mat0){g.mat.dispose();g.mat=g.mat0}});
 
 /* Датчики движения (ДД на плане) */
 const SENS=[
   {room:"liv",pos:mp("liv",105,482),groups:[gKit],t:0},
   {room:"bath",pos:mp("bath",690,290),groups:[gBathS],t:0},
-  {room:"hall",pos:mp("hall",932,820),groups:[gHallS,gHallL],t:0}];
+  {room:"hall",pos:mp("hall",932,820),groups:[gHallS],t:0}];
 SENS.forEach(s=>s.mat=new THREE.MeshStandardMaterial({color:0x8A1F1F,emissive:0xFF3B30,emissiveIntensity:.3}));
 
 /* Сборка светильников под текущий потолок */
@@ -933,10 +919,13 @@ const BUILD={
     [[b[0]+i,b[1]+i,b[2]-i,b[1]+i+w],[b[0]+i,b[3]-i-w,b[2]-i,b[3]-i],[b[0]+i,b[1]+i,b[0]+i+w,b[3]-i],[b[2]-i-w,b[1]+i,b[2]-i,b[3]-i]].forEach(q=>boxp(q[0],q[1],q[2],q[3],y-8,y,g.mat,fxG));g.L=[]},
   shadow(g){const b=RR.liv,y=2650,w=22;
     [[b[0],b[1],b[2],b[1]+w],[b[0],b[3]-w,b[2],b[3]],[b[0],b[1],b[0]+w,b[3]],[b[2]-w,b[1],b[2],b[3]]].forEach(q=>boxp(q[0],q[1],q[2],q[3],y-30,y,g.mat,fxG));g.L=[]},
-  winled(g){const o=g.win,c1=o.face-o.dir*38,c2=o.face-o.dir*24,C1=Math.min(c1,c2),C2=Math.max(c1,c2),
+  winled(g){g.L=[];(g.wins||[g.win]).forEach(o=>{const c1=o.face-o.dir*38,c2=o.face-o.dir*24,C1=Math.min(c1,c2),C2=Math.max(c1,c2),
       B=(a1,a2,y1,y2)=>o.ax==="h"?boxp(a1,C1,a2,C2,y1,y2,g.mat,fxG):boxp(C1,a1,C2,a2,y1,y2,g.mat,fxG);
     B(o.a,o.b,o.hi-10,o.hi);B(o.a,o.a+10,o.lo,o.hi-10);B(o.b-10,o.b,o.lo,o.hi-10);
-    const m=(o.a+o.b)/2,cc=o.face+o.dir*400;g.L=[o.ax==="h"?[m,cc,(o.lo+o.hi)/2]:[cc,m,(o.lo+o.hi)/2]]},
+    const m=(o.a+o.b)/2,cc=o.face+o.dir*400;g.L.push(o.ax==="h"?[m,cc,(o.lo+o.hi)/2]:[cc,m,(o.lo+o.hi)/2])})},
+  /* лента в алюминиевом профиле вдоль стены, свет вверх по стене */
+  strip(g){const q=g.strip;boxp(q.x1,q.z1,q.x2,q.z2,q.y,q.y+14,mGraphite,fxG);boxp(q.x1+6,q.z1+10,q.x2-6,q.z2-10,q.y+14,q.y+18,g.mat,fxG);
+    g.L=[[q.x2+250,(q.z1+q.z2)/2,q.y+500]]},
   steps(g){g.L=[]}
 };
 function buildCeil(){clearG(ceilG);if(CV==="none")return;
@@ -959,7 +948,8 @@ function setFlux(g){let len=0,tp=null;
   else if(g.type==="curtain"){len=(g.seg[1]-g.seg[0])/1000;tp="L2060"}
   else if(g.type==="kitchen"){len=4;tp="L2080"}
   else if(g.type==="steps"){len=4;tp="L2060"}
-  else if(g.type==="winled"){len=((g.win.b-g.win.a)+2*(g.win.hi-g.win.lo))/1000;tp="CCT"}
+  else if(g.type==="winled"){len=(g.wins||[g.win]).reduce((t,o)=>t+((o.b-o.a)+2*(o.hi-o.lo))/1000,0);tp="CCT"}
+  else if(g.type==="strip"){len=Math.hypot(g.strip.x2-g.strip.x1,g.strip.z2-g.strip.z1)/1000;tp="L2080"}
   if(tp){g.len=len;g.tape=tp;g.F+=len*TAPE[tp].lm*(g.type==="winled"?.3:.6);g.Wt+=len*TAPE[tp].W}
   if(g.type==="bra"&&g.room!=="out"){g.F+=400*g.pts.length;g.Wt+=8*g.pts.length}
   g.E.forEach(e=>g.Wt+=e.W)}
@@ -986,7 +976,7 @@ function buildBeams(){while(beamG.children.length){const o=beamG.children.pop();
 function buildFx(){clearG(fxG);
   LG.forEach(g=>{g.avail=!g.only||g.only===CV;g.E=[];g.F=0;g.Wt=0;if(g.avail)BUILD[g.type](g);if(g.avail)setFlux(g);
     const pts=lightPts(g);
-    if(!g.pl)g.pl=pts.map(()=>{const l=new THREE.PointLight(0xFFD2A0,0,g.type==="bra"||g.type==="kitchen"||g.type==="winled"?4:7.5,2);root.add(l);return l});
+    if(!g.pl)g.pl=pts.map(()=>{const l=new THREE.PointLight(0xFFD2A0,0,g.type==="bra"||g.type==="kitchen"||g.type==="winled"||g.type==="strip"?4:7.5,2);root.add(l);return l});
     g.pl.forEach((l,i)=>{const p=pts[i]||pts[0];if(p)l.position.set(p[0]*S,p[2]*S,p[1]*S)})});
   buildBeams();if(AIMREADY)markSel();
   SENS.forEach(s=>{const y=ceilY(s.pos[0],s.pos[1]);cylp(s.pos[0],s.pos[1],40,y-22,y,mWhite,fxG);cylp(s.pos[0]+14,s.pos[1],8,y-26,y-22,s.mat,fxG)});
@@ -1042,7 +1032,7 @@ buildCeil();buildFx();
 
 /* Панель света */
 const ROOMN={liv:"Кухня-гостиная",kid:"Детская",bath:"Санузел",bed:"Спальня",hall:"Прихожая",out:"Фасад"};
-const ICON={winled:"ln",spot:"",track:"sq",chand:"",bra:"sq",led:"ln",kitchen:"ln",curtain:"ln",wline:"ln",float:"ln",shadow:"ln",steps:"ln"};
+const ICON={winled:"ln",spot:"",track:"sq",chand:"",bra:"sq",led:"ln",kitchen:"ln",curtain:"ln",wline:"ln",float:"ln",shadow:"ln",steps:"ln",strip:"ln"};
 const grpBox=document.getElementById("groups");const boxes=[];
 Object.keys(ROOMN).forEach(r=>{const sec=document.createElement("div");sec.className="room";
   const hd=document.createElement("div");hd.className="room-h";hd.innerHTML=`<b>${ROOMN[r]}</b>`;sec.appendChild(hd);
@@ -1058,9 +1048,9 @@ Object.keys(ROOMN).forEach(r=>{const sec=document.createElement("div");sec.class
 function syncUI(){LG.forEach(g=>{g.cb.checked=g.on;g.cb.disabled=g.avail===false;g.lab.classList.toggle("na",g.avail===false);g.lab.title=g.avail===false?(g.only==="A"?"Есть только в варианте А":"Есть только в варианте Б"):""})}
 const SC=[
   ["Всё",g=>true],
-  ["Ужин",g=>g.room==="liv"&&["chand","kit","led","curt"].includes(g.k)],
-  ["Кино",g=>(g.room==="liv"&&["shadow","float"].includes(g.k))],
-  ["Ночь",g=>g.k==="steps"||(g.room==="bed"&&g.k==="bra")||(g.room==="hall"&&g.k==="led")||(g.room==="out")],
+  ["Ужин",g=>g.room==="liv"&&["chand","kit","l20"].includes(g.k)],
+  ["Кино",g=>(g.room==="liv"&&["kit","bra"].includes(g.k))],
+  ["Ночь",g=>g.k==="steps"||(g.room==="bed"&&g.k==="bra")||(g.room==="bed"&&g.k==="l6")||(g.room==="hall"&&g.k==="spots")||(g.room==="out")],
   ["Выкл",g=>false]];
 const scBox=document.getElementById("scenes");
 SC.forEach(s=>{const b=document.createElement("button");b.type="button";b.textContent=s[0];b.setAttribute("aria-pressed","false");
@@ -1068,8 +1058,8 @@ SC.forEach(s=>{const b=document.createElement("button");b.type="button";b.textCo
     if(s[0]!=="Выкл"&&!EVE)setTod("eve");syncUI();applyL()};scBox.appendChild(b)});
 grpBox.addEventListener("change",()=>[...scBox.children].forEach(x=>x.setAttribute("aria-pressed","false")));
 
-const NOTE={A:"Натяжной матовый потолок на 2750 мм (чистовая высота 2800). По периметру всех комнат парящий профиль с лентой, по контурам с плана — световые линии. Потолок виден в видах «изнутри».",
-  B:"Гипсокартон: короб 2650 мм по периметру, в центре 2800 мм, лента в нише по контуру с плана. Споты стоят в коробе. В гостиной по стенам теневой профиль с лентой.",
+const NOTE={A:"Натяжной матовый потолок на 2750 мм (чистовая высота 2800). Свет строго по плану заказчика: группы C — светильники, L — LED-ленты. Потолок виден в видах «изнутри».",
+  B:"Гипсокартон: короб 2650 мм по периметру, в центре 2800 мм, споты стоят в коробе. Группы света те же, что в варианте А.",
   none:"Потолок скрыт. Сверху видна раскладка светильников над мебелью."};
 const cvSel=document.getElementById("cvSel"),cvNote=document.getElementById("cvNote");
 function setCV(v){CV=v;if(typeof spText==="function"&&document.getElementById("spNote").textContent)setTimeout(spText);[...cvSel.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===v)));cvNote.textContent=NOTE[v];buildCeil();buildFx();syncUI()}
