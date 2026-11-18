@@ -813,28 +813,120 @@ pillow(4520,960,420,mBoucle,Math.PI/2);pillow(4520,1760,420,mLinen,Math.PI/2);
 box(2100,1000,3600,2500,0,12,M(0xB9C0AC,{roughness:1}));
 box(900,370,2300,400,1900,2300,mOak); // полка над окном
 
-/* Санузел по скриншоту: ванна 1700 вдоль стены спальни от наружной стены, у противоположной стены унитаз и тумба */
+/* Санузел: ванна 1700 вдоль стены спальни, душ 900 × 900 в углу у окна, у противоположной стены подвесной унитаз и тумба с зеркалом */
+const KANIM=[];
 (function(){
-  // душ 900 × 900 в углу у окна: низкий поддон, стеклянные перегородки, тропический душ
-  box(6420,360,7320,1260,0,40,mWhite);box(6520,760,6620,860,40,42,mSteel);
-  box(6420,1248,7320,1260,40,2000,mGlass);box(6414,360,6426,860,40,2000,mGlass);
-  box(7290,700,7320,820,1000,1120,mSteel);cyl(7240,810,10,1120,2150,mSteel,8);box(6950,800,7240,820,2140,2155,mSteel);cyl(6950,810,130,2125,2140,mSteel);
-  // ванна 700 × 1700 ниже душа, смеситель на стене со стороны спальни
-  box(6620,1360,7320,3060,0,560,mWhite);
-  box(6690,1430,7250,2990,545,562,M(0xE6EAEC,{roughness:.12}));
-  box(7290,2150,7320,2300,620,700,mSteel);box(7180,2205,7290,2245,660,680,mSteel);
-  // подвесной унитаз на инсталляции, смотрит в комнату
-  box(4990,520,5140,1000,0,1150,C.stone);box(5090,700,5150,780,1100,1160,mWhite);
-  const b=new THREE.Mesh(new THREE.CylinderGeometry(0.19,0.16,0.3,24),mCeramic);b.scale.set(1.45,1,1);b.position.set(5.4,0.33,0.76);b.castShadow=true;root.add(b);
-  box(5140,640,5300,880,300,480,mCeramic);
-  // подвесная тумба 800 с раковиной и зеркало
-  box(4990,1250,5490,2050,450,850,mOak);box(5040,1320,5450,1980,850,885,mCeramic);
-  cyl(5050,1650,12,885,1080,mSteel,10);box(5050,1640,5150,1660,1065,1080,mSteel);
-  box(4995,1300,5005,2000,1100,1950,M(0xDDE6EA,{roughness:.05,metalness:.6}));
-  // полотенцесушитель на стене у двери
-  box(4990,2500,5010,3000,900,1600,mGraphite);for(let y=950;y<1600;y+=110)box(5010,2520,5040,2980,y,y+22,mGraphite);
-  // коврик
-  box(5600,1300,6500,1900,0,10,M(0xCFC8BB,{roughness:1}));
+ const mCer=M(0xFBFBF9,{roughness:.08}),mCerD=M(0xFBFBF9,{roughness:.08,side:THREE.DoubleSide}),mBlk=M(0x1C1D1F,{roughness:.38,metalness:.55}),mBlk2=M(0x2C2E31,{roughness:.3,metalness:.5}),
+  mTray=M(0xEDEBE6,{roughness:.6}),mWat=M(0x8CCBE0,{roughness:.02,metalness:.1,transparent:true,opacity:.55,depthWrite:false}),
+  mStr=M(0xD8F0FA,{roughness:.05,transparent:true,opacity:.55,emissive:0x1E3644,depthWrite:false}),mTw=M(0xD9CFC0,{roughness:1}),mTw2=M(0x8C9A86,{roughness:1}),
+  mPool=M(0x9FB9C2,{roughness:.05});
+ const rr=(w,d,r)=>rrShape(w*S,d*S,r*S);
+ // выдавленный по высоте контур (форма в плане), y1…y2 в мм, центр cx,cz; bev — скругление кромок, мм
+ const ext=(sh,y1,y2,cx,cz,mat,bev,par)=>{const b=(bev||0)*S;const g=new THREE.ExtrudeGeometry(sh,{depth:Math.max((y2-y1)*S-2*b,0.0005),bevelEnabled:b>0,bevelThickness:b,bevelSize:b,bevelSegments:4,curveSegments:24});
+   const m=new THREE.Mesh(g,mat);m.rotation.x=-Math.PI/2;m.position.set(cx*S,y1*S+b,cz*S);m.castShadow=m.receiveShadow=true;(par||root).add(m);return m};
+ const tube=(pts,r,mat,par)=>{const c=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(p[0]*S,p[1]*S,p[2]*S)));const m=new THREE.Mesh(new THREE.TubeGeometry(c,40,r*S,12,false),mat);m.castShadow=true;(par||root).add(m);return m};
+ const cx_=(x,z,r,y1,y2,mat,par)=>{const m=par?kC(par,x,z,r,y1,y2,mat):cyl(x,z,r,y1,y2,mat,20);m.rotation.z=Math.PI/2;return m}; // цилиндр вдоль x: длина = y2−y1, центр по y = (y1+y2)/2
+
+ /* ---- Тумба 800 × 480 из дуба, подвесная, ящик на весь фасад с фрезерованной ручкой; столешница травертин; накладная раковина ---- */
+ box(4990,1250,5450,2050,480,498,mOak);box(4990,1250,5450,1268,480,830,mOak);box(4990,2032,5450,2050,480,830,mOak);box(4990,1250,5008,2050,480,830,mOak);
+ box(4990,1250,5480,2050,830,850,mTrav);
+ {const g=kGrp(0,0,0);kB(g,5450,1252,5470,2048,482,800,mOak);kB(g,5450,1252,5462,2048,800,828,mBlk);           // фасад и паз-ручка
+  kB(g,5040,1290,5450,1302,510,760,mKC);kB(g,5040,1998,5450,2010,510,760,mKC);kB(g,5040,1302,5052,1998,510,760,mKC);kB(g,5040,1290,5450,2010,498,510,mKC);
+  kC(g,5150,1400,32,510,700,KJ[5]);kC(g,5250,1430,28,510,660,KJ[3]);kC(g,5180,1520,26,510,620,KJ[1]);kB(g,5100,1650,5400,1950,510,600,mTw);kB(g,5100,1650,5400,1950,600,690,mTw2);
+  kAdd(g,a=>{g.position.x=a*.36},["выдвинуть ящик тумбы","задвинуть ящик тумбы"])}
+ // накладная раковина-чаша 550 × 410 × 130 из фаянса (как Duravit Luv): профиль вращения, вытянутый вдоль стены
+ {const P=[[0,0],[.15,0],[.185,.012],[.2,.06],[.205,.12],[.2,.13],[.19,.126],[.185,.06],[.165,.022],[.12,.013],[0,.011]].map(p=>new THREE.Vector2(p[0],p[1]));
+  const m=new THREE.Mesh(new THREE.LatheGeometry(P,56),mCerD);m.scale.set(1,1,1.35);m.position.set(5235*S,850*S,1650*S);m.castShadow=m.receiveShadow=true;root.add(m);
+  cyl(5235,1650,22,861,863,mBlk2,20)}
+ // смеситель из стены: круглая накладка, излив 200 мм, рычаг; вода — по E
+ {const g=kGrp(0,0,0);kC(g,4996,1650,45,1066,1074,mBlk).rotation.z=Math.PI/2;
+  cx_(5000,1650,13,5000-100,5000+100,mBlk,g).position.set(5100*S,1060*S,1650*S);kC(g,5190,1650,11,1030,1062,mBlk);
+  const lv=kGrp(5002,1100,1650,g);kB(lv,5002,1645,5065,1655,1094,1106,mBlk);
+  const w=kC(g,5190,1650,6,862,1030,mStr);w.visible=false;w.castShadow=false;const sp=kC(g,5235,1650,45,861,864,mStr);sp.visible=false;
+  kAdd(g,a=>{lv.rotation.z=.45*a;w.visible=sp.visible=a>.05;const k=Math.max(.2,a);w.scale.set(k,1,k)},["включить воду","выключить воду"],false)}
+
+ /* ---- Зеркало 700 × 900 с настоящим отражением, чёрная тонкая рама, контурная подсветка на стену ---- */
+ {const W=700,Hh=900,cz=1650,cy=1600,X=5012;
+  box(4994,cz-W/2-10,X,cz-W/2,cy-Hh/2-10,cy+Hh/2+10,mBlk);box(4994,cz+W/2,X,cz+W/2+10,cy-Hh/2-10,cy+Hh/2+10,mBlk);
+  box(4994,cz-W/2,X,cz+W/2,cy-Hh/2-10,cy-Hh/2,mBlk);box(4994,cz-W/2,X,cz+W/2,cy+Hh/2,cy+Hh/2+10,mBlk);box(4990,cz-W/2,4994,cz+W/2,cy-Hh/2,cy+Hh/2,mBlk);
+  const mHalo=M(0xFFFFFF,{emissive:0xFFE2B8,emissiveIntensity:0});box(4990,cz-W/2-15,4993,cz-W/2-10,cy-Hh/2-15,cy+Hh/2+15,mHalo);box(4990,cz+W/2+10,4993,cz+W/2+15,cy-Hh/2-15,cy+Hh/2+15,mHalo);
+  box(4990,cz-W/2-10,4993,cz+W/2+10,cy-Hh/2-15,cy-Hh/2-10,mHalo);box(4990,cz-W/2-10,4993,cz+W/2+10,cy+Hh/2+10,cy+Hh/2+15,mHalo);
+  let LGm=null;KANIM.push(()=>{if(!LGm)LGm=LG.find(g=>g.room==="bath"&&g.k==="mirror");const v=LGm&&LGm.on?1.6:0;if(mHalo.emissiveIntensity!==v){mHalo.emissiveIntensity=v;return true}return false});
+  const rt=new THREE.WebGLRenderTarget(COARSE?512:800,COARSE?660:1030,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});rt.texture.encoding=THREE.sRGBEncoding;
+  const tm=new THREE.Matrix4(),mat=new THREE.ShaderMaterial({uniforms:{tDiffuse:{value:rt.texture},textureMatrix:{value:tm},act:{value:0}},
+    vertexShader:"uniform mat4 textureMatrix;varying vec4 vUv;void main(){vUv=textureMatrix*vec4(position,1.0);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}",
+    fragmentShader:"uniform sampler2D tDiffuse;uniform float act;varying vec4 vUv;void main(){vec3 c=texture2DProj(tDiffuse,vUv).rgb*.93+.015;gl_FragColor=vec4(mix(vec3(.62,.66,.68),c,act),1.0);}"});
+  const mir=new THREE.Mesh(new THREE.PlaneGeometry(W*S,Hh*S),mat);mir.rotation.y=Math.PI/2;mir.position.set((X+1)*S,cy*S,cz*S);root.add(mir);
+  const vc=new THREE.PerspectiveCamera(),pl=new THREE.Plane(),nrm=new THREE.Vector3(),mp=new THREE.Vector3(),cp=new THREE.Vector3(),rot=new THREE.Matrix4(),
+    look=new THREE.Vector3(),clip=new THREE.Vector4(),vw=new THREE.Vector3(),tg=new THREE.Vector3(),q=new THREE.Vector4();
+  mir.onBeforeRender=function(r,sc,cam){mp.setFromMatrixPosition(mir.matrixWorld);cp.setFromMatrixPosition(cam.matrixWorld);
+    const near=cam===camera&&cp.distanceTo(mp)<6&&cp.y<2.7;mat.uniforms.act.value=near?1:0;if(!near)return;
+    rot.extractRotation(mir.matrixWorld);nrm.set(0,0,1).applyMatrix4(rot);vw.subVectors(mp,cp);if(vw.dot(nrm)>0)return;
+    vw.reflect(nrm).negate().add(mp);rot.extractRotation(cam.matrixWorld);look.set(0,0,-1).applyMatrix4(rot).add(cp);
+    tg.subVectors(mp,look).reflect(nrm).negate().add(mp);vc.position.copy(vw);vc.up.set(0,1,0).applyMatrix4(rot).reflect(nrm);vc.lookAt(tg);
+    vc.far=cam.far;vc.near=cam.near;vc.updateMatrixWorld();vc.projectionMatrix.copy(cam.projectionMatrix);
+    tm.set(.5,0,0,.5,0,.5,0,.5,0,0,.5,.5,0,0,0,1);tm.multiply(vc.projectionMatrix).multiply(vc.matrixWorldInverse).multiply(mir.matrixWorld);
+    pl.setFromNormalAndCoplanarPoint(nrm,mp);pl.applyMatrix4(vc.matrixWorldInverse);clip.set(pl.normal.x,pl.normal.y,pl.normal.z,pl.constant);
+    const e=vc.projectionMatrix.elements;q.x=(Math.sign(clip.x)+e[8])/e[0];q.y=(Math.sign(clip.y)+e[9])/e[5];q.z=-1;q.w=(1+e[10])/e[14];
+    clip.multiplyScalar(2/clip.dot(q));e[2]=clip.x;e[6]=clip.y;e[10]=clip.z+1;e[14]=clip.w;
+    mir.visible=false;const cur=r.getRenderTarget(),au=r.shadowMap.autoUpdate;r.shadowMap.autoUpdate=false;r.setRenderTarget(rt);r.state.buffers.depth.setMask(true);
+    if(r.autoClear===false)r.clear();r.render(sc,vc);r.shadowMap.autoUpdate=au;r.setRenderTarget(cur);mir.visible=true}}
+
+ /* ---- Подвесной унитаз 530 × 350 на инсталляции, безободковый, крышка микролифт открывается; клавиша смыва на коробе ---- */
+ box(4990,520,5140,1000,0,1150,C.stone);box(4990,505,5155,1015,1150,1168,mTrav);
+ box(5140,635,5146,885,985,1140,mBlk);box(5146,645,5149,757,995,1130,mBlk2);box(5146,763,5149,875,995,1130,mBlk2);
+ cyl(5060,940,38,1168,1290,M(0x6F7A6A,{roughness:.8}),20);[[5052,935],[5070,948],[5060,925]].forEach(([x,z])=>cyl(x,z,4,1290,1420,M(0x5E7A4E,{roughness:.8}),6));
+ const egg=(L,W)=>{const sh=new THREE.Shape(),w=W/2*S,l=L*S;sh.moveTo(0,-w);sh.bezierCurveTo(l*.48,-w*1.08,l,-w*.86,l,0);sh.bezierCurveTo(l,w*.86,l*.48,w*1.08,0,w);sh.lineTo(0,-w);return sh};
+ {const top=egg(530,350);const h=new THREE.Path();h.absellipse(.305,0,.15,.112,0,Math.PI*2,false,0);top.holes.push(h);
+  ext(top,250,400,5143,760,mCer,22);ext(egg(430,280),110,280,5143,760,mCer,30);
+  const bot=new THREE.Mesh(new THREE.CircleGeometry(1,32),mCer);bot.scale.set(.15,.112,1);bot.rotation.x=-Math.PI/2;bot.position.set(5448*S,300*S,760*S);root.add(bot);
+  const wp=new THREE.Mesh(new THREE.CircleGeometry(1,32),mPool);wp.scale.set(.085,.065,1);wp.rotation.x=-Math.PI/2;wp.position.set(5470*S,302*S,760*S);root.add(wp);
+  const seat=egg(520,345);const h2=new THREE.Path();h2.absellipse(.3,0,.16,.12,0,Math.PI*2,false,0);seat.holes.push(h2);ext(seat,400,416,5148,760,mCer,5);
+  const g=kGrp(5160,424,760);ext(egg(515,342),-8,14,-12,0,mCer,6,g);
+  kAdd(g,a=>{g.rotation.z=1.5*a},["поднять крышку унитаза","опустить крышку унитаза"],false)}
+ // держатель бумаги на коробе
+ box(5140,962,5150,988,690,730,mBlk);cx_(5150,975,5,5150,5262,mBlk).position.set(5206*S,710*S,975*S);cx_(5150,975,55,5160,5260,KJ[5]).position.set(5212*S,710*S,975*S);
+
+ /* ---- Душ 900 × 900: поддон из литьевого камня 30 мм с линейным трапом, стекло 8 мм в чёрном профиле, распашная дверь 550 ---- */
+ box(6420,360,7320,1260,0,30,mTray);box(7210,420,7250,1200,30,31,mBlk);
+ box(6420,1250,7320,1258,30,2000,mGlass);box(6416,360,6424,700,30,2000,mGlass);
+ box(6413,360,6427,376,30,2000,mBlk);box(7304,1246,7320,1262,30,2000,mBlk);box(6420,1246,7320,1262,1994,2004,mBlk);box(6413,360,6427,700,1994,2004,mBlk);
+ [300,1700].forEach(y=>box(6410,690,6430,716,y,y+80,mBlk));
+ {const g=kGrp(6420,0,701);kB(g,6416,703,6424,1246,30,2000,mGlass);kB(g,6396,1190,6444,1202,950,1250,mBlk);kB(g,6396,1180,6444,1212,940,950,mBlk);kB(g,6396,1180,6444,1212,1250,1260,mBlk);
+  kAdd(g,a=>{g.rotation.y=-1.4*a},["открыть дверь душа","закрыть дверь душа"])}
+ // термостат на стене, штанга, кронштейн и тропическая лейка 300 × 300, ручной душ на шланге
+ const shG=kGrp(0,0,0);kB(shG,7298,720,7320,900,1030,1130,mBlk);cx_(7280,760,30,7268,7298,mBlk,shG).position.set(7283*S,1080*S,760*S);cx_(7280,860,30,7268,7298,mBlk,shG).position.set(7283*S,1080*S,860*S);
+ cyl(7290,810,11,1130,2130,mBlk,16);box(6880,802,7300,818,2122,2138,mBlk);rbox(6730,660,7030,960,2098,2112,12,mBlk);box(6750,680,7010,940,2096,2098,mBlk2);
+ box(7276,796,7292,824,1480,1520,mBlk);cyl(7262,810,15,1330,1540,mBlk,16);cyl(7262,810,42,1540,1560,mBlk,24);
+ tube([[7290,1130,790],[7240,1000,780],[7200,850,800],[7230,1100,812],[7262,1330,810]],8,mBlk);
+ box(7200,372,7320,482,1250,1258,mBlk);cyl(7240,410,28,1258,1440,KJ[5],14);cyl(7290,440,24,1258,1400,mBlk2,14);
+ // ливень: штрихи воды падают из лейки, на поддоне плёнка воды
+ {const N=170,seg=[],P=140;for(let i=0;i<N;i++){const r=Math.sqrt(Math.random())*135,a=Math.random()*Math.PI*2,x=6880+Math.cos(a)*r,z=810+Math.sin(a)*r,o=Math.random()*P;
+    for(let y=2096-o;y>-P;y-=P)seg.push(x*S,y*S,z*S,(x+(Math.random()-.5)*6)*S,(y-60)*S,z*S)}
+  const gg=new THREE.BufferGeometry();gg.setAttribute("position",new THREE.Float32BufferAttribute(seg,3));
+  const rain=new THREE.LineSegments(gg,new THREE.LineBasicMaterial({color:0xE6F6FF,transparent:true,opacity:.5,depthWrite:false}));const rg=kGrp(0,0,0);rg.add(rain);rg.visible=false;
+  const film=box(6440,380,7300,1240,30,31.5,mWat);film.visible=false;film.castShadow=false;
+  KANIM.push(now=>{if(!rg.visible)return false;rain.position.y=-((now*3.2)%P)*S;return true});
+  kAdd(shG,a=>{rg.visible=film.visible=a>.05},["включить душ","выключить душ"],false)}
+
+ /* ---- Ванна акриловая 1700 × 700 вдоль стены спальни: скруглённый борт 55 мм, внутри чаша; наливной излив из стены ---- */
+ {const bg=kGrp(0,0,0),sh=rr(684,1684,45),h=rr(590,1590,210);sh.holes.push(h);ext(sh,0,580,6970,2210,mCer,8,bg);
+  ext(rr(600,1600,215),150,165,6970,2210,mCer,0,bg);
+  const dr=kC(bg,6970,1470,24,165,167,mBlk2);const ov=kC(bg,6970,1418,26,447,453,mBlk2);ov.rotation.x=Math.PI/2;
+  // излив и два вентиля на стене
+  kB(bg,7300,1540,7320,1660,640,720,mBlk);cx_(7140,1600,15,7140,7300,mBlk,bg).position.set(7220*S,690*S,1600*S);kC(bg,7145,1600,12,660,690,mBlk);
+  [1530,1670].forEach(z=>{cx_(7290,z,22,7280,7320,mBlk,bg).position.set(7300*S,690*S,z*S);kB(bg,7270,z-5,7285,z+5,690,740,mBlk)});
+  const wsh=rr(586,1586,206),wg=new THREE.ExtrudeGeometry(wsh,{depth:.001,bevelEnabled:false,curveSegments:24});
+  const wt=new THREE.Mesh(wg,mWat);wt.rotation.x=-Math.PI/2;wt.position.set(6970*S,165*S,2210*S);wt.visible=false;bg.add(wt);
+  const st=kC(bg,7145,1600,9,170,660,mStr);st.visible=false;st.castShadow=false;
+  const kb=kAdd(bg,a=>{wt.visible=a>.01;wt.scale.z=Math.max(1,a*300);st.visible=kb.t>.5&&a<.97;st.scale.y=1},["набрать ванну","слить воду"],false);kb.sp=.012}
+ // свёрнутое полотенце, поднос через борт, коврик у ванны
+ {const t=cyl(6740,3000,48,0,460,mTw,20);t.rotation.x=Math.PI/2;t.position.set(6740*S,628*S,2990*S);}
+ box(6650,2350,7290,2510,580,598,mOak);cyl(6800,2430,30,598,700,M(0xF3EEE4,{roughness:.6}),16);
+ rbox(6100,1950,6590,2650,0,12,10,M(0xE5DFD3,{roughness:1}));
+ // полотенцесушитель у двери и полотенце на нём
+ box(4990,2500,5010,3000,900,1600,mGraphite);for(let y=950;y<1600;y+=110)box(5010,2520,5040,2980,y,y+22,mGraphite);
+ box(5040,2560,5056,2940,1120,1560,mTw2);box(5010,2560,5040,2940,1544,1560,mTw2);
 })();
 
 /* Спальня по скриншоту: кровать изголовьем к стене санузла, боком к окну; шкаф у стены прихожей */
@@ -1485,7 +1577,7 @@ function loop(now){requestAnimationFrame(loop);if(now-linT>1000){linT=now;linPas
   scrStep(now);kitStep();
   /* рендер по требованию: кадр рисуется, только когда что-то меняется (раз в 2 с — контрольный) */
   if(WALK||anim||MOV||now<HOT||now-lastR>2000){MOV=false;lastR=now;renderer.render(scene,camera)}}
-function kitStep(){for(const k of KIT){if(k.a===k.t)continue;MOV=true;k.a+=(k.t-k.a)*.09;if(Math.abs(k.a-k.t)<.002)k.a=k.t;k.ap(k.a)}}
+function kitStep(){const nw=performance.now();for(const fn of KANIM)if(fn(nw))MOV=true;for(const k of KIT){if(k.a===k.t)continue;MOV=true;k.a+=(k.t-k.a)*(k.sp||.09);if(Math.abs(k.a-k.t)<.002)k.a=k.t;k.ap(k.a)}}
 ["pointerdown","pointermove","pointerup","wheel","keydown","keyup","input","change","click","touchstart","touchmove","resize","visibilitychange"].forEach(ev=>
   addEventListener(ev,e=>{if(ev==="pointermove"&&!e.buttons&&e.pointerType==="mouse")return;HOT=Math.max(HOT,performance.now()+(ev==="pointermove"?300:1200))},{capture:true,passive:true}));
 requestAnimationFrame(loop);
