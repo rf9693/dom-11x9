@@ -100,7 +100,7 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
 <div id="stage"></div>
 <div id="walkCross"></div>
 <div id="walkUI" role="group" aria-label="Управление прогулкой">
-  <div class="hint"><b>Прогулка.</b> W A S D или стрелки — идти, тянуть мышью или пальцем — смотреть, Shift — быстрее, двойной клик по полу — дойти туда, Esc — выход.</div>
+  <div class="hint"><b>Прогулка.</b> W A S D или стрелки — идти, мышь — поворачивать взгляд (с зажатой кнопкой), палец — тянуть картинку, Shift — быстрее, двойной клик по полу — дойти туда, Esc — выход.</div>
   <div class="pad"><button class="up" type="button" data-k="f" aria-label="Вперёд">↑</button><button class="lt" type="button" data-k="l" aria-label="Влево">←</button><button class="dn" type="button" data-k="b" aria-label="Назад">↓</button><button class="rt" type="button" data-k="r" aria-label="Вправо">→</button></div>
   <button class="exit" type="button" id="walkExit">Выйти</button>
 </div>
@@ -1160,8 +1160,8 @@ document.querySelectorAll("#walkUI .pad button").forEach(b=>{const k=b.dataset.k
   ["pointerup","pointercancel","lostpointercapture"].forEach(t=>b.addEventListener(t,()=>PAD[k]=false))});
 {const cv=renderer.domElement;let drag=null;
   cv.addEventListener("pointerdown",e=>{if(!WALK)return;drag={x:e.clientX,y:e.clientY,id:e.pointerId};cv.setPointerCapture(e.pointerId)});
-  cv.addEventListener("pointermove",e=>{if(!WALK||!drag||e.pointerId!==drag.id)return;const k=e.pointerType==="touch"?0.006:0.004;
-    yaw+=(e.clientX-drag.x)*k;pitch=Math.max(-1.2,Math.min(1.2,pitch+(e.clientY-drag.y)*k));drag.x=e.clientX;drag.y=e.clientY});
+  cv.addEventListener("pointermove",e=>{if(!WALK||!drag||e.pointerId!==drag.id)return;const t=e.pointerType==="touch",k=t?0.006:0.004,sg=t?1:-1; // мышь — как в играх, палец — тянуть картинку
+    yaw+=sg*(e.clientX-drag.x)*k;pitch=Math.max(-1.2,Math.min(1.2,pitch+sg*(e.clientY-drag.y)*k));drag.x=e.clientX;drag.y=e.clientY});
   ["pointerup","pointercancel"].forEach(t=>cv.addEventListener(t,()=>drag=null));
   cv.addEventListener("dblclick",e=>{if(!WALK)return;const r=cv.getBoundingClientRect(),v=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
     wray.setFromCamera(v,camera);wray.far=40;const h=wray.intersectObjects(root.children,true).find(i=>visDeep(i.object));
