@@ -929,22 +929,141 @@ const KANIM=[];
  box(5040,2560,5056,2940,1120,1560,mTw2);box(5010,2560,5040,2940,1544,1560,mTw2);
 })();
 
-/* Спальня по скриншоту: кровать изголовьем к стене санузла, боком к окну; шкаф у стены прихожей */
-(function(){const x1=7620,x2=9800,z1=1070,z2=3050;box(x1+80,z1,x2,z2,0,300,mOak);box(x1+80,z1+20,x2-20,z2-20,300,520,mLinen);
-  box(x1,z1-60,x1+80,z2+60,0,1150,mBoucle);box(x1+900,z1,x2,z2,505,560,mOlive);
-  pillow(x1+300,z1+450,650,mWhite,Math.PI/2);pillow(x1+300,z2-450,650,mWhite,Math.PI/2);
-  // две подвесные тумбы по сторонам кровати
-  box(x1,z2+60,x1+420,z2+460,250,550,mOak);cyl(x1+210,z2+260,90,550,600,mBrass);
-  box(x1,z1-460,x1+420,z1-60,250,550,mOak);cyl(x1+210,z1-260,90,550,600,mBrass);
-  box(7900,3110,10300,4850,0,12,mRug);
-  // открытый шкаф венге: две колонны полок по краям, штанга посередине
-  const xa=8200,xb=10400,zA=4960,zB=5560;
-  box(xa,zA,xa+450,zB,0,2400,mDarkWood);box(xb-450,zA,xb,zB,0,2400,mDarkWood);
-  box(xa+450,zA,xb-450,zB,2100,2400,mDarkWood);box(xa+450,zA,xb-450,zB,0,450,mDarkWood);
-  box(xa+450,zB-30,xb-450,zB,450,2100,M(0x5A4636,{roughness:.6}));
-  for(let y=350;y<2400;y+=330){box(xa+20,zA-2,xa+430,zA,y,y+22,M(0x2E241C));box(xb-430,zA-2,xb-20,zA,y,y+22,M(0x2E241C))}
-  const rod=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,(xb-xa-900)*S,10),mSteel);rod.rotation.z=Math.PI/2;rod.position.set((xa+xb)/2*S,1.95,(zA+zB)/2*S);root.add(rod);
-  curtain(8060,380,8330,520);curtain(10500,380,10745,520);
+/* Спальня: кровать изголовьем к стене санузла, боком к окну; открытый шкаф венге у стены прихожей */
+(function(){
+  const ext=(sh,y1,y2,cx,cz,mat,bev,par)=>{const b=(bev||0)*S;const g=new THREE.ExtrudeGeometry(sh,{depth:Math.max((y2-y1)*S-2*b,0.0005),bevelEnabled:b>0,bevelThickness:b,bevelSize:b,bevelSegments:3,curveSegments:16});
+   const m=new THREE.Mesh(g,mat);m.rotation.x=-Math.PI/2;m.position.set(cx*S,y1*S+b,cz*S);m.castShadow=m.receiveShadow=true;(par||root).add(m);return m};
+ const lathe=(P,x,y,z,mat,par)=>{const m=new THREE.Mesh(new THREE.LatheGeometry(P.map(p=>new THREE.Vector2(p[0]*S,p[1]*S)),40),mat);m.position.set(x*S,y*S,z*S);m.castShadow=m.receiveShadow=true;(par||root).add(m);return m};
+ let sd=7;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+ const mSheet=M(0xF4F1EC,{roughness:.92}),mDuv=M(0xF1EDE6,{roughness:.95,side:THREE.DoubleSide}),mThrow=surf(M(0x8E9272,{roughness:1,side:THREE.DoubleSide}),"boucle"),
+  mHead=mBoucleW,mPlinth=M(0x1E1F21,{roughness:.6}),mVen=M(0x3E3027,{roughness:.5}),mVenB=M(0x4A3A2E,{roughness:.6}),mWhiteIn=M(0xEFEDE8,{roughness:.6}),
+  mCurtW=M(0xEDE7DC,{roughness:1,side:THREE.DoubleSide});
+
+ /* драпировка: плоский верх x0…x1 × z0…z1 на высоте top, края скругляются радиусом r и свисают на drop (по бокам и/или в ногах) */
+ function drape(x0,x1,z0,z1,top,drop,foot,r,mat,wr,nu,nv){const arc=Math.PI/2*r,hz=(z1-z0)/2,cz=(z0+z1)/2,Lf=x1-x0,ex=foot?arc+drop-r:0,ez=arc+drop-r;
+  const prof=(a,h)=>{if(a<=h)return[a,0,0];if(a<=h+arc){const t=(a-h)/r;return[h+r*Math.sin(t),-(r-r*Math.cos(t)),t]}return[h+r,-(r+(a-h-arc)),Math.PI/2]};
+  const g=new THREE.PlaneGeometry(1,1,nu||40,nv||36),pa=g.attributes.position;
+  for(let i=0;i<pa.count;i++){const u=pa.getX(i)+.5,v=pa.getY(i)+.5;
+   const sx=u*(Lf+ex),sz=(v-.5)*2*(hz+ez),px=foot?prof(sx,Lf):[sx,0,0],pz=prof(Math.abs(sz),hz),sg=sz<0?-1:1;
+   let X=x0+px[0],Z=cz+sg*pz[0],Y=top+Math.min(px[1],pz[1]);
+   // складки: на верху — мягкие волны, на свесах — вертикальные заломы
+   Y+=wr*(Math.sin(sx*.011+sz*.004)*Math.sin(sz*.017)+.6*Math.sin(sx*.023-sz*.009));
+   if(pz[2]>.2)Z+=sg*wr*1.6*Math.sin(X*.021+sz*.002)*Math.min(1,(-pz[1])/drop);
+   if(px[2]>.2)X+=wr*1.6*Math.sin(Z*.019)*Math.min(1,(-px[1])/drop);
+   pa.setXYZ(i,X*S,Y*S,Z*S)}
+  g.computeVertexNormals();const m=new THREE.Mesh(g,mat);m.castShadow=m.receiveShadow=true;root.add(m);return m}
+ /* подушка: пухлый параллелепипед (толщина вдоль x), наклон к стене */
+ function pil(x,y,z,w,h,t,mat,lean,ry){const g=new THREE.BoxGeometry(t*S,h*S,w*S,2,10,14),pa=g.attributes.position;
+  for(let i=0;i<pa.count;i++){const fy=pa.getY(i)/(h*S/2),fz=pa.getZ(i)/(w*S/2),k=Math.sqrt(Math.max(0,(1-Math.pow(Math.abs(fy),3))*(1-Math.pow(Math.abs(fz),3))));
+   pa.setX(i,pa.getX(i)*Math.max(.12,k));pa.setY(i,pa.getY(i)*(1-.05*fz*fz));pa.setZ(i,pa.getZ(i)*(1-.04*fy*fy))}
+  g.computeVertexNormals();const m=new THREE.Mesh(g,mat);m.position.set(x*S,y*S,z*S);m.rotation.set(0,ry||0,lean);m.castShadow=m.receiveShadow=true;root.add(m);return m}
+
+ /* ---- Кровать 1800 × 2000: парящее основание в букле, высокое изголовье с вертикальной стяжкой ---- */
+ const x1=7620,x2=9800,z1=1070,z2=3050;
+ box(7780,1140,9720,2980,0,90,mPlinth);                                  // утопленный цоколь — кровать «парит»
+ rbox(7700,z1,x2,z2,90,340,45,mHead);                                     // мягкая царга
+ rbox(x1,1010,7700,3110,0,1130,30,mHead);                                 // спинка
+ for(let i=0;i<6;i++){const a=1010+i*350;rbox(7690,a+4,7790,a+346,330,1110,45,mHead)} // 6 мягких вертикальных панелей
+ rbox(7795,z1+15,x2-15,z2-15,340,565,55,mSheet);                          // матрас в простыне
+ drape(8330,x2-10,z1+10,z2-10,603,250,true,45,mDuv,4,44,40);              // одеяло со свесом по бокам и в ногах
+ drape(8250,8520,z1-10,z2+10,640,265,false,40,mDuv,3,10,40);                // отворот одеяла
+ drape(9180,9580,z1-20,z2+20,630,260,false,30,mThrow,3,14,40);              // плед-полоса в ногах
+ pil(7965,800,1590,740,500,190,mSheet,.42);pil(7965,800,2530,740,500,190,mSheet,.42);   // спальные подушки
+ pil(8095,760,1690,480,470,160,mFabric,.33,.06);pil(8095,760,2430,480,470,160,M(0x6E7558,{roughness:.9}),.33,-.06); // декоративные
+ pil(8195,700,2060,580,300,140,mBoucle,.22);                               // валик
+
+ /* ---- Подвесные тумбы с ящиком «тип-он» и керамическими лампами ---- */
+ [[3120,3510],[610,1000]].forEach(([za,zb],n)=>{
+  box(x1,za,8040,zb,540,565,mOak);box(x1,za,8040,zb,250,270,mOak);box(x1,za,8040,za+18,270,540,mOak);box(x1,zb-18,8040,zb,270,540,mOak);box(x1,za,x1+12,zb,270,540,mOak);
+  const g=kGrp(0,0,0);kB(g,8018,za+3,8042,zb-3,274,536,mOak);kB(g,8030,za+60,8043,zb-60,515,520,mDarkWood); // фасад + теневой паз
+  kB(g,7650,za+22,8018,za+34,282,450,mWhiteIn);kB(g,7650,zb-34,8018,zb-22,282,450,mWhiteIn);kB(g,7650,za+22,7662,zb-22,282,450,mWhiteIn);kB(g,7650,za+22,8018,zb-22,272,282,mWhiteIn);
+  kB(g,7700,za+70,7850,zb-150,282,312,n?KJ[1]:KJ[4]);kB(g,7720,za+80,7840,zb-170,312,330,n?KJ[3]:KJ[0]);  // книги в ящике
+  kAdd(g,a=>{g.position.x=a*.30},["выдвинуть ящик тумбы","задвинуть ящик тумбы"],false);
+  // лампа: керамическое основание-«амфора», латунная стойка, абажур из льна; светит по E/клику
+  const zc=(za+zb)/2,L=kGrp(0,0,0),mS=M(0xEDE2CF,{roughness:1,side:THREE.DoubleSide,emissive:0xFFC27A,emissiveIntensity:0}),mBl=M(0xFFF3DC,{emissive:0xFFD9A0,emissiveIntensity:0});
+  lathe([[0,0],[55,0],[68,40],[72,110],[62,190],[34,240],[22,262],[0,262]],7830,565,zc,n?M(0x2F3134,{roughness:.35}):M(0xC9B79C,{roughness:.4}),L);
+  kC(L,7830,zc,6,827,905,mBrass);
+  {const sh=new THREE.Mesh(new THREE.CylinderGeometry(.105,.145,.21,48,1,true),mS);sh.position.set(7830*S,985*S,zc*S);sh.castShadow=true;L.add(sh);
+   const bu=new THREE.Mesh(new THREE.SphereGeometry(.032,16,10),mBl);bu.position.set(7830*S,935*S,zc*S);L.add(bu)}
+  const pl=new THREE.PointLight(0xFFC890,0,3.2,2);pl.position.set(7830*S,930*S,zc*S);root.add(pl);
+  kAdd(L,a=>{mS.emissiveIntensity=a*.85;mBl.emissiveIntensity=a*3;pl.intensity=a*1.1},["включить лампу","выключить лампу"],false);
+  if(n){box(7905,640,8030,850,565,592,M(0x9C6B4E,{roughness:.7}));box(7915,655,8025,840,592,614,M(0xE4DCCD,{roughness:.8}))} // книги на тумбе
+  else{lathe([[0,0],[30,0],[34,10],[34,95],[0,95]],7985,565,3420,M(0xDDE4E6,{roughness:.05,transparent:true,opacity:.45}))} // стакан воды
+ });
+
+ /* ---- Ковёр с плотным ворсом ---- */
+ rbox(7900,3110,10300,4850,0,16,40,surf(M(0xCDBFAA,{roughness:1}),"boucle"));rbox(7960,3170,10240,4790,16,18,30,surf(M(0xBBAA92,{roughness:1}),"boucle"));
+
+ /* ---- Картина над изголовьем: дубовая рамка, холст, абстракция ---- */
+ box(x1,1560,7655,2560,1330,2070,mOak);box(7655,1585,7664,2535,1355,2045,M(0xEDE6DA,{roughness:1}));
+ {const d=new THREE.Mesh(new THREE.CircleGeometry(.2,48),M(0xB4673F,{roughness:.95}));d.position.set(7665*S,1760*S,1880*S);d.rotation.y=Math.PI/2;root.add(d);
+  const h=new THREE.Mesh(new THREE.CircleGeometry(.15,48,0,Math.PI),M(0xC9B28E,{roughness:.95}));h.position.set(7666*S,1500*S,2250*S);h.rotation.y=Math.PI/2;root.add(h);
+  const ln=box(7664,2020,7668,2420,1700,1714,M(0x26272A));ln.rotation.x=.18}
+
+ /* ---- Растение у окна: фикус лировидный в бетонном кашпо ---- */
+ lathe([[0,0],[150,0],[175,30],[185,420],[175,430],[165,420],[0,410]],10380,0,860,M(0x9C9A95,{roughness:.85}));
+ cyl(10380,860,160,400,412,M(0x3B2E24,{roughness:1}),24);
+ {const mL=M(0x3E5A35,{roughness:.55,side:THREE.DoubleSide}),mL2=M(0x5B7A45,{roughness:.6,side:THREE.DoubleSide});
+  cyl(10380,860,14,400,1350,M(0x6B5A48,{roughness:.9}),8);
+  for(let i=0;i<34;i++){const t=i/34,y=820+t*780,an=i*2.4,rd=60+120*Math.sin(t*Math.PI)+40*rnd();
+   const lf=new THREE.Mesh(new THREE.SphereGeometry(1,12,8),i%3?mL:mL2);lf.scale.set(.055+.02*rnd(),.005,.11+.03*rnd());
+   lf.position.set((10380+Math.cos(an)*rd)*S,y*S,(860+Math.sin(an)*rd)*S);lf.rotation.set(.5*rnd()-.25,-an+Math.PI/2,.5+.4*rnd());lf.castShadow=true;root.add(lf)}}
+
+ /* ---- Открытый шкаф венге (по проекту заказчика): колонны полок по краям, штанга с вещами посередине, ящики внизу ---- */
+ const xa=8200,xb=10400,zA=4960,zB=5560,mFold=[0xE8E2D6,0x9AA3AE,0x3B4048,0xC7A57E,0x7F8C74,0xF2F0EC,0xB86B4B,0x4B5D78].map(c=>surf(M(c,{roughness:1}),"fabric"));
+ box(xa,zA+40,xb,zB,0,60,mPlinth);box(xa,zB-16,xb,zB,60,2400,mVenB);                 // цоколь, задняя стенка
+ [[xa,xa+20],[xa+430,xa+450],[xb-450,xb-430],[xb-20,xb]].forEach(([a,b])=>box(a,zA,b,zB-16,60,2400,mVen)); // стойки
+ box(xa,zA,xb,zB-16,2378,2400,mVen);box(xa+450,zA,xb-450,zB-16,2090,2112,mVen);box(xa+450,zA,xb-450,zB-16,450,472,mVen); // крыша, полка, крышка ящиков
+ const ys=[60,350,680,1010,1340,1670,2000];
+ ys.forEach(y=>{box(xa+20,zA,xa+430,zB-16,y,y+22,mVen);box(xb-430,zA,xb-20,zB-16,y,y+22,mVen)});
+ // наполнение колонн: стопки свёрнутых вещей, короба из льна, обувь
+ const stack=(x,y,n,c0)=>{let h=y+22;for(let i=0;i<n;i++){const t=34+((i*7+c0)%3)*8;rbox(x+(i%2?4:0),zA+60,x+185+(i%2?0:6),zA+330,h,h+t,14,mFold[(c0+i*3)%mFold.length]);h+=t}};
+ const mBoxL=surf(M(0xD8CCB7,{roughness:1}),"fabric"),mBoxL2=surf(M(0xCBBEA6,{roughness:1}),"fabric");const boxL=(x,y,w)=>{rbox(x,zA+30,x+w,zB-40,y+22,y+262,10,mBoxL);box(x+w/2-40,zA+28,x+w/2+40,zA+30,y+200,y+225,mBrass)};
+ boxL(xa+40,ys[0],370);ys.slice(1,6).forEach((y,i)=>{if(i===2)boxL(xa+40,y,370);else{stack(xa+30,y,5+(i%2),i);stack(xa+225,y,4+((i+1)%3),i+2)}});
+ ys.slice(2,6).forEach((y,i)=>{if(i===1)boxL(xb-410,y,370);else{stack(xb-420,y,4+(i%2),i+4);stack(xb-225,y,5,i+1)}});
+ [[xa+50,2000],[xa+240,2000],[xb-400,2000],[xb-210,2000]].forEach(([x,y],i)=>rbox(x,zA+40,x+160,zB-40,y+22,y+300,8,i%2?mFold[5]:mBoxL2)); // короба наверху
+ box(xa+460,zA+40,xb-460,zB-40,2112,2112+250,mFold[0]);                            // одеяло в чехле на верхней полке
+ // обувь на нижних полках правой колонны
+ const shoe=(x,y,z,c)=>{rbox(x,z,x+95,z+260,y+22,y+70,30,c);rbox(x+8,z+150,x+87,z+260,y+70,y+120,28,c)};
+ [[xb-420,ys[1],0x1E1D1C],[xb-215,ys[1],0xD9D2C6],[xb-420,ys[0],0x6B4A33],[xb-215,ys[0],0x2C3442]].forEach(([x,y,c],i)=>{const m=M(c,{roughness:.5});shoe(x,y,zA+70+(i%2)*15,m);shoe(x+100,y,zA+60+(i%2)*15,m)});
+ // штанга и вещи на плечиках — раздвигаются кликом
+ const rodY=1960,rod=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,(xb-xa-900)*S,14),mSteel);rod.rotation.z=Math.PI/2;rod.position.set((xa+xb)/2*S,rodY*S,(zA+zB)/2*S);root.add(rod);
+ const mHang=M(0xB08A63,{roughness:.5}),zc=(zA+zB-16)/2,GW=kGrp(0,0,0),items=[];
+ const garm=[[0xF2F0EC,"s",760],[0xA9BBD0,"s",760],[0x2D3340,"j",820],[0xC09A6B,"c",1080],[0x1B1B1D,"d",1150],[0xE3D9C8,"k",700],[0x7F8C74,"s",760],[0x3B4048,"p",560],
+  [0xD8CCB8,"j",820],[0xB86B4B,"k",700],[0x4B5D78,"s",760],[0xEAE3D5,"d",1050],[0x5C4A3B,"c",1100],[0x9AA3AE,"p",560]];
+ const outline=(t,L)=>{const p=t==="p"?[[-180,-50],[180,-50],[175,-L],[20,-L],[0,-200],[-20,-L],[-175,-L]]:
+   t==="d"?[[-60,0],[-190,-40],[-170,-300],[-150,-420],[-250,-L],[250,-L],[150,-420],[170,-300],[190,-40],[60,0]]:
+   [[-60,0],[-215,-45],[-245,-L*.72],[-200,-L*.74],[-200,-L],[200,-L],[200,-L*.74],[245,-L*.72],[215,-45],[60,0]];
+   const sh=new THREE.Shape();p.forEach((q,i)=>i?sh.lineTo(q[0]*S,q[1]*S):sh.moveTo(q[0]*S,q[1]*S));return sh};
+ garm.forEach(([c,t,L],i)=>{const x=8700+i*(1200/(garm.length-1)),gi=kGrp(x,rodY,zc,GW);items.push([gi,x,i<garm.length/2?-1:1]);
+  // плечики: дуга + крючок
+  const hp=[[-205,-70],[-120,-40],[0,-28],[120,-40],[205,-70]].map(q=>new THREE.Vector3(0,q[1]*S,q[0]*S));
+  const hm=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(hp),24,6*S,8,false),mHang);gi.add(hm);
+  const hk=new THREE.Mesh(new THREE.TorusGeometry(.022,.0025,6,16,Math.PI*1.3),mSteel);hk.rotation.y=Math.PI/2;hk.position.set(0,-.004,0);gi.add(hk);
+  kC(gi,x,zc,2.5,rodY-30,rodY-4,mSteel);
+  const th=t==="c"||t==="j"?55:t==="k"?45:22,g=new THREE.ExtrudeGeometry(outline(t,L),{depth:th*S,bevelEnabled:true,bevelThickness:9*S,bevelSize:9*S,bevelSegments:3,curveSegments:4});
+  const gm=new THREE.Mesh(g,surf(M(c,{roughness:t==="d"?.7:1}),"fabric"));gm.rotation.y=Math.PI/2;gm.position.set(-th/2*S,(t==="p"?-40:-60)*S,0);gm.castShadow=gm.receiveShadow=true;gi.add(gm);
+  if(t==="p"){const bar=new THREE.Mesh(new THREE.CylinderGeometry(5*S,5*S,370*S,8),mHang);bar.rotation.x=Math.PI/2;bar.position.set(0,-90*S,0);gi.add(bar)}});
+ kAdd(GW,a=>{items.forEach(([gi,x,d],j)=>{const k=d<0?j:(items.length-1-j);gi.position.x=(d<0?8690+(x-8690)*(1-.5*a):9910-(9910-x)*(1-.5*a))*S})},["раздвинуть вещи на штанге","сдвинуть вещи"],false);
+ // два ящика внизу, латунные ручки-планки
+ [[65,255],[262,446]].forEach(([y1,y2],n)=>{const g=kGrp(0,0,0);kB(g,xa+452,zA-4,xb-452,zA+18,y1,y2,mVen);kB(g,xa+600,zA-22,xb-600,zA-14,y2-60,y2-48,mBrass);
+  kB(g,xa+608,zA-14,xa+620,zA-4,y2-60,y2-48,mBrass);kB(g,xb-620,zA-14,xb-608,zA-4,y2-60,y2-48,mBrass);
+  kB(g,xa+470,zA+18,xb-470,zA+30,y1+10,y2-30,mWhiteIn);kB(g,xa+470,zB-60,xb-470,zB-48,y1+10,y2-30,mWhiteIn);kB(g,xa+470,zA+18,xb-470,zB-48,y1+10,y1+20,mWhiteIn);
+  for(let i=0;i<10;i++){const c=KJ[i%6];kC(g,xa+530+i*115,zA+140+(i%2)*160,36,y1+20,y1+80,n?mFold[i%8]:c)}
+  kAdd(g,a=>{g.position.z=-a*.42},["выдвинуть ящик шкафа","задвинуть ящик шкафа"],false)});
+ // подсветка шкафа: тёплые LED-профили по стойкам и под полкой над штангой
+ {const mLed=M(0xFFE7C2,{emissive:0xFFC98A,emissiveIntensity:0}),g=kGrp(0,0,0);
+  [xa+20,xa+422,xb-430,xb-28].forEach(x=>kB(g,x,zA+8,x+8,zA+20,82,2370,mLed));kB(g,xa+460,zA+30,xb-460,zA+42,2080,2090,mLed);
+  const pl=new THREE.PointLight(0xFFD2A0,0,2.6,2);pl.position.set((xa+xb)/2*S,2000*S,(zA+120)*S);root.add(pl);
+  kAdd(g,a=>{mLed.emissiveIntensity=a*1.6;pl.intensity=a*.9},["включить подсветку шкафа","выключить подсветку шкафа"],false)}
+
+ /* ---- Шторы «волной» из льна, задёргиваются кликом ---- */
+ {const P=kGrp(0,0,0),xm=9415;
+  const wave=(ax,dir,w0,wM)=>{const g=kGrp(ax,0,450,P),geo=new THREE.PlaneGeometry(1,1,Math.round(w0/9),1),pa=geo.attributes.position;
+   for(let i=0;i<pa.count;i++){const u=pa.getX(i)+.5,v=pa.getY(i)+.5,X=dir*u*w0;pa.setXYZ(i,X*S,(30+v*2610)*S,32*Math.sin(u*w0/w0*Math.PI*2*(w0/95))*S)}
+   geo.computeVertexNormals();const m=new THREE.Mesh(geo,mCurtW);m.castShadow=true;m.receiveShadow=true;g.add(m);return [g,wM/w0]};
+  const C=[wave(8060,1,270,xm-8060+15),wave(10745,-1,245,10745-xm+15)];
+  kAdd(P,a=>{C.forEach(([g,k])=>{g.scale.x=1+a*(k-1);g.scale.z=1-a*.6})},["задёрнуть шторы","раздвинуть шторы"],false).sp=.05}
 })();
 
 /* Прихожая и котельная */
