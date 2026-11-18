@@ -157,7 +157,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 renderer.outputEncoding=THREE.sRGBEncoding;
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.localClippingEnabled=true;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.85;
 stage.appendChild(renderer.domElement);
 
 const scene=new THREE.Scene();
@@ -179,6 +179,14 @@ sun.shadow.mapSize.set(2048,2048);
 Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10,near:1,far:40});
 sun.shadow.bias=-0.0004;scene.add(sun);
 const fill=new THREE.DirectionalLight(0xdfe8ff,0.25);fill.position.set(8,6,-6);scene.add(fill);
+/* Окружение (IBL): светлая комната с окнами, даёт мягкий рассеянный свет и отражения на камне, металле, стекле */
+let ENV=null;try{const pg=new THREE.PMREMGenerator(renderer),es=new THREE.Scene();
+  const rm=new THREE.Mesh(new THREE.BoxGeometry(16,6,16),new THREE.MeshBasicMaterial({color:0xCFC8BD,side:THREE.BackSide}));rm.position.y=2;es.add(rm);
+  const pan=(x,y,z,w,h,d,c,k)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshBasicMaterial({color:new THREE.Color(c).multiplyScalar(k)}));m.position.set(x,y,z);es.add(m)};
+  pan(-7.9,2.2,0,.1,2.6,7,0xEAF2FF,4.5);pan(7.9,2.2,-3,.1,2.4,3,0xFFF4E6,3);pan(0,2.2,7.9,6,2.4,.1,0xF2F4F6,3);pan(0,4.95,0,6,.1,6,0xFFFFFF,1.4);
+  const fl=new THREE.Mesh(new THREE.BoxGeometry(16,.1,16),new THREE.MeshBasicMaterial({color:0x6E6258}));fl.position.y=-.95;es.add(fl);
+  ENV=pg.fromScene(es,.03).texture;pg.dispose();scene.environment=ENV}catch(e){}
+hemi.intensity=.3;sun.shadow.mapSize.set(4096,4096);sun.shadow.normalBias=.02;
 
 const root=new THREE.Group();root.position.set(OX*S,0,OZ*S);scene.add(root);
 
@@ -278,11 +286,42 @@ const marbleTex=canvasTex(2048,2048,g=>tilePatch(g,2048,"devon",2400,600,600,0,2
 const calTex=canvasTex(2048,2048,g=>tilePatch(g,2048,"calacatta",2400,300,600,0,2,41));
 [woodTex,tileTex,marbleTex,calTex].forEach(t=>{try{t.anisotropy=Math.min(16,renderer.capabilities.getMaxAnisotropy())}catch(e){}});
 const deckTex=canvasTex(256,256,(g,w,h)=>{for(let i=0;i<8;i++){g.fillStyle=i%2?"#8A6A4A":"#94724F";g.fillRect(0,i*32,w,30);g.fillStyle="#3B2E22";g.fillRect(0,i*32+30,w,2)}});
-function texMat(base,wm,dm,rep,rot){const t=base.clone();t.needsUpdate=true;t.repeat.set((rot?dm:wm)/rep,(rot?wm:dm)/rep);t.rotation=rot?Math.PI/2:0;return new THREE.MeshStandardMaterial({map:t,roughness:.75})}
+/* ===== Реалистичные поверхности: процедурные бесшовные текстуры ===== */
+function nz2(seed,PX,PY){PY=PY||PX;const R=tRng(seed),g=new Float32Array(PX*PY);for(let i=0;i<g.length;i++)g[i]=R();
+  return(x,y)=>{const xi=Math.floor(x),yi=Math.floor(y),fx=x-xi,fy=y-yi,u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy),X=((xi%PX)+PX)%PX,Y=((yi%PY)+PY)%PY,X1=(X+1)%PX,Y1=(Y+1)%PY;
+    const a=g[Y*PX+X],b=g[Y*PX+X1],c=g[Y1*PX+X],d=g[Y1*PX+X1];return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}}
+function fbm(seed,base,oct){const L=[];for(let o=0;o<oct;o++)L.push(nz2(seed+o*97,base<<o));
+  return(x,y)=>{let s=0,a=.5,t=0;for(let o=0;o<oct;o++){const p=base<<o;s+=a*L[o](x*p,y*p);t+=a;a*=.5}return s/t}}
+function pixTex(N,f){return canvasTex(N,N,g=>{const im=g.createImageData(N,N),d=im.data;for(let y=0;y<N;y++)for(let x=0;x<N;x++){const v=Math.max(0,Math.min(1,f(x/N,y/N)))*255,i=(y*N+x)*4;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255}g.putImageData(im,0,0)})}
+const WR=tRng(777),WN=()=>WR()-.5;
+/* краска: валик даёт мелкую «апельсиновую корку» и едва заметные полосы */
+const paintTex=(()=>{const F=fbm(101,4,3),st=nz2(111,6,1);return pixTex(512,(u,v)=>.955+.025*(F(u,v)-.5)+.012*(st(u*6,0)-.5)+.03*WN())})();
+/* известковая штукатурка (limewash): мягкие облака кистью, заметная неоднородность */
+const limeTex=(()=>{const W=fbm(202,3,4),C=fbm(303,2,5),B=nz2(313,24);return pixTex(1024,(u,v)=>{const w=W(u,v);return .8+.36*(C((u+.3*w)%1,(v+.3*w)%1)-.35)+.03*(B(u*24,v*24)-.5)+.02*WN()})})();
+/* дерево: годичные слои вдоль длинной стороны, тонкие штрихи пор */
+const grainTex=(()=>{const F=fbm(404,4,4),G=fbm(414,8,3),Fs=nz2(606,8,512);return pixTex(1024,(u,v)=>{const t=v*90+1.2*F(u,v),r=t-Math.floor(t);
+  return .95-.09*Math.exp(-Math.pow((r-.8)/.12,2))-.04*r-.08*(Fs(u*8,v*512)-.5)-.05*(G(u,v)-.5)})})();
+/* ткань полотняного переплетения: нити ≈ 1 мм */
+const weaveTex=(()=>{const F=fbm(707,4,3);return pixTex(256,(u,v)=>{const x=u*64,y=v*64,ox=Math.sin((x%1)*Math.PI),oy=Math.sin((y%1)*Math.PI),over=((Math.floor(x)+Math.floor(y))&1);
+  return .82+.12*(over?ox:oy)+.08*(F(u,v)-.5)+.04*WN()})})();
+/* букле: петли пряжи */
+const boucleTex=(()=>{const L=nz2(808,48),F=fbm(818,4,2);return pixTex(256,(u,v)=>.78+.3*(L(u*48,v*48)-.5)+.1*(F(u,v)-.5)+.12*WN())})();
+/* травертин: слои вдоль плиты и вытянутые поры */
+const travTex=(()=>{const F=fbm(909,3,4),Pq=nz2(919,64,256);return pixTex(1024,(u,v)=>{const t=v*9+1.4*F(u,v),b=.5+.5*Math.sin(t*6.283);const p=Pq(u*64,v*256);
+  return .93+.06*(b-.5)+.05*(F((u*2)%1,v)-.5)-(p>.83?.22*(p-.83)/.17:0)})})();
+[paintTex,limeTex,grainTex,weaveTex,boucleTex,travTex].forEach(t=>{try{t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy())}catch(e){}});
+/* назначение фактуры материалу: карта цвета + рельеф, UV считаются в мировых мм (шаг rep) */
+function surf(m,kind,bs){const T={paint:[paintTex,900,.0018],lime:[limeTex,2600,.003],wood:[grainTex,1400,.0012],fabric:[weaveTex,70,.0035],boucle:[boucleTex,90,.008],trav:[travTex,1500,.0015]}[kind];
+  m.map=T[0];m.bumpMap=T[0];m.bumpScale=bs==null?T[2]:bs;m.userData.wuv=T[1];m.needsUpdate=true;return m}
+/* мировые UV: проекция по оси нормали, сетка общая для соседних деталей */
+function worldUV(o,mm){const g=o.geometry;if(!g||!g.attributes.uv||!g.attributes.normal||g.userData.wuv)return;g.userData.wuv=1;const p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv,k=1/(mm*S),q=o.position;
+  for(let i=0;i<p.count;i++){const x=(p.getX(i)+q.x)*k,y=(p.getY(i)+q.y)*k,z=(p.getZ(i)+q.z)*k,ax=Math.abs(n.getX(i)),ay=Math.abs(n.getY(i)),az=Math.abs(n.getZ(i));
+    if(ay>=ax&&ay>=az)uv.setXY(i,x,z);else if(ax>=az)uv.setXY(i,z,y);else uv.setXY(i,x,y)}uv.needsUpdate=true}
+function texMat(base,wm,dm,rep,rot){const t=base.clone();t.needsUpdate=true;t.repeat.set((rot?dm:wm)/rep,(rot?wm:dm)/rep);t.rotation=rot?Math.PI/2:0;return new THREE.MeshStandardMaterial({map:t,bumpMap:t,bumpScale:.0012,roughness:.75})}
 
 /* Материалы */
 const cut=new THREE.Plane(new THREE.Vector3(0,-1,0),H*S+0.001);
-function M(color,o={}){return new THREE.MeshStandardMaterial(Object.assign({color,roughness:.7,metalness:0},o))}
+function M(color,o={}){const m=new THREE.MeshStandardMaterial(Object.assign({color,roughness:.7,metalness:0},o));m.color.convertSRGBToLinear();m.userData.lin=1;return m}
 const mWall=M(0xEEECE7,{roughness:.92,clippingPlanes:[cut],clipShadows:true});
 const mWallTop=M(0x3B3F43,{clippingPlanes:[cut]});
 const mFrame=M(0x3B3F43,{roughness:.5,clippingPlanes:[cut],clipShadows:true});
@@ -311,11 +350,16 @@ const mWalnut=M(0x6A4A35,{roughness:.55});
 const mRust=M(0xA0583A,{roughness:.95});         // диван
 const mChoc=M(0x5A3E30,{roughness:.8});          // кресло
 const mButter=M(0xE3C878,{roughness:.95});
+/* фактуры: дерево — годичные слои, ткани — переплетение и букле, травертин — слои и поры, стены — краска */
+[mOak,mOakF,mWalnut,mDarkWood].forEach(m=>surf(m,"wood"));mOak.roughness=mOakF.roughness=.62;mWalnut.roughness=.58;
+[mRust,mBlueSofa,mMustard,mLinen,mChoc,mButter,mTerra].forEach(m=>surf(m,"fabric"));surf(mBoucle,"boucle");surf(mRug,"boucle",.012);
+surf(mTrav,"trav");mTrav.roughness=.38;surf(mWall,"paint");
+mSteel.roughness=.28;mBrass.roughness=.3;mCeramic.roughness=.12;mBlack.roughness=.35;mOlive.roughness=.5;
 
 /* Геометрия в мм, координаты как на плане (X вправо, Y вниз = Z) */
 function box(x1,z1,x2,z2,y1,y2,mat,p){const m=new THREE.Mesh(new THREE.BoxGeometry(Math.abs(x2-x1)*S,Math.abs(y2-y1)*S,Math.abs(z2-z1)*S),mat);
-  m.position.set((x1+x2)/2*S,(y1+y2)/2*S,(z1+z2)/2*S);m.castShadow=true;m.receiveShadow=true;(p||root).add(m);return m}
-function cyl(x,z,r,y1,y2,mat,seg){const m=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,(y2-y1)*S,seg||24),mat);m.position.set(x*S,(y1+y2)/2*S,z*S);m.castShadow=m.receiveShadow=true;root.add(m);return m}
+  m.position.set((x1+x2)/2*S,(y1+y2)/2*S,(z1+z2)/2*S);m.castShadow=true;m.receiveShadow=true;if(mat&&mat.userData&&mat.userData.wuv)worldUV(m,mat.userData.wuv);(p||root).add(m);return m}
+function cyl(x,z,r,y1,y2,mat,seg){const m=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,(y2-y1)*S,seg||24),mat);m.position.set(x*S,(y1+y2)/2*S,z*S);m.castShadow=m.receiveShadow=true;if(mat&&mat.userData&&mat.userData.wuv)worldUV(m,mat.userData.wuv);root.add(m);return m}
 
 /* Пол */
 const floors=[
@@ -384,6 +428,7 @@ const C={
   jade:PM(0x557A6E),     // дымчатый нефрит / Hidden Gem, стена за кроватью над шоколадной панелью
   hall:PM(0xE6DCCB)      // овсяный, как гостиная: прихожая продолжает её цвет
 };
+Object.values(C).forEach(m=>surf(m,"paint"));surf(C.oat,"lime");surf(C.jade,"lime",.004);C.oat.roughness=C.jade.roughness=.96;
 /* Слой краски толщиной 4 мм на внутренней грани стены, с теми же проёмами; y0..y1 — высота покраски */
 /* Стены санузла в плитке 30×60 под белый мрамор: у каждого куска стены своя копия текстуры, сетка привязана к полу и к оси стены */
 const TILEW=new Map(),mBathTile=M(0xffffff,{roughness:.3,clippingPlanes:[cut],clipShadows:true});TILEW.set(mBathTile,calTex);
@@ -619,9 +664,9 @@ function spotPos(x,z){if(CV!=="B"||!inCont(x,z))return[x,z];const r=roomOf(x,z),
   while(t<3&&inside(CMM[r],c[0]+dx*t,c[1]+dz*t))t+=.01;return[c[0]+dx*t+dx/L*90,c[1]+dz*t+dz/L*90]}
 
 const ceilG=new THREE.Group(),fxG=new THREE.Group();root.add(ceilG);root.add(fxG);
-const mCeil=M(0xF7F6F3,{roughness:.95}),mCeilD=M(0xF7F6F3,{roughness:.95,side:THREE.DoubleSide});
+const mCeil=surf(M(0xF7F6F3,{roughness:.95}),"paint",.001),mCeilD=surf(M(0xF7F6F3,{roughness:.95,side:THREE.DoubleSide}),"paint",.001);
 function clearG(g){while(g.children.length){const c=g.children.pop();c.traverse(o=>{if(o.geometry)o.geometry.dispose()})}}
-function cylp(x,z,r,y1,y2,mat,p){const m=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,(y2-y1)*S,20),mat);m.position.set(x*S,(y1+y2)/2*S,z*S);p.add(m);return m}
+function cylp(x,z,r,y1,y2,mat,p){const m=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,(y2-y1)*S,20),mat);m.position.set(x*S,(y1+y2)/2*S,z*S);if(mat&&mat.userData&&mat.userData.wuv)worldUV(m,mat.userData.wuv);p.add(m);return m}
 function boxp(x1,z1,x2,z2,y1,y2,mat,p){const m=box(x1,z1,x2,z2,y1,y2,mat,p);m.castShadow=false;return m}
 function plane(x1,z1,x2,z2,y,mat,p){const m=new THREE.Mesh(new THREE.PlaneGeometry((x2-x1)*S,(z2-z1)*S),mat);m.rotation.x=Math.PI/2;m.position.set((x1+x2)/2*S,y*S,(z1+z2)/2*S);m.receiveShadow=true;p.add(m);return m}
 function tubeP(pts,y,r,mat,closed,p){const v=pts.map(q=>new THREE.Vector3(q[0]*S,y*S,q[1]*S));const c=new THREE.CatmullRomCurve3(v,closed,"centripetal");p.add(new THREE.Mesh(new THREE.TubeGeometry(c,Math.max(40,v.length*3),r*S,6,closed),mat))}
@@ -903,7 +948,7 @@ function setCV(v){CV=v;if(typeof spText==="function"&&document.getElementById("s
 [...cvSel.children].forEach(b=>b.onclick=()=>setCV(b.dataset.v));
 const todSel=document.getElementById("tod");
 function setTod(v){EVE=v==="eve";[...todSel.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===v)));
-  hemi.intensity=EVE?.05:.75;sun.intensity=EVE?0:1.1;sun.castShadow=!EVE;fill.intensity=EVE?.03:.25;renderer.toneMappingExposure=EVE?1.2:1.05;setBg();applyL()}
+  hemi.intensity=EVE?.05:.3;scene.environment=EVE?null:ENV;sun.intensity=EVE?0:1.1;sun.castShadow=!EVE;fill.intensity=EVE?.03:.25;renderer.toneMappingExposure=EVE?1.2:.85;setBg();applyL()}
 [...todSel.children].forEach(b=>b.onclick=()=>setTod(b.dataset.v));
 const spSel=document.getElementById("spM"),trSel=document.getElementById("trM");
 Object.keys(SPOT).forEach(k=>spSel.add(new Option(k+" · "+SPOT[k].t,k,false,k===SPM)));
@@ -1022,7 +1067,11 @@ function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSiz
 addEventListener("resize",resize);resize();
 fly(VIEWS[0],true);
 
-function loop(now){requestAnimationFrame(loop);
+function linPass(){const seen=new Set();scene.traverse(o=>{if(!o.isMesh)return;const m=o.material;if(!m||Array.isArray(m))return;
+  if(!seen.has(m)){seen.add(m);if(m.color&&!m.isMeshBasicMaterial&&!m.userData.lin){m.color.convertSRGBToLinear();m.userData.lin=1}if(m.isMeshStandardMaterial&&!m.userData.ei){m.envMapIntensity=.6;m.userData.ei=1}}
+  if(m.userData.wuv)worldUV(o,m.userData.wuv)})}
+linPass();let linT=0;
+function loop(now){requestAnimationFrame(loop);if(now-linT>1000){linT=now;linPass()}
   if(anim){const k=Math.min(1,(now-anim.s)/900),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
     camera.position.lerpVectors(anim.p0,anim.v.pos,e);controls.target.lerpVectors(anim.t0,anim.v.tg,e);if(k>=1)anim=null}
   controls.update();
