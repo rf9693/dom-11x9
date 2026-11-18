@@ -69,6 +69,7 @@ header{display:grid;gap:16px}
 .ledl{stroke:var(--lamp);stroke-width:34;stroke-linecap:round}
 .trk{stroke:var(--ink);stroke-width:70;stroke-linecap:round}
 .sens{fill:none;stroke:#C2185B;stroke-width:26}
+.skt{font:600 78px var(--f-mono);fill:#E07A3C}
 .lt{fill:var(--lamp);font:700 150px Manrope,system-ui,sans-serif}
 .st{fill:#C2185B;font:700 130px Manrope,system-ui,sans-serif}
 .cmp td:first-child{white-space:nowrap;font-weight:600}
@@ -156,6 +157,7 @@ td small{color:var(--muted);font-weight:400;font-size:12px}
       <label><input type="checkbox" id="t-furn" checked> Мебель</label>
       <label><input type="checkbox" id="t-light" checked> Свет</label>
       <label><input type="checkbox" id="t-dim" checked> Размеры</label>
+      <label><input type="checkbox" id="t-sock" checked> Розетки</label>
     </div>
   </div>
   <div class="plan-box"><svg id="plan" viewBox="-200 -500 11490 10000" role="img" aria-label="План первого этажа с расстановкой мебели"></svg></div>
@@ -169,6 +171,8 @@ td small{color:var(--muted);font-weight:400;font-size:12px}
     <span><i style="background:var(--lamp);border-radius:50%;border-color:var(--lamp)"></i>Споты, люстра, бра</span>
     <span><i style="background:transparent;border:2px dashed var(--lamp);border-radius:3px"></i>LED-контур на потолке</span>
     <span><i style="background:var(--ink);border-color:var(--ink)"></i>Треки</span>
+    <span><i style="background:#E07A3C;border-color:#E07A3C;border-radius:2px"></i>Розетки по плану заказчика, h — высота центра, мм</span>
+    <span><i style="background:transparent;border:2px solid #3FA66B;border-radius:2px"></i>Вывод кабеля</span>
     <span><i style="background:transparent;border:2px solid #C2185B;border-radius:50%"></i>ДД — датчик движения</span>
   </div>
   <p class="eyebrow" style="letter-spacing:.06em;text-transform:none">Ориентация как в вашей 3D-модели. Размеры помещений в мм, по чистовым стенам с 2D-плана; мебель условная.</p>
@@ -298,7 +302,8 @@ td small{color:var(--muted);font-weight:400;font-size:12px}
 
     <li><div><b>Стиральная машина.</b> Колонна стиральная + сушильная в углу прихожей у стены спальни. Трапик или поддон с датчиком протечки под ней обязателен: рядом спальня.</div></li>
     <li><div><b>Датчики движения.</b> Считаю, что ДД на кухне включает подсветку рабочей зоны, в санузле — споты, в прихожей — споты и контур C1. Если группы другие, поправлю.</div></li>
-    <li><div><b>Розетки.</b> Помимо отметок 1200 мм на кухне: розетки у тумб в спальне (650 мм), над столом в детской (900 мм), за ТВ (1100–1200 мм) и в шкафу прихожей для сушилки обуви.</div></li>
+    <li><div><b>Розетки.</b> Нанесены по плану заказчика: 55 розеток (2 из них в лючке), 8 выводов в полу. Что поправить: блок из трёх розеток на 1050 мм над краем мойки (x ≈ 1,5–1,7 м) лучше сдвинуть на 200 мм вправо, за пределы чаши. Двойная P4 уходит за колонны холодильника и морозильника, это нормально для их питания. Лючок в полу попадает под край журнального стола (360 мм от центра стола), лучше сместить его на 300 мм к дивану. В спальне блоки у тумб перенесены на мягкую панель вместе с кроватью (+150 мм) и стоят над тумбами, рамки там тёмные. Выводы под варочную (5×4) и вытяжку (3×1,5) разнесены: варочная под столешницей на 600 мм, вытяжка в коробе на 2350 мм, в фартуке выводов нет. В санузле розетки с крышкой IP44 и через УЗО 30 мА. Высоты у правой стены спальни на плане не подписаны, принял 300 мм.</div></li>
+    <li><div><b>Двери.</b> Скрытые полотна 800 × 2100 в плоскости стены со стороны петель, каждая сторона окрашена в цвет своей стены: в детской снизу шалфей, сверху сливочный, в спальне нефрит, со стороны гостиной хаки и овсяный. Ручки нажимные, чёрные матовые. Двери в детскую и санузел открываются внутрь комнат, в спальню и прихожую — от гостиной. Входная — графит снаружи, панель в цвет прихожей внутри. Проёмы в 3D выровнены по плану: спальня 3,9–4,7 м, прихожая 7,7–8,5 м. Ковёр в спальне не толще 10 мм, иначе полотно заденет его.</div></li>
   </ol>
 </section>
 
@@ -798,8 +803,23 @@ tag("bath",692,260,"C10");tag("bath",650,118,"C8");tag("bath",735,150,"C7");
 tag("bed",1027,180,"C3");tag("bed",1027,560,"C2");tag(null,8000,500,"C5");{el("line",{x1:600,y1:760,x2:1800,y2:760,class:"ledl"},gL);txt(1200,700,"4000 K","st",gL)}
 tag("hall",1030,800,"C1");tag(null,-150,3850,"C22");tag(null,-150,7600,"C23");
 
+/* Розетки и выводы по плану заказчика */
+const gS=g("sock");
+[
+ ["h",360,1,2605,600,"sss"],["v",340,1,2460,600,"sss"],["h",3460,-1,1285,600,"sso"],["h",3460,-1,3480,300,"o"],["v",4780,-1,3250,300,"s"],
+ ["v",4990,1,2300,1100,"ss"],["v",4990,1,2630,1100,"o"],
+ ["v",7690,1,810,600,"sso",1],["v",7690,1,3310,600,"oss",1],["v",10750,-1,525,300,"s"],["v",10750,-1,1685,300,"sss"],["v",10750,-1,4010,300,"sss"],["h",5560,-1,7895,900,"ss"],
+ ["h",5760,1,7895,300,"ss"],["v",10750,-1,8150,1000,"sss"],["h",8760,-1,7725,300,"s"],
+ ["v",346,1,4070,1050,"sss"],["h",3660,1,930,300,"ss"],["h",3666,1,1590,1050,"sss"],["h",3660,1,2350,1050,"ss"],
+ ["v",346,1,5120,1050,"ss"],["v",340,1,5500,600,"o"],["v",340,1,5700,2350,"o"],
+ ["v",340,1,8550,300,"s"],["h",8760,-1,1710,300,"ss"],["v",7320,-1,6050,300,"sss"],["v",7320,-1,6050,1300,"sss"],["h",3660,1,6947,300,"s"],["h",8760,-1,7147,300,"s"]].forEach(([ax,f,dir,c,h,pat])=>{const n=pat.length,L=n*100,a1=c-L/2;
+  [...pat].forEach((k,i)=>{const u=a1+i*100+8,r=ax==="h"?{x:u,y:dir>0?f:f-84,width:84,height:84}:{x:dir>0?f:f-84,y:u,width:84,height:84};
+    el("rect",Object.assign(r,{style:k==="s"?"fill:#E07A3C;stroke:none":"fill:none;stroke:#3FA66B;stroke-width:16"}),gS)});
+  const t=ax==="h"?txt(c,f+dir*(dir>0?200:130),"h"+h,"skt",gS):txt(f+dir*120,c+28,"h"+h,"skt",gS,dir>0?"start":"end")});
+[[4040,7157,2]].forEach(([x,y,n])=>{el("rect",{x:x-n*55,y:y-55,width:n*110,height:110,style:"fill:none;stroke:#E07A3C;stroke-width:16"},gS);
+  el("path",{d:`M${x-n*55} ${y-55} L${x+n*55} ${y+55} M${x+n*55} ${y-55} L${x-n*55} ${y+55}`,style:"stroke:#E07A3C;stroke-width:10"},gS);txt(x,y+170,"в полу","skt",gS)});
 function bind(id,grp){const c=document.getElementById(id);c.addEventListener("change",()=>grp.setAttribute("display",c.checked?"inline":"none"))}
-bind("t-furn",gf);bind("t-light",gL);bind("t-dim",gd);
+bind("t-furn",gf);bind("t-light",gL);bind("t-dim",gd);bind("t-sock",gS);
 })();
 </script>
 <script>
@@ -829,7 +849,7 @@ const E=[
  ["Входная утеплённая дверь с монтажом","",1,"шт",1100,2200],
  ["Электрика и свет"],
  ["Электромонтаж","кабель, щиток, автоматы, ≈ 70 точек",1,"компл",3200,4500],
- ["Розетки и выключатели","",60,"шт",12,30],
+ ["Розетки и выключатели","55 розеток и 8 выводов по плану + выключатели",80,"шт",12,30],
  ["Точечные светильники hdl.by","HD-TH3075 12 Вт, в варианте Б — HD-YM3075; дороже — HD-TH3075-L 15 Вт или DALI",38,"шт",141,165],
  ["Трековые системы C17, C18 hdl.by","встраиваемый магнитный CX-YM 2 м + 4 × CX5003 + драйвер",2,"компл",1117,1180],
  ["Подвес над столом C16","Louis Poulsen PH 5 или аналог",1,"шт",350,3800],

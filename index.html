@@ -106,6 +106,9 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
     <div class="slider"><input type="range" id="cut" min="300" max="2800" step="50" value="2800"><output id="cutv">2800 мм</output></div>
     <label class="check"><input type="checkbox" id="names" checked> Названия комнат</label>
     <label class="check"><input type="checkbox" id="sashT"> Открыть створку окна в спальне</label>
+    <label class="check"><input type="checkbox" id="doorT"> Открыть двери</label>
+    <label class="check"><input type="checkbox" id="scrT"> Опустить экран</label>
+    <label class="check"><input type="checkbox" id="sockT" checked> Розетки</label>
   </div>
   <p class="hint more">Вращение: левая кнопка мыши или один палец. Сдвиг: правая кнопка или два пальца. Масштаб: колесо или щипок. Потолок виден только в видах «изнутри».</p>
 </div>
@@ -365,7 +368,7 @@ function cyl(x,z,r,y1,y2,mat,seg){const m=new THREE.Mesh(new THREE.CylinderGeome
 const floors=[
  [340,360,4780,3460,"wood"],[4990,360,7320,3460,"tile"],[7620,360,10750,5560,"wood",1],
  [340,3660,7320,8760,"marble"],[7620,5760,10750,8760,"wood",1],
- [3700,3460,4600,3660,"wood"],[5600,3460,6400,3660,"tile"],[7320,4500,7620,5400,"wood",1],[7320,7900,7620,8750,"marble"],[8200,8760,9100,9100,"wood",1],[0,6900,340,8700,"marble"]];
+ [3800,3460,4600,3660,"wood"],[5600,3460,6400,3660,"tile"],[7320,3900,7620,4700,"wood",1],[7320,7700,7620,8500,"marble"],[8200,8760,9100,9100,"wood",1],[0,6900,340,8700,"marble"]];
 floors.forEach(f=>{const w=f[2]-f[0],d=f[3]-f[1];const mat=f[4]==="wood"?texMat(woodTex,w,d,2400,f[5]):f[4]==="oak"?texMat(oakTex,w,d,1600):f[4]==="marble"?texMat(marbleTex,w,d,2400):texMat(tileTex,w,d,2400);if(f[4]==="wood")mat.roughness=.68;if(f[4]==="tile")mat.roughness=.8;
   if(f[4]==="marble"){mat.roughness=.62;mat.metalness=.05}
   const m=new THREE.Mesh(new THREE.PlaneGeometry(w*S,d*S),mat);m.rotation.x=-Math.PI/2;m.position.set((f[0]+f[2])/2*S,0.002,(f[1]+f[3])/2*S);m.receiveShadow=true;root.add(m)});
@@ -402,7 +405,7 @@ wall("h",0,11090,0,360,[W(530,2680,900,2500,{n:2}),W(5600,6200,0,2500,{n:1}),W(B
 wall("h",0,11090,8760,9100,[W(2200,5400,0,2500,{n:3}),D(8200,9100),W(9700,10400,900,2500,{n:1})]);
 wall("v",0,9100,0,340,[W(600,2720,900,2500,{n:2}),W(6700,8400,0,2500,{n:2})]);
 wall("v",0,9100,10750,11090,[]);
-wall("h",340,7320,3460,3660,[D(3700,4600),D(5600,6400)]);
+wall("h",340,7320,3460,3660,[D(3800,4600),D(5600,6400)]);
 /* Открывающаяся створка: петли со стороны угла, открывается внутрь комнаты */
 const sash=new THREE.Group();
 (function(){const sw=(BW.b-BW.a)/3,hx=BW.b-60,wS=hx-(BW.b-sw+30),lo=BW.lo+60,hi=BW.hi-60;
@@ -412,7 +415,7 @@ const sash=new THREE.Group();
   box(-wS+60,-15,-60,15,lo+60,hi-60,mGlass,sash);
   box(-wS+18,35,-wS+42,58,(lo+hi)/2-30,(lo+hi)/2+120,mBrass,sash)})();
 wall("v",360,3460,4780,4990,[]);
-wall("v",360,8760,7320,7620,[D(4500,5400),D(7900,8750)]);
+wall("v",360,8760,7320,7620,[D(3900,4700),D(7700,8500)]);
 wall("h",7620,10750,5560,5760,[]);
 
 /* ===== Цвет стен по комнатам (тенденции 2026) ===== */
@@ -440,12 +443,12 @@ function paint(ax,a1,a2,face,dir,ops,mat,y0,y1){
   ops.forEach(o=>{s(cur,o.a,0,H);s(o.a,o.b,0,o.lo);s(o.a,o.b,o.hi,H);cur=o.b});s(cur,a2,0,H)}
 const w=(a,b,lo,hi)=>({a,b,lo,hi}), d=(a,b)=>({a,b,lo:0,hi:2100});
 // Кухня-гостиная
-paint("h",340,7320,3660,1,[d(3700,4600),d(5600,6400)],C.oat);
+paint("h",340,7320,3660,1,[d(3800,4600),d(5600,6400)],C.oat);
 paint("h",340,7320,8760,-1,[w(2200,5400,0,2500)],C.oat);
 paint("v",3660,8760,340,1,[w(6700,8400,0,2500)],C.oat);
-paint("v",3660,8760,7320,-1,[d(4500,5400),d(7900,8750)],C.khaki);
+paint("v",3660,8760,7320,-1,[d(3900,4700),d(7700,8500)],C.khaki);
 // Детская: шалфей до 1100 мм, выше сливочный
-[["h",340,4780,360,1,[w(530,2680,900,2500)]],["h",340,4780,3460,-1,[d(3700,4600)]],["v",360,3460,340,1,[w(600,2720,900,2500)]],["v",360,3460,4780,-1,[]]]
+[["h",340,4780,360,1,[w(530,2680,900,2500)]],["h",340,4780,3460,-1,[d(3800,4600)]],["v",360,3460,340,1,[w(600,2720,900,2500)]],["v",360,3460,4780,-1,[]]]
   .forEach(f=>{paint(...f,C.cream,1100,H);paint(...f,C.sage,0,1100)});
 // Санузел: пол — Cersanit City Line светло-серый 30×60, все четыре стены — плитка 30×60 под белый мрамор
 paint("h",4990,7320,360,1,[w(5600,6200,0,2500)],mBathTile);
@@ -455,12 +458,12 @@ paint("v",360,3460,7320,-1,[],mBathTile);
 // Спальня: льняной грейж, за кроватью дымчатый нефрит
 paint("h",7620,10750,360,1,[w(BW.a,BW.b,BW.lo,BW.hi)],C.linen);
 paint("h",7620,10750,5560,-1,[],C.linen);
-paint("v",360,5560,7620,1,[d(4500,5400)],C.jade);
+paint("v",360,5560,7620,1,[d(3900,4700)],C.jade);
 paint("v",360,5560,10750,-1,[],C.linen);
 // Прихожая
 paint("h",7620,10750,5760,1,[],C.hall);
 paint("h",7620,10750,8760,-1,[d(8200,9100),w(9700,10400,900,2500)],C.hall);
-paint("v",5760,8760,7620,1,[d(7900,8750)],C.hall);
+paint("v",5760,8760,7620,1,[d(7700,8500)],C.hall);
 paint("v",5760,8760,10750,-1,[],C.hall);
 
 /* ===== Мебель по модели заказчика ===== */
@@ -563,7 +566,47 @@ rbox(4250,5500,4550,5800,2620,2740,20,mWhite);cyl(4400,5650,20,2740,2790,mBlack,
 box(1870,8610,5730,8690,2700,2790,mWhite);
 box(1890,8644,5710,8652,40,2700,M(0xE9E8E4,{roughness:.95}),scr);box(1890,8638,5710,8658,20,40,mBlack,scr);
 box(3180,8640,5620,8643,780,2150,M(0xF4F4F2,{roughness:.9,emissive:0x8899AA,emissiveIntensity:.22}),scr);
-scr.visible=false;
+const scrImg=scr.children[2];scr.visible=false;
+/* Моторизованный экран: полотно сматывается в кассету, верх неподвижен. Реальный мотор опускает 2,7 м примерно за 20 с, в модели за 8 с */
+let scrT=0,scrA=0;const scrCb=document.getElementById("scrT");scrCb.onchange=()=>scrT=scrCb.checked?1:0;
+let scrL=0;function scrStep(now){const dt=scrL?Math.min((now-scrL)/1000,.5):0;scrL=now;if(scrA===scrT)return;scrA+=Math.sign(scrT-scrA)*Math.min(Math.abs(scrT-scrA),dt/8);const k=Math.max(scrA,1e-3);
+  scr.visible=scrA>0.001;scr.scale.y=k;scr.position.y=2.7*(1-k);scrImg.visible=scrA>0.985}
+
+/* Двери: скрытые полотна под покраску (короб в плоскости стены со стороны петель), каждая сторона в цвете своей стены.
+   Ручки — чёрные матовые нажимные. Входная — графит снаружи, панель в цвет прихожей внутри, ручка нерж. */
+const mDE=M(0xE9E6E0,{roughness:.6,clippingPlanes:[cut]}),mHdl=M(0x1E2022,{roughness:.55,clippingPlanes:[cut]}),mDS=M(0xA9AEB2,{roughness:.3,metalness:.7,clippingPlanes:[cut]});
+const DOORS=[];
+function mkDoor(hx,hz,base,L,t,ns,segs,amax,hm){
+  const o=new THREE.Group();o.position.set(hx*S,0,hz*S);o.rotation.y=base;root.add(o);const p=new THREE.Group();o.add(p);
+  const z0=-4*ns,z1=(t-4)*ns;
+  segs.forEach(([y1,y2,fr,bk])=>box(0,z0,L,z1,y1,y2,[mDE,mDE,mDE,mDE,ns>0?bk:fr,ns>0?fr:bk],p));
+  [[z0,-ns],[z1,ns]].forEach(([zf,s])=>{box(L-95,zf,L-45,zf+s*8,970,1030,hm,p);box(L-78,zf+s*8,L-62,zf+s*48,992,1008,hm,p);box(L-210,zf+s*40,L-62,zf+s*56,992,1008,hm,p)});
+  DOORS.push({p,amax});return p}
+mkDoor(3808,3460,0,784,40,1,[[14,1100,C.sage,C.oat],[1100,2090,C.cream,C.oat]],1.45,mHdl);   // детская: внутрь детской
+mkDoor(5608,3460,0,784,40,1,[[14,2090,C.stone,C.oat]],1.45,mHdl);                         // санузел: внутрь санузла
+mkDoor(7620,3908,-Math.PI/2,784,40,1,[[14,2090,C.jade,C.khaki]],1.45,mHdl);               // спальня: петли со стороны кровати
+mkDoor(7620,7708,-Math.PI/2,784,40,1,[[14,2090,C.hall,C.khaki]],1.45,mHdl);               // прихожая
+mkDoor(8208,9100,0,884,72,-1,[[10,2090,mFrame,C.hall]],-1.35,mDS);                         // входная: наружу
+let doorT=0,doorA=0;const doorCb=document.getElementById("doorT");doorCb.onchange=()=>doorT=doorCb.checked?1:0;
+
+/* Розетки и выводы по плану заказчика: рамка 71 мм на модуль, высота — центр */
+const sockG=new THREE.Group();root.add(sockG);
+const mSkW=M(0xF3F2EE,{roughness:.4,clippingPlanes:[cut]}),mSkWi=M(0xE4E2DD,{roughness:.5,clippingPlanes:[cut]}),
+  mSkD=M(0x3A3B3D,{roughness:.45,clippingPlanes:[cut]}),mSkDi=M(0x2A2B2D,{roughness:.5,clippingPlanes:[cut]}),mSkH=M(0x111213,{roughness:.8});
+[
+ ["h",360,1,2605,600,"sss"],["v",340,1,2460,600,"sss"],["h",3460,-1,1285,600,"sso"],["h",3460,-1,3480,300,"o"],["v",4780,-1,3250,300,"s"],
+ ["v",4990,1,2300,1100,"ss"],["v",4990,1,2630,1100,"o"],
+ ["v",7690,1,810,600,"sso",1],["v",7690,1,3310,600,"oss",1],["v",10750,-1,525,300,"s"],["v",10750,-1,1685,300,"sss"],["v",10750,-1,4010,300,"sss"],["h",5560,-1,7895,900,"ss"],
+ ["h",5760,1,7895,300,"ss"],["v",10750,-1,8150,1000,"sss"],["h",8760,-1,7725,300,"s"],
+ ["v",346,1,4070,1050,"sss"],["h",3660,1,930,300,"ss"],["h",3666,1,1590,1050,"sss"],["h",3660,1,2350,1050,"ss"],
+ ["v",346,1,5120,1050,"ss"],["v",340,1,5500,600,"o"],["v",340,1,5700,2350,"o"],
+ ["v",340,1,8550,300,"s"],["h",8760,-1,1710,300,"ss"],["v",7320,-1,6050,300,"sss"],["v",7320,-1,6050,1300,"sss"],["h",3660,1,6947,300,"s"],["h",8760,-1,7147,300,"s"]].forEach(([ax,f,dir,c,h,pat,dk])=>{const L=pat.length*71+9,a1=c-L/2,o1=f+dir*4,o2=f+dir*13,o3=f+dir*16,o4=f+dir*16.8;
+  const B=(u1,u2,v1,v2,y1,y2,m)=>ax==="h"?boxp(u1,v1,u2,v2,y1,y2,m,sockG):boxp(v1,u1,v2,u2,y1,y2,m,sockG);
+  B(a1,a1+L,o1,o2,h-40,h+40,dk?mSkD:mSkW);
+  [...pat].forEach((k,i)=>{const u=a1+40+71*i;B(u-27,u+27,o2,o3,h-27,h+27,dk?mSkDi:mSkWi);
+    if(k==="s"){B(u-14,u-8,o3,o4,h-3,h+3,mSkH);B(u+8,u+14,o3,o4,h-3,h+3,mSkH)}else B(u-18,u+18,o3,o4,h-21,h-15,mSkH)})});
+[[4040,7157,2]].forEach(([x,z,n])=>{const w=n*90+20;boxp(x-w/2,z-60,x+w/2,z+60,0,4,mSteel,sockG);boxp(x-w/2+8,z-2,x+w/2-8,z+2,4,4.6,mSkH,sockG)});
+const sockCb=document.getElementById("sockT");sockCb.onchange=()=>sockG.visible=sockCb.checked;
 
 /* ===== Стены 2026 ===== */
 // гостиная: известковая штукатурка с «облачной» фактурой в овсяном цвете
@@ -943,7 +986,7 @@ const SC=[
   ["Выкл",g=>false]];
 const scBox=document.getElementById("scenes");
 SC.forEach(s=>{const b=document.createElement("button");b.type="button";b.textContent=s[0];b.setAttribute("aria-pressed","false");
-  b.onclick=()=>{LG.forEach(g=>g.on=s[1](g));scr.visible=s[0]==="Кино";[...scBox.children].forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  b.onclick=()=>{LG.forEach(g=>g.on=s[1](g));scrT=s[0]==="Кино"?1:0;scrCb.checked=!!scrT;[...scBox.children].forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
     if(s[0]!=="Выкл"&&!EVE)setTod("eve");syncUI();applyL()};scBox.appendChild(b)});
 grpBox.addEventListener("change",()=>[...scBox.children].forEach(x=>x.setAttribute("aria-pressed","false")));
 
@@ -1085,6 +1128,8 @@ function loop(now){requestAnimationFrame(loop);if(now-linT>1000){linT=now;linPas
   if(camera.position.y<0.25)camera.position.y=0.25;
   const inRoom=camera.position.y<2.7;ceilG.visible=inRoom;labels.visible=namesCb.checked&&!inRoom&&!LUX;
   if(Math.abs(sashA-sashT)>0.001){sashA+=(sashT-sashA)*0.12;sash.rotation.y=sashA}
+  if(Math.abs(doorA-doorT)>0.0005){doorA+=(doorT-doorA)*0.06;if(Math.abs(doorA-doorT)<=0.0005)doorA=doorT;DOORS.forEach(d=>d.p.rotation.y=d.amax*doorA)}
+  scrStep(now);
   renderer.render(scene,camera)}
 requestAnimationFrame(loop);
 })();
