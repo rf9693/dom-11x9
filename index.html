@@ -12,6 +12,20 @@
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font:14px/1.45 var(--f-body);overflow:hidden}
 #stage{position:fixed;inset:0}
+.walk-btn{width:100%;padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#fff;font:600 14px/1.2 inherit;cursor:pointer}
+.walk-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+#walkUI{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));display:none;gap:12px;align-items:end;z-index:5;max-width:calc(100% - 32px)}
+body.walking #walkUI{display:flex}
+body.walking .panel,body.walking .lp{display:none}
+#walkUI .hint{background:var(--panel);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;color:var(--ink);max-width:300px}
+#walkUI .hint b{font-weight:600}
+#walkUI .pad{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,52px);gap:6px}
+#walkUI .pad button,#walkUI .exit{border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(8px);color:var(--ink);border-radius:12px;font:600 18px/1 inherit;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}
+#walkUI .exit{font-size:14px;padding:0 14px;height:52px}
+#walkUI .pad .up{grid-column:2}#walkUI .pad .lt{grid-column:1;grid-row:2}#walkUI .pad .dn{grid-column:2;grid-row:2}#walkUI .pad .rt{grid-column:3;grid-row:2}
+#walkCross{position:fixed;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px #0006;display:none;pointer-events:none;z-index:4}
+body.walking #walkCross{display:block}
+@media (max-width:640px){#walkUI .hint{display:none}}
 #stage canvas{display:block;width:100%;height:100%;touch-action:none}
 .panel{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));width:300px;max-width:calc(100% - 32px);background:var(--panel);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;box-shadow:0 6px 24px #0000001a}
 h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
@@ -84,6 +98,12 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
 </style>
 
 <div id="stage"></div>
+<div id="walkCross"></div>
+<div id="walkUI" role="group" aria-label="Управление прогулкой">
+  <div class="hint"><b>Прогулка.</b> W A S D или стрелки — идти, тянуть мышью или пальцем — смотреть, Shift — быстрее, двойной клик по полу — дойти туда, Esc — выход.</div>
+  <div class="pad"><button class="up" type="button" data-k="f" aria-label="Вперёд">↑</button><button class="lt" type="button" data-k="l" aria-label="Влево">←</button><button class="dn" type="button" data-k="b" aria-label="Назад">↓</button><button class="rt" type="button" data-k="r" aria-label="Вправо">→</button></div>
+  <button class="exit" type="button" id="walkExit">Выйти</button>
+</div>
 <p id="err" hidden>Не удалось запустить 3D. Нужен браузер с поддержкой WebGL.</p>
 <div class="panel" id="panel">
   <button id="toggle" type="button">Свернуть</button>
@@ -93,6 +113,7 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
   </div>
   <div class="row">
     <span class="lbl">Вид</span>
+    <button class="walk-btn" id="walkBtn" type="button">Прогулка по дому</button>
     <div class="views" id="views"></div>
   </div>
   <div class="row more">
@@ -1106,10 +1127,55 @@ const VIEWS=[
 const vbox=document.getElementById("views");
 VIEWS.forEach(v=>{const b=document.createElement("button");b.type="button";b.textContent=v.t;b.dataset.id=v.id;b.setAttribute("aria-pressed","false");b.onclick=()=>fly(v);vbox.appendChild(b)});
 let anim=null;
-function fly(v,instant){[...vbox.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.id===v.id)));
+function fly(v,instant){exitWalk();[...vbox.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.id===v.id)));
   const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
   if(instant||reduce){camera.position.copy(v.pos);controls.target.copy(v.tg);controls.update();return}
   anim={p0:camera.position.clone(),t0:controls.target.clone(),v,s:performance.now()}}
+
+/* Прогулка от первого лица */
+let WALK=false,yaw=0,pitch=0,wT=0,wGoal=null,COL=[];const EYE=1.6,KEYS={},PAD={};
+const wray=new THREE.Raycaster(),wbody=document.body;
+function visDeep(o){for(;o;o=o.parent)if(!o.visible)return false;return true}
+function buildCol(){COL=[];const b=new THREE.Box3();scene.updateMatrixWorld(true);
+  scene.traverse(o=>{if(!o.isMesh||!o.geometry)return;b.setFromObject(o);if(b.isEmpty())return;
+    if(b.min.y>1.3||b.max.y<0.3)return;if(b.max.y-b.min.y<0.03)return;
+    const m=Array.isArray(o.material)?o.material[0]:o.material;if(m&&m.isMeshBasicMaterial&&m.transparent)return;COL.push(o)})}
+function hit(p,dx,dz,dist){const L=Math.hypot(dx,dz);if(L<1e-6)return false;const d=new THREE.Vector3(dx/L,0,dz/L);
+  for(const h of [0.4,1.1]){wray.set(new THREE.Vector3(p.x,h,p.z),d);wray.far=dist+0.22;const r=wray.intersectObjects(COL,false);for(const i of r){if(visDeep(i.object))return true}}return false}
+function lookDir(){return new THREE.Vector3(-Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),-Math.cos(yaw)*Math.cos(pitch))}
+function enterWalk(){if(WALK)return;anim=null;buildCol();
+  const inside=camera.position.y<2.7,start=inside?camera.position.clone():P(6000,1600,8500),tgt=inside?controls.target.clone():P(1500,1600,4600);
+  start.y=EYE;const d=tgt.clone().sub(start);yaw=Math.atan2(-d.x,-d.z);pitch=0;camera.position.copy(start);
+  WALK=true;controls.enabled=false;wbody.classList.add("walking");doorT=1;doorCb.checked=true;
+  [...vbox.children].forEach(b=>b.setAttribute("aria-pressed","false"));wT=performance.now();renderer.domElement.focus&&renderer.domElement.focus()}
+function exitWalk(){if(!WALK)return;WALK=false;wGoal=null;controls.enabled=true;wbody.classList.remove("walking");
+  controls.target.copy(camera.position.clone().add(lookDir().multiplyScalar(1.5)));controls.update();Object.keys(KEYS).forEach(k=>KEYS[k]=false);Object.keys(PAD).forEach(k=>PAD[k]=false)}
+document.getElementById("walkBtn").onclick=enterWalk;document.getElementById("walkExit").onclick=exitWalk;
+const KM={KeyW:"f",ArrowUp:"f",KeyS:"b",ArrowDown:"b",KeyA:"l",ArrowLeft:"l",KeyD:"r",ArrowRight:"r"};
+addEventListener("keydown",e=>{if(!WALK)return;if(e.code==="Escape"){exitWalk();return}const k=KM[e.code];if(k){KEYS[k]=true;wGoal=null;e.preventDefault()}if(e.key==="Shift")KEYS.run=true});
+addEventListener("keyup",e=>{const k=KM[e.code];if(k)KEYS[k]=false;if(e.key==="Shift")KEYS.run=false});
+addEventListener("blur",()=>Object.keys(KEYS).forEach(k=>KEYS[k]=false));
+document.querySelectorAll("#walkUI .pad button").forEach(b=>{const k=b.dataset.k;
+  b.addEventListener("pointerdown",e=>{PAD[k]=true;wGoal=null;b.setPointerCapture(e.pointerId);e.preventDefault()});
+  ["pointerup","pointercancel","lostpointercapture"].forEach(t=>b.addEventListener(t,()=>PAD[k]=false))});
+{const cv=renderer.domElement;let drag=null;
+  cv.addEventListener("pointerdown",e=>{if(!WALK)return;drag={x:e.clientX,y:e.clientY,id:e.pointerId};cv.setPointerCapture(e.pointerId)});
+  cv.addEventListener("pointermove",e=>{if(!WALK||!drag||e.pointerId!==drag.id)return;const k=e.pointerType==="touch"?0.006:0.004;
+    yaw+=(e.clientX-drag.x)*k;pitch=Math.max(-1.2,Math.min(1.2,pitch+(e.clientY-drag.y)*k));drag.x=e.clientX;drag.y=e.clientY});
+  ["pointerup","pointercancel"].forEach(t=>cv.addEventListener(t,()=>drag=null));
+  cv.addEventListener("dblclick",e=>{if(!WALK)return;const r=cv.getBoundingClientRect(),v=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
+    wray.setFromCamera(v,camera);wray.far=40;const h=wray.intersectObjects(root.children,true).find(i=>visDeep(i.object));
+    if(h&&h.point.y<0.15)wGoal=new THREE.Vector3(h.point.x,EYE,h.point.z)})}
+function walkStep(now){const dt=Math.min(0.1,(now-wT)/1000);wT=now;
+  const f=(KEYS.f||PAD.f?1:0)-(KEYS.b||PAD.b?1:0),st=(KEYS.r||PAD.r?1:0)-(KEYS.l||PAD.l?1:0),sp=(KEYS.run?2.8:1.4)*dt;
+  let dx=0,dz=0;const fx=-Math.sin(yaw),fz=-Math.cos(yaw);
+  if(f||st){const n=Math.hypot(f,st);dx=(fx*f-fz*st)/n*sp;dz=(fz*f+fx*st)/n*sp}
+  else if(wGoal){const gx=wGoal.x-camera.position.x,gz=wGoal.z-camera.position.z,gl=Math.hypot(gx,gz);if(gl<0.05)wGoal=null;else{const m=Math.min(sp,gl);dx=gx/gl*m;dz=gz/gl*m;
+    const ty=Math.atan2(-gx,-gz);let a=ty-yaw;a=Math.atan2(Math.sin(a),Math.cos(a));yaw+=a*Math.min(1,dt*4)}}
+  const p=camera.position;
+  if(dx||dz){const L=Math.hypot(dx,dz);if(!hit(p,dx,dz,L)){p.x+=dx;p.z+=dz}else{let moved=false;
+      if(dx&&!hit(p,dx,0,Math.abs(dx))){p.x+=dx;moved=true}if(dz&&!hit(p,0,dz,Math.abs(dz))){p.z+=dz;moved=true}if(!moved)wGoal=null}}
+  p.y=EYE;camera.lookAt(p.clone().add(lookDir()))}
 
 /* Высота стен */
 const cutIn=document.getElementById("cut"),cutOut=document.getElementById("cutv");
@@ -1130,7 +1196,7 @@ linPass();let linT=0;
 function loop(now){requestAnimationFrame(loop);if(now-linT>1000){linT=now;linPass()}
   if(anim){const k=Math.min(1,(now-anim.s)/900),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
     camera.position.lerpVectors(anim.p0,anim.v.pos,e);controls.target.lerpVectors(anim.t0,anim.v.tg,e);if(k>=1)anim=null}
-  controls.update();
+  if(WALK)walkStep(now);else controls.update();
   if(camera.position.y<0.25)camera.position.y=0.25;
   const inRoom=camera.position.y<2.7;ceilG.visible=inRoom;labels.visible=namesCb.checked&&!inRoom&&!LUX;
   if(Math.abs(sashA-sashT)>0.001){sashA+=(sashT-sashA)*0.12;sash.rotation.y=sashA}
