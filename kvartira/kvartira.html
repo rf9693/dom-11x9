@@ -193,7 +193,7 @@ a{color:var(--oak)}
 #plan .lin{stroke:var(--lamp);stroke-width:30}
 #plan .ts{fill:var(--lamp);stroke:var(--wall);stroke-width:18}
 #plan .strip.cove{stroke-dasharray:90 60;stroke-width:36}
-#plan .strip{stroke:var(--lamp);stroke-width:50;stroke-linecap:round;opacity:.85}
+#plan .strip{stroke:var(--lamp);stroke-width:50;stroke-linecap:butt;stroke-linejoin:miter;fill:none;opacity:.85}
 #plan .rn{font:600 150px var(--f-body);fill:var(--ink);text-anchor:middle}
 #plan .ra{font:500 120px var(--f-mono);fill:var(--muted);text-anchor:middle}
 #plan .dim{stroke:var(--muted);stroke-width:8;fill:none}
@@ -211,7 +211,7 @@ a{color:var(--oak)}
 .lg h4{margin:0;font:600 13.5px var(--f-body);display:flex;justify-content:space-between;gap:8px}.lg h4 span{font:500 12px var(--f-mono);color:var(--muted)}
 .lg label{display:grid;grid-template-columns:1fr 92px 38px;gap:8px;align-items:center;font-size:12.5px;line-height:1.3}
 .lg input[type=range]{width:100%;accent-color:var(--lamp)}.lg output{font:500 12px var(--f-mono);text-align:right;color:var(--muted)}
-.plan-box{position:relative;border-radius:10px;overflow:hidden}
+.plan-box{position:relative;overflow:hidden}
 #plan [data-g]{cursor:pointer}#plan .hit{stroke:transparent;fill:transparent;stroke-width:160}
 #plan .lx{font:600 105px var(--f-mono);fill:var(--lamp);text-anchor:middle;paint-order:stroke;stroke:#0008;stroke-width:22}
 #plan.lit .rn{fill:#F3F1EC;paint-order:stroke;stroke:#0006;stroke-width:20}#plan.lit .ra{fill:#CFCAC1}
@@ -612,11 +612,16 @@ const order=f=>f.flat?0:(f.z0>0&&f.k!=="sinkTop"&&f.k!=="hob"&&f.k!=="bowl"&&f.k
 /* свет */
 const gl=g("light");
 K.L.forEach(l=>{if(l.r){const r=l.r,v=r[2]-r[0]<r[3]-r[1];const ln=v?{x1:(r[0]+r[2])/2,x2:(r[0]+r[2])/2,y1:Y(r[1]),y2:Y(r[3])}:{x1:r[0],x2:r[2],y1:Y((r[1]+r[3])/2),y2:Y((r[1]+r[3])/2)};
-    ln.class=l.t==="rail"?"rail":l.t==="lin"?"lin":l.cove?"strip cove":"strip";el("line",ln,gl);return}
+    if(l.cove)return;ln.class=l.t==="rail"?"rail":l.t==="lin"?"lin":"strip";el("line",ln,gl);return}
   if(l.t==="tspot"){el("circle",{cx:l.x,cy:Y(l.y),r:75,class:"ts"},gl);return}
   const R=l.t==="spot"?100:l.t==="pend"?150:85;el("circle",{cx:l.x,cy:Y(l.y),r:R,class:"lt"},gl);
   if(l.t==="spot")el("path",{d:`M${l.x-R} ${Y(l.y)}H${l.x+R}M${l.x} ${Y(l.y)-R}V${Y(l.y)+R}`,class:"lt x"},gl);
   if(l.t==="pend")el("circle",{cx:l.x,cy:Y(l.y),r:50,fill:"var(--lamp)"},gl)});
+/* парящий потолок: один замкнутый контур, углы прямые */
+{const cs=K.L.filter(l=>l.cove);if(cs.length){const x0=Math.min(...cs.map(l=>l.r[0])),y0=Math.min(...cs.map(l=>l.r[1])),x1=Math.max(...cs.map(l=>l.r[2])),y1=Math.max(...cs.map(l=>l.r[3])),h=15;
+  const X=[x0+h,x1-h],Yv=[y0+h,y1-h],d=90;
+  [[X[0],Yv[0],X[1],Yv[0]],[X[0],Yv[1],X[1],Yv[1]],[X[0],Yv[0],X[0],Yv[1]],[X[1],Yv[0],X[1],Yv[1]]].forEach(([a,b,c,e])=>{const L=Math.hypot(c-a,e-b),n=Math.max(1,Math.round((L-d)/150)),gp=(L-(n+1)*d)/n;
+    el("line",{x1:a,y1:Y(b),x2:c,y2:Y(e),class:"strip cove","stroke-dasharray":d+" "+gp,"stroke-linecap":"square"},gl)})}}
 /* ===== управление светом ===== */
 const GK=l=>l.room+"|"+(l.cove?"cove":l.n),GR=new Map();K.L.forEach((l,i)=>{if(l.t==="rail")return;const k=GK(l);if(!GR.has(k))GR.set(k,{k,l,ls:[],lv:0});GR.get(k).ls.push(l)});
 const KC=k=>k<=2200?[255,150,60]:k<=2700?[255,176,96]:k<=3000?[255,196,128]:[255,228,196];
