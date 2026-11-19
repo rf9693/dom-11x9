@@ -150,7 +150,7 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
   </div>
   <div class="row more">
     <span class="lbl">Высота стен</span>
-    <div class="slider"><input type="range" id="cut" min="300" max="2800" step="50" value="2800"><output id="cutv">2800 мм</output></div>
+    <div class="slider"><input type="range" id="cut" min="300" max="3000" step="10" value="3000"><output id="cutv">3000 мм</output></div>
     <label class="check"><input type="checkbox" id="names" checked> Названия комнат</label>
     <label class="check"><input type="checkbox" id="sashT"> Открыть створку окна в спальне</label>
     <label class="check"><input type="checkbox" id="doorT"> Открыть двери</label>
@@ -158,6 +158,9 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
     <label class="check"><input type="checkbox" id="scrT"> Опустить экран</label>
     <label class="check"><input type="checkbox" id="sockT" checked> Розетки</label>
       <label class="check"><input type="checkbox" id="recT" checked> Рекуператор в шкафу</label>
+      <label class="check"><input type="checkbox" id="ventT" checked> Вентиляция: трубы и решётки</label>
+      <div class="row"><span class="lbl">Улица</span><div class="seg" id="voSel"><button type="button" data-v="roof" aria-pressed="true">через кровлю</button><button type="button" data-v="wall" aria-pressed="false">через стену</button></div></div>
+      <p class="note" id="ventNote" style="margin:4px 0 0;font-size:12px;opacity:.8"></p>
   </div>
   <p class="hint more">Вращение: левая кнопка мыши или один палец. Сдвиг: правая кнопка или два пальца. Масштаб: колесо или щипок. Потолок виден только в видах «изнутри».</p>
 </div>
@@ -201,7 +204,7 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
 <script>
 (function(){
 if(!window.THREE){document.getElementById("err").hidden=false;return}
-const S=0.001, H=2800, OX=-5545, OZ=-4550;
+const S=0.001, H=3000, OX=-5545, OZ=-4550;
 const stage=document.getElementById("stage");
 let renderer;
 try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){document.getElementById("err").hidden=false;return}
@@ -743,7 +746,7 @@ rbox(3050,5700,5750,7900,0,14,160,mRug);
    Полотно проекционное с затемняющей тыльной стороной, днём поднято; в сцене «Кино» опущено до пола,
    изображение 110″ (2440 × 1370) по оси дивана */
 const scr=new THREE.Group();root.add(scr);
-rbox(4250,5500,4550,5800,2620,2740,20,mWhite);cyl(4400,5650,20,2740,2790,mBlack,8);box(4320,5802,4480,5806,2650,2710,mBlack);
+rbox(4250,5500,4550,5800,2540,2660,20,mWhite);cyl(4400,5650,20,2660,2720,mBlack,8);box(4320,5802,4480,5806,2570,2630,mBlack);
 box(1870,8610,5730,8690,2700,2790,mWhite);
 box(1890,8644,5710,8652,40,2700,M(0xE9E8E4,{roughness:.95}),scr);box(1890,8638,5710,8658,20,40,mBlack,scr);
 box(3180,8640,5620,8643,780,2150,M(0xF4F4F2,{roughness:.9,emissive:0x8899AA,emissiveIntensity:.22}),scr);
@@ -1071,7 +1074,7 @@ const KANIM=[];
 // колонна стиральная + сушильная машина в углу у стены спальни, рядом шкаф 1300 до потолка
 (function(){const x=7640,z=5780;
   [[0,850],[850,1700]].forEach(([a,b])=>{box(x,z,x+600,z+600,a,b-10,mWhite);const dr=cyl(x+300,z+610,170,a+390,a+410,mGraphite,32);dr.rotation.x=Math.PI/2;dr.position.z=(z+610)*S;box(x+40,z+598,x+560,z+602,b-110,b-50,M(0xC9CDD0))});
-  window.CAB40=box(8240,5780,9520,6380,0,2720,M(0xE9E4DA,{roughness:.6}));box(8880,6378,8882,6382,0,2780,mGraphite);})();
+  window.CAB40=box(8240,5780,9520,6380,0,2720,M(0xE9E4DA,{roughness:.6}));box(8880,6378,8882,6382,0,2720,mGraphite);})();
 /* RECUP40 */ /* самодельный рекуператор в левой части шкафа прихожей: корпус 530 × 1000 × 380, вентиляторы, подогрев, трубы к потолку */
 (function(){const G=new THREE.Group();root.add(G);
   const mP=M(0xC9A46A,{roughness:.7}),mF=M(0x5A5F64,{roughness:.4}),mO=M(0xD2691E,{roughness:.5}),mK=M(0x2B2D2F,{roughness:.8}),
@@ -1106,6 +1109,33 @@ const KANIM=[];
   const cb=document.getElementById("recT"),cab=window.CAB40;cab.material.transparent=true;
   const ap=()=>{const on=cb.checked;G.visible=on;cab.material.opacity=on?.22:1;cab.material.depthWrite=!on;cab.castShadow=!on;cab.material.needsUpdate=true};
   cb.onchange=ap;ap()})();
+/* VENT41 */ /* трубы вентиляции над потолком из расчёта страницы вентиляции: приток голубой, вытяжка красная, улица тёмная */
+const VG41={"H":3000,"CEIL":2720,"TRH":50,"YS":2836,"YE":2845,"trays":[[340,4780,360,460],[340,4780,3360,3460],[340,440,460,3360],[4680,4780,460,3360],[4990,7320,360,460],[4990,7320,3360,3460],[4990,5090,460,3360],[7220,7320,460,3360],[7620,10750,360,460],[7620,10750,5460,5560],[7620,7720,460,5460],[10650,10750,460,5460],[340,7320,3660,3760],[340,7320,8660,8760],[340,440,3760,8660],[7220,7320,3760,8660],[7620,8190,5760,5860],[9570,10750,5760,5860],[7620,10750,8660,8760],[7620,7720,5860,8660],[10650,10750,5860,8660]],"v":{"roof":{"pipes":[{"k":"s","r":64,"b":1,"p":[[8380,2836,6180],[8380,2836,1000]]},{"k":"s","r":64,"b":1,"p":[[8540,2836,6180],[8540,2836,1000]]},{"k":"s","r":64,"b":1,"p":[[8460,2836,920],[6900,2836,920]]},{"k":"s","r":64,"b":1,"p":[[8460,2836,1080],[6900,2836,1080]]},{"k":"s","r":64,"b":1,"p":[[6900,2836,920],[1180,2836,920]]},{"k":"s","r":64,"b":1,"p":[[6900,2836,1080],[1180,2836,1080]]},{"k":"s","r":64,"p":[[1180,2836,1000],[1000,2836,1000],[1000,2836,8000],[2380,2836,8000],[2380,2720,8000]]},{"k":"s","r":64,"p":[[1180,2836,1000],[1000,2836,1000],[1000,2836,8000],[2380,2836,8000],[4780,2836,8000],[4780,2720,8000]]},{"k":"s","r":64,"p":[[8460,2836,1000],[8980,2836,1000],[8980,2720,1000]]},{"k":"s","r":64,"p":[[8460,2836,1000],[8980,2836,1000],[10180,2836,1000],[10180,2720,1000]]},{"k":"s","r":64,"p":[[1180,2836,1000],[1180,2836,1300],[1180,2720,1300]]},{"k":"s","r":64,"p":[[6900,2836,1000],[6900,2836,1500],[6900,2720,1500]]},{"k":"e","r":55,"b":1,"p":[[8750,2845,6180],[8750,2845,6450]]},{"k":"e","r":55,"b":1,"p":[[8890,2845,6180],[8890,2845,6450]]},{"k":"e","r":55,"b":1,"p":[[8820,2845,6380],[8000,2845,6380]]},{"k":"e","r":55,"b":1,"p":[[8820,2845,6520],[8000,2845,6520]]},{"k":"e","r":55,"b":1,"p":[[8000,2845,6380],[7000,2845,6380]]},{"k":"e","r":55,"b":1,"p":[[8000,2845,6520],[7000,2845,6520]]},{"k":"e","r":55,"b":1,"p":[[6930,2845,6450],[6930,2845,5000]]},{"k":"e","r":55,"b":1,"p":[[7070,2845,6450],[7070,2845,5000]]},{"k":"e","r":55,"b":1,"p":[[6930,2845,5000],[6930,2845,4300]]},{"k":"e","r":55,"b":1,"p":[[7070,2845,5000],[7070,2845,4300]]},{"k":"e","r":55,"b":1,"p":[[7000,2845,4230],[6000,2845,4230]]},{"k":"e","r":55,"b":1,"p":[[7000,2845,4370],[6000,2845,4370]]},{"k":"e","r":55,"p":[[6000,2845,4300],[4180,2845,4300],[2980,2845,4300],[2980,2845,4000],[2980,2720,4000]]},{"k":"e","r":55,"p":[[6000,2845,4300],[4180,2845,4300],[2980,2845,4300],[1780,2845,4300],[1780,2845,4000],[1780,2720,4000]]},{"k":"e","r":55,"p":[[7000,2845,5000],[7880,2845,5000],[7880,2720,5000]]},{"k":"e","r":55,"p":[[6000,2845,4300],[4180,2845,4300],[4180,2845,3200],[4180,2720,3200]]},{"k":"e","r":55,"p":[[6000,2845,4300],[6000,2845,1800],[5380,2845,1800],[5380,2720,1800]]},{"k":"e","r":55,"p":[[6000,2845,4300],[6000,2845,1800],[6200,2845,1800],[6200,2720,1800]]},{"k":"e","r":55,"p":[[8000,2845,6450],[8000,2845,6700],[8000,2720,6700]]},{"k":"s","r":80,"c":1,"p":[[8540,2100,6180],[8540,2250,6180],[7760,2250,6180],[7760,2836,6180],[8460,2836,6180]]},{"k":"e","r":80,"c":1,"p":[[8820,1850,6180],[8820,2845,6180]]},{"k":"oda","r":105,"p":[[8540,850,6180],[8540,350,6180],[8540,350,5885],[9130,350,5885],[9130,3900,5885],[9130,3900,1500],[10000,3900,1500],[10000,4509,1500]]},{"k":"eha","r":105,"p":[[8820,850,6180],[8820,350,6180],[9380,350,6180],[9380,350,5900],[9380,4100,5900],[9380,4100,4000],[9380,6195,4000]]}],"gr":[{"k":"s","x":2380,"z":8000,"y":2720,"room":"liv","q":45},{"k":"s","x":4780,"z":8000,"y":2720,"room":"liv","q":45},{"k":"s","x":8980,"z":1000,"y":2720,"room":"bed","q":30},{"k":"s","x":10180,"z":1000,"y":2720,"room":"bed","q":30},{"k":"s","x":1180,"z":1300,"y":2720,"room":"kid","q":30},{"k":"s","x":6900,"z":1500,"y":2720,"room":"bath","q":15},{"k":"e","x":2980,"z":4000,"y":2720,"room":"liv","q":30},{"k":"e","x":1780,"z":4000,"y":2720,"room":"liv","q":30},{"k":"e","x":7880,"z":5000,"y":2720,"room":"bed","q":20},{"k":"e","x":4180,"z":3200,"y":2720,"room":"kid","q":10},{"k":"e","x":5380,"z":1800,"y":2720,"room":"bath","q":38},{"k":"e","x":6200,"z":1800,"y":2720,"room":"bath","q":38},{"k":"e","x":8000,"z":6700,"y":2720,"room":"hall","q":30}],"outT":{"oda":[10000,4509.05,1500],"eha":[9380,6195.3,4000]},"cross":0,"Q":195},"wall":{"pipes":[{"k":"s","r":64,"b":1,"p":[[8380,2836,6180],[8380,2836,1000]]},{"k":"s","r":64,"b":1,"p":[[8540,2836,6180],[8540,2836,1000]]},{"k":"s","r":64,"b":1,"p":[[8460,2836,920],[6900,2836,920]]},{"k":"s","r":64,"b":1,"p":[[8460,2836,1080],[6900,2836,1080]]},{"k":"s","r":64,"b":1,"p":[[6900,2836,920],[1180,2836,920]]},{"k":"s","r":64,"b":1,"p":[[6900,2836,1080],[1180,2836,1080]]},{"k":"s","r":64,"p":[[1180,2836,1000],[1000,2836,1000],[1000,2836,8000],[2380,2836,8000],[2380,2720,8000]]},{"k":"s","r":64,"p":[[1180,2836,1000],[1000,2836,1000],[1000,2836,8000],[2380,2836,8000],[4780,2836,8000],[4780,2720,8000]]},{"k":"s","r":64,"p":[[8460,2836,1000],[8980,2836,1000],[8980,2720,1000]]},{"k":"s","r":64,"p":[[8460,2836,1000],[8980,2836,1000],[10180,2836,1000],[10180,2720,1000]]},{"k":"s","r":64,"p":[[1180,2836,1000],[1180,2836,1300],[1180,2720,1300]]},{"k":"s","r":64,"p":[[6900,2836,1000],[6900,2836,1500],[6900,2720,1500]]},{"k":"e","r":55,"b":1,"p":[[8750,2845,6180],[8750,2845,6450]]},{"k":"e","r":55,"b":1,"p":[[8890,2845,6180],[8890,2845,6450]]},{"k":"e","r":55,"b":1,"p":[[8820,2845,6380],[8000,2845,6380]]},{"k":"e","r":55,"b":1,"p":[[8820,2845,6520],[8000,2845,6520]]},{"k":"e","r":55,"b":1,"p":[[8000,2845,6380],[7000,2845,6380]]},{"k":"e","r":55,"b":1,"p":[[8000,2845,6520],[7000,2845,6520]]},{"k":"e","r":55,"b":1,"p":[[6930,2845,6450],[6930,2845,5000]]},{"k":"e","r":55,"b":1,"p":[[7070,2845,6450],[7070,2845,5000]]},{"k":"e","r":55,"b":1,"p":[[6930,2845,5000],[6930,2845,4300]]},{"k":"e","r":55,"b":1,"p":[[7070,2845,5000],[7070,2845,4300]]},{"k":"e","r":55,"b":1,"p":[[7000,2845,4230],[6000,2845,4230]]},{"k":"e","r":55,"b":1,"p":[[7000,2845,4370],[6000,2845,4370]]},{"k":"e","r":55,"p":[[6000,2845,4300],[4180,2845,4300],[2980,2845,4300],[2980,2845,4000],[2980,2720,4000]]},{"k":"e","r":55,"p":[[6000,2845,4300],[4180,2845,4300],[2980,2845,4300],[1780,2845,4300],[1780,2845,4000],[1780,2720,4000]]},{"k":"e","r":55,"p":[[7000,2845,5000],[7880,2845,5000],[7880,2720,5000]]},{"k":"e","r":55,"p":[[6000,2845,4300],[4180,2845,4300],[4180,2845,3200],[4180,2720,3200]]},{"k":"e","r":55,"p":[[6000,2845,4300],[6000,2845,1800],[5380,2845,1800],[5380,2720,1800]]},{"k":"e","r":55,"p":[[6000,2845,4300],[6000,2845,1800],[6200,2845,1800],[6200,2720,1800]]},{"k":"e","r":55,"p":[[8000,2845,6450],[8000,2845,6700],[8000,2720,6700]]},{"k":"s","r":80,"c":1,"p":[[8540,2100,6180],[8540,2250,6180],[7760,2250,6180],[7760,2836,6180],[8460,2836,6180]]},{"k":"e","r":80,"c":1,"p":[[8820,1850,6180],[8820,2845,6180]]},{"k":"oda","r":105,"p":[[8540,850,6180],[8540,350,6180],[8540,350,5885],[9130,350,5885],[9130,2795,5885],[9130,2795,5200],[11130,2795,5200]]},{"k":"eha","r":105,"p":[[8820,850,6180],[8820,350,6180],[9380,350,6180],[9380,350,5900],[9380,2795,5900],[9380,2795,7000],[11130,2795,7000]]}],"gr":[{"k":"s","x":2380,"z":8000,"y":2720,"room":"liv","q":45},{"k":"s","x":4780,"z":8000,"y":2720,"room":"liv","q":45},{"k":"s","x":8980,"z":1000,"y":2720,"room":"bed","q":30},{"k":"s","x":10180,"z":1000,"y":2720,"room":"bed","q":30},{"k":"s","x":1180,"z":1300,"y":2720,"room":"kid","q":30},{"k":"s","x":6900,"z":1500,"y":2720,"room":"bath","q":15},{"k":"e","x":2980,"z":4000,"y":2720,"room":"liv","q":30},{"k":"e","x":1780,"z":4000,"y":2720,"room":"liv","q":30},{"k":"e","x":7880,"z":5000,"y":2720,"room":"bed","q":20},{"k":"e","x":4180,"z":3200,"y":2720,"room":"kid","q":10},{"k":"e","x":5380,"z":1800,"y":2720,"room":"bath","q":38},{"k":"e","x":6200,"z":1800,"y":2720,"room":"bath","q":38},{"k":"e","x":8000,"z":6700,"y":2720,"room":"hall","q":30}],"outT":{"oda":[11130,2795,5200],"eha":[11130,2795,7000]},"cross":0,"Q":195}},"unit":{"x0":8415,"x1":8945,"y0":850,"y1":1850,"z0":5990,"z1":6370},"ac":{"x0":7880,"x1":8380,"y":2250}};
+(function(){const VG=new THREE.Group();root.add(VG);let VO="roof";
+  const mt=c=>M(c,{roughness:.5}),MS=mt(0x5B9BD5),ME=mt(0xE0786B),MO=mt(0x3E5872),MH=mt(0x7A4A44),
+    MG=M(0xFBFBF8,{roughness:.4}),MT=M(0x9AA3AA,{metalness:.5,roughness:.4}),MAT={s:MS,e:ME,oda:MO,eha:MH};
+  const V3=(p)=>new THREE.Vector3(p[0]*S,p[1]*S,p[2]*S);
+  const seg=(a,b,r,m)=>{const A=V3(a),B=V3(b),L=A.distanceTo(B);if(L<1e-4)return;const o=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,L,18),m);
+    o.position.copy(A).add(B).multiplyScalar(.5);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),B.clone().sub(A).normalize());o.castShadow=true;VG.add(o)};
+  const ball=(p,r,m)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(r*S,16,10),m);o.position.copy(V3(p));VG.add(o)};
+  const above=(p,y0)=>{const o=[];p.forEach((q,i)=>{if(q[1]>=y0)o.push(q);else if(p[i+1]&&p[i+1][1]>y0)o.push([q[0],y0,q[2]])});return o};
+  const disc=(x,z,y1,y2,r,m)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,(y2-y1)*S,32),m);o.position.set(x*S,(y1+y2)/2*S,z*S);VG.add(o)};
+  function build(){while(VG.children.length){const c=VG.children.pop();c.geometry&&c.geometry.dispose()}
+    const v=VG41.v[VO],gl={};v.gr.forEach(g=>{let y=2720;try{if(CV!=="none")y=ceilY(g.x,g.z)}catch(e){}gl[g.x+","+g.z]=y});
+    v.pipes.forEach(p=>{let pts=p.c||p.k.length>2?above(p.p,2720):p.p.map(q=>q.slice());if(pts.length<2)return;
+      const last=pts[pts.length-1],key=last[0]+","+last[2];if(!p.b&&!p.c&&gl[key]!=null)last[1]=gl[key];
+      const m=MAT[p.k];for(let i=0;i+1<pts.length;i++)seg(pts[i],pts[i+1],p.r,m);for(let i=1;i+1<pts.length;i++)ball(pts[i],p.r,m)});
+    v.gr.forEach(g=>{const y=gl[g.x+","+g.z];disc(g.x,g.z,y-14,y-2,100,MG);disc(g.x,g.z,y-17,y-13,62,g.k==="s"?MS:ME)});
+    VG41.trays.forEach(t=>{const[x0,x1,z0,z1]=t,y0=VG41.H-VG41.TRH,X=x1-x0>z1-z0;
+      box(x0,z0,x1,z1,y0,y0+2,MT,VG);if(X){box(x0,z0,x1,z0+2,y0,y0+VG41.TRH,MT,VG);box(x0,z1-2,x1,z1,y0,y0+VG41.TRH,MT,VG)}else{box(x0,z0,x0+2,z1,y0,y0+VG41.TRH,MT,VG);box(x1-2,z0,x1,z1,y0,y0+VG41.TRH,MT,VG)}});
+    const n=v.gr.length,ns=v.gr.filter(g=>g.k==="s").length;
+    document.getElementById("ventNote").textContent="Решёток "+n+": приток "+ns+" (голубые), вытяжка "+(n-ns)+" (красные). Трубы Ø110 по оси "+VG41.YS+"/"+VG41.YE+" мм, лоток "+(VG41.H-VG41.TRH)+"–"+VG41.H+", потолок "+VG41.CEIL+". Пересечений трасс: "+v.cross+", мин. зазор между трубами 65 мм. Вид «Трассы вентиляции» снимает стены выше 2700."}
+  window.V41=build;
+  const cb=document.getElementById("ventT"),sel=document.getElementById("voSel");
+  cb.onchange=()=>{VG.visible=cb.checked};
+  sel.onclick=e=>{const b=e.target.closest("button");if(!b)return;VO=b.dataset.v;[...sel.children].forEach(x=>x.setAttribute("aria-pressed",String(x===b)));build()};
+  build()})();
+
 
 /* Котельная — стена по видео заказчика: x 10750, от z 6900 до угла с окном 700 */
 (function(){const mPP=M(0xDCDCD8,{roughness:.55}),mPEX=M(0xD42A2A,{roughness:.45}),mRed=M(0xC9302C,{roughness:.4}),mBlk=M(0x222426,{roughness:.6}),
@@ -1169,7 +1199,7 @@ const KANIM=[];
   box(px(400),Z+85,px(422),Z+90,1870,1895,M(0x1A1A1A));           // табло прибора
   // пучок кабелей и гофра от щита под потолок
   [[10080,5800,9,mCabB],[10110,5830,8,mCabB],[10150,5800,7,mCabW],[10190,5845,7,mCabW],[10230,5810,6,mCabW],[10300,5800,9,mCabB],[10360,5830,6,mCabW],
-   [10420,5810,6,mCabW],[10480,5840,7,mCabW],[10540,5800,8,mCabB],[10590,5830,10,mSteel]].forEach(([x,z,r,m])=>cyl(x,z,r,Y2,2750,m,8));
+   [10420,5810,6,mCabW],[10480,5840,7,mCabW],[10540,5800,8,mCabB],[10590,5830,10,mSteel]].forEach(([x,z,r,m])=>cyl(x,z,r,Y2,2720,m,8));
 })();
 
 /* ===== Потолок и свет по плану освещения заказчика ===== */
@@ -1191,7 +1221,7 @@ function roomOf(x,z){for(const r in RR){const b=RR[r];if(x>=b[0]-5&&x<=b[2]+5&&z
 
 let CV="A"; // A — натяжной + парящий профиль, B — ГКЛ с нишей по контуру + теневой профиль в гостиной, none — скрыт
 function inCont(x,z){const r=roomOf(x,z);return!!(r&&CMM[r]&&inside(CMM[r],x,z))}
-function ceilY(x,z){return CV==="B"?(inCont(x,z)?2800:2650):2750}
+function ceilY(x,z){return CV==="B"?(inCont(x,z)?2720:2620):2720}
 /* В варианте Б споты стоят в коробе: если точка попала в проём ниши, сдвигаем её наружу */
 function spotPos(x,z){if(CV!=="B"||!inCont(x,z))return[x,z];const r=roomOf(x,z),c=centroid(CMM[r]),dx=x-c[0],dz=z-c[1],L=Math.hypot(dx,dz)||1;let t=1;
   while(t<3&&inside(CMM[r],c[0]+dx*t,c[1]+dz*t))t+=.01;return[c[0]+dx*t+dx/L*90,c[1]+dz*t+dz/L*90]}
@@ -1291,7 +1321,7 @@ const BUILD={
   spot(g){const s=SPOT[SPM];g.L=g.pts.map((p0,i)=>{const p=spotPos(p0[0],p0[1]),y=ceilY(p[0],p[1]),A=aimOf(g,i);
     spotFx(p[0],p[1],y,SPM,g.mat,CV==="B",A,{g,i});g.E.push({x:p[0],z:p[1],y,lm:s.lm,b:spBeam(g),W:s.W,d:A.d,i});return[p[0],p[1],y-300]})},
   led(g){const pts=CMM[g.cont],c=centroid(pts);let y=2644,P=pts;
-    if(CV==="B"){P=pts.map(p=>{const dx=p[0]-c[0],dz=p[1]-c[1],L=Math.hypot(dx,dz)||1;return[p[0]-dx/L*45,p[1]-dz/L*45]});y=2700}
+    if(CV==="B"){P=pts.map(p=>{const dx=p[0]-c[0],dz=p[1]-c[1],L=Math.hypot(dx,dz)||1;return[p[0]-dx/L*45,p[1]-dz/L*45]});y=2670}
     tubeP(P,y,13,g.mat,true,fxG);
     g.L=g.room==="liv"?[[c[0]-1700,c[1],y-200],[c[0]+1700,c[1],y-200]]:[[c[0],c[1],y-200]]},
   track(g){const a=g.pts[0],b=g.pts[1],X=Math.abs(b[0]-a[0])>Math.abs(b[1]-a[1]),xc=(a[0]+b[0])/2,zc=(a[1]+b[1])/2,y=ceilY(xc,zc),t=TRK[TRM],L=2000;
@@ -1329,7 +1359,7 @@ const BUILD={
     g.F=len*950*.6;g.Wt=len*9.6;g.L=[[(a[0]+b[0])/2,a[1]+250,y-400]]},
   float(g){const b=RR[g.room],y=2648,i=8,w=24;
     [[b[0]+i,b[1]+i,b[2]-i,b[1]+i+w],[b[0]+i,b[3]-i-w,b[2]-i,b[3]-i],[b[0]+i,b[1]+i,b[0]+i+w,b[3]-i],[b[2]-i-w,b[1]+i,b[2]-i,b[3]-i]].forEach(q=>boxp(q[0],q[1],q[2],q[3],y-8,y,g.mat,fxG));g.L=[]},
-  shadow(g){const b=RR.liv,y=2650,w=22;
+  shadow(g){const b=RR.liv,y=2620,w=22;
     [[b[0],b[1],b[2],b[1]+w],[b[0],b[3]-w,b[2],b[3]],[b[0],b[1],b[0]+w,b[3]],[b[2]-w,b[1],b[2],b[3]]].forEach(q=>boxp(q[0],q[1],q[2],q[3],y-30,y,g.mat,fxG));g.L=[]},
   winled(g){g.L=[];(g.wins||[g.win]).forEach(o=>{const c1=o.face-o.dir*38,c2=o.face-o.dir*24,C1=Math.min(c1,c2),C2=Math.max(c1,c2),
       B=(a1,a2,y1,y2)=>o.ax==="h"?boxp(a1,C1,a2,C2,y1,y2,g.mat,fxG):boxp(C1,a1,C2,a2,y1,y2,g.mat,fxG);
@@ -1342,11 +1372,11 @@ const BUILD={
 };
 function buildCeil(){clearG(ceilG);if(CV==="none")return;
   for(const r in RR){const b=RR[r];
-    if(CV==="A"){plane(b[0],b[1],b[2],b[3],2750,mCeil,ceilG);continue}
-    plane(b[0],b[1],b[2],b[3],2800,mCeil,ceilG);
+    if(CV==="A"){plane(b[0],b[1],b[2],b[3],2720,mCeil,ceilG);continue}
+    plane(b[0],b[1],b[2],b[3],2720,mCeil,ceilG);
     const sh=new THREE.Shape();sh.moveTo(b[0]*S,b[1]*S);sh.lineTo(b[2]*S,b[1]*S);sh.lineTo(b[2]*S,b[3]*S);sh.lineTo(b[0]*S,b[3]*S);sh.closePath();
     const h=new THREE.Path();CMM[r].forEach((p,i)=>i?h.lineTo(p[0]*S,p[1]*S):h.moveTo(p[0]*S,p[1]*S));h.closePath();sh.holes.push(h);
-    const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:150*S,bevelEnabled:false,curveSegments:2}),mCeilD);m.rotation.x=Math.PI/2;m.position.y=2800*S;m.receiveShadow=true;ceilG.add(m)}}
+    const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:100*S,bevelEnabled:false,curveSegments:2}),mCeilD);m.rotation.x=Math.PI/2;m.position.y=2720*S;m.receiveShadow=true;ceilG.add(m)}}
 function avg(a){const s=[0,0,0];a.forEach(p=>{s[0]+=p[0];s[1]+=p[1];s[2]+=p[2]});return s.map(v=>v/a.length)}
 function lightPts(g){const L=g.L;if(!L.length)return[];if(g.type!=="spot")return L;
   if(L.length<=6||g.room!=="liv")return[avg(L)];const s=L.slice().sort((a,b)=>a[0]-b[0]),h=s.length>>1;return[avg(s.slice(0,h)),avg(s.slice(h))]}
@@ -1470,11 +1500,11 @@ SC.forEach(s=>{const b=document.createElement("button");b.type="button";b.textCo
     if(s[0]!=="Выкл"&&!EVE)setTod("eve");syncUI();applyL()};scBox.appendChild(b)});
 grpBox.addEventListener("change",()=>[...scBox.children].forEach(x=>x.setAttribute("aria-pressed","false")));
 
-const NOTE={A:"Натяжной матовый потолок на 2750 мм (чистовая высота 2800). Свет строго по плану заказчика: группы C — светильники, L — LED-ленты. Потолок виден в видах «изнутри».",
-  B:"Гипсокартон: короб 2650 мм по периметру, в центре 2800 мм, споты стоят в коробе. Группы света те же, что в варианте А.",
+const NOTE={A:"Натяжной матовый потолок на 2720 мм от стяжки (плита 3000, над потолком лоток и трубы вентиляции). Свет строго по плану заказчика: группы C — светильники, L — LED-ленты. Потолок виден в видах «изнутри».",
+  B:"Гипсокартон: короб 2620 мм по периметру, в центре 2720 мм, споты стоят в коробе. Группы света те же, что в варианте А.",
   none:"Потолок скрыт. Сверху видна раскладка светильников над мебелью."};
 const cvSel=document.getElementById("cvSel"),cvNote=document.getElementById("cvNote");
-function setCV(v){CV=v;if(typeof spText==="function"&&document.getElementById("spNote").textContent)setTimeout(spText);[...cvSel.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===v)));cvNote.textContent=NOTE[v];buildCeil();buildFx();syncUI()}
+function setCV(v){CV=v;if(typeof spText==="function"&&document.getElementById("spNote").textContent)setTimeout(spText);[...cvSel.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===v)));cvNote.textContent=NOTE[v];buildCeil();buildFx();window.V41&&V41();syncUI()}
 [...cvSel.children].forEach(b=>b.onclick=()=>setCV(b.dataset.v));
 const todSel=document.getElementById("tod");
 function setTod(v){EVE=v==="eve";[...todSel.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===v)));
@@ -1565,7 +1595,7 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawLabels);
 const P=(x,y,z)=>new THREE.Vector3((x+OX)*S,y*S,(z+OZ)*S);
 const VIEWS=[
   {id:"all",t:"Весь дом",pos:P(5545,13500,16500),tg:P(5545,0,4400)},
-  {id:"eye",t:"Гостиная изнутри",pos:P(6000,1600,8500),tg:P(1500,1100,4600),cut:2800},
+  {id:"eye",t:"Гостиная изнутри",pos:P(6000,1600,8500),tg:P(1500,1100,4600),cut:3000},
   {id:"kitchen",t:"Кухня-гостиная",pos:P(4200,7600,13800),tg:P(3700,0,6000)},
   {id:"bed",t:"Спальня",pos:P(9300,7400,9800),tg:P(9185,0,2900)},
   {id:"kid",t:"Детская",pos:P(2600,7000,8200),tg:P(2560,0,1900)},
@@ -1577,10 +1607,11 @@ const VIEWS=[
   {id:"kidIn",t:"Детская изнутри",pos:P(4400,1600,3200),tg:P(1200,1100,800)},
   {id:"hallIn",t:"Прихожая изнутри",pos:P(10400,1600,8500),tg:P(8000,1300,6000)},
   {id:"ceil",t:"Потолок гостиной",pos:P(6600,1200,8500),tg:P(3000,2400,5600)},
-  {id:"screen",t:"Экран-штора",pos:P(4400,1500,4700),tg:P(3900,1300,8700),cut:2800},
+  {id:"screen",t:"Экран-штора",pos:P(4400,1500,4700),tg:P(3900,1300,8700),cut:3000},
+  {id:"vent",t:"Трассы вентиляции",pos:P(12500,8200,12500),tg:P(5545,2400,4300),cut:2700},
   {id:"spots",t:"Споты вблизи",pos:P(2600,1500,6600),tg:P(2200,2750,5200)}];
 const vbox=document.getElementById("views");
-VIEWS.forEach(v=>{const b=document.createElement("button");b.type="button";b.textContent=v.t;b.dataset.id=v.id;b.setAttribute("aria-pressed","false");b.onclick=()=>fly(v);vbox.appendChild(b)});
+VIEWS.forEach(v=>{const b=document.createElement("button");b.type="button";b.textContent=v.t;b.dataset.id=v.id;b.setAttribute("aria-pressed","false");b.onclick=()=>{fly(v);if(v.id==="vent"){cutIn.value=2700;setCut();const c=document.getElementById("ventT");if(!c.checked){c.checked=true;c.onchange()}}};vbox.appendChild(b)});
 let anim=null;
 function fly(v,instant){exitWalk();[...vbox.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.id===v.id)));
   const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
