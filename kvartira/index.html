@@ -114,7 +114,7 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
 .check{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
 .check input{accent-color:var(--accent)}
 .hint{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;margin:0}
-.pal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.pal{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
 .pal span{aspect-ratio:1;border-radius:4px;border:1px solid var(--line)}
 a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
 #toggle{display:none}
@@ -136,11 +136,15 @@ a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
   <button id="toggle" type="button">Свернуть</button>
   <div style="display:grid;gap:4px">
     <h1>Квартира 53,76 м²</h1>
-    <p class="sub">Две комнаты, кухня 9,5 м², потолок 2,55 м. Тёплый минимализм: дуб, тёплый белый, глина и шалфей.</p>
+    <p class="sub">Две комнаты, кухня 9,5 м², потолок 2,55 м. Современный минимализм: тёплый серый, дуб, орех, графит. Свет — треки, световые линии и сценарии.</p>
   </div>
   <div class="row">
     <span class="lbl">Вид</span>
     <div class="views" id="views"></div>
+  </div>
+  <div class="row">
+    <span class="lbl">Свет</span>
+    <div class="views" id="scn"></div>
   </div>
   <div class="row more">
     <span class="lbl">Высота стен</span>
@@ -148,7 +152,6 @@ a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
   </div>
   <div class="row more">
     <label class="check"><input type="checkbox" id="cFurn" checked>Мебель</label>
-    <label class="check"><input type="checkbox" id="cEve">Вечерний свет</label>
     <label class="check"><input type="checkbox" id="cTags" checked>Подписи комнат</label>
   </div>
   <div class="row more">
@@ -1216,11 +1219,11 @@ a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
    Оси плана: x вправо, y вверх (как в DWG). Высота потолка 2550 по техпаспорту. */
 const KV=(()=>{
 const H=2550, DOOR_H=2050, SILL=800, WIN_TOP=2200;
-const C={white:"#F2EFE8",oak:"#C39A6B",oakD:"#9A7148",sage:"#9AA387",sageD:"#7D876C",clay:"#B7846A",linen:"#D8CCB7",
-  graphite:"#3A3D40",stone:"#DAD4CA",greige:"#CBC2B4",black:"#2A2B2D",glass:"#9CC3D3",steel:"#A9AEB2",green:"#6F8F6A",wool:"#E7E1D6",terr:"#C9A68A"};
+const C={wall:"#E4E1DB",white:"#F4F3F0",oak:"#B59A7C",oakD:"#8C7258",walnut:"#6E4F3A",walnutD:"#4E372A",graphite:"#46474A",taupe:"#8F857C",micro:"#B7AFA5",microD:"#9E958B",quartz:"#E3DED6",trav:"#D5C7B2",boucle:"#D8D1C6",cognac:"#8A5A3B",
+  sage:"#9AA387",sageD:"#7D876C",clay:"#B7846A",linen:"#D8CCB7",stone:"#BDB5AA",greige:"#CBC2B4",black:"#1F2022",glass:"#9CC3D3",steel:"#A9AEB2",green:"#6F8F6A",wool:"#DDD7CD",terr:"#C9A68A"};
 /* помещения: внутренний контур, мм */
 const ROOMS=[
-  {id:"liv",n:"Гостиная",r:[1350,3760,6750,7080],tp:18.04,lux:200,cct:"2700–3000 K",z:"liv",
+  {id:"liv",n:"Гостиная",r:[1350,3760,6750,7080],tp:18.04,lux:200,cct:"3000 K, акценты 2700 K",z:"liv",
    use:"Отдых, ТВ, гости, рабочее место"},
   {id:"bed",n:"Спальня",r:[4170,200,8370,3520],tp:13.91,lux:100,cct:"2700 K",z:"bed",use:"Сон, хранение, туалетный столик"},
   {id:"kit",n:"Кухня",r:[8570,200,11820,3130],tp:9.45,lux:200,cct:"3000 K, над столешницей 4000 K",z:"kit",use:"Готовка и обеденная зона на 4"},
@@ -1231,7 +1234,7 @@ const ROOMS=[
   {id:"b1",n:"Балкон гостиной",r:[30,3720,1000,7080],tp:4.0,balc:1,z:"balc",use:"Кофе у окна, хранение"},
   {id:"b2",n:"Балкон спальни",r:[2850,100,3820,3520],tp:6.2,balc:1,z:"balc",use:"Сушка белья, хранение"}];
 /* встроенный шкаф в коридоре и шахта в кухне */
-const SOLID=[{n:"Встроенный шкаф 0,3 м²",r:[8570,3200,9250,3750],h:H,c:"oak"},{n:"Короб стояков",r:[10500,2680,11820,3130],h:H,c:"white"}];
+const SOLID=[{n:"Встроенный шкаф 0,3 м²",r:[8570,3200,9250,3750],h:H,c:"wall"},{n:"Короб стояков",r:[10500,2680,11820,3130],h:H,c:"wall"}];
 /* наружный контур квартиры со стенами */
 const ENV=[[1000,7344],[8570,7344],[8570,5540],[11960,5540],[11960,0],[3820,0],[3820,3520],[1000,3520]];
 /* проёмы в стенах */
@@ -1250,89 +1253,116 @@ const SWING=[[[6750,6090],[6750,5365],[6025,6090]],[[6750,4640],[6750,5365],[602
 /* мебель: r — габарит на плане, h — высота, z0 — от пола, k — тип для 3D */
 const F=[
   // гостиная
-  {room:"liv",n:"Ковёр 2000 × 3000",r:[1950,4900,4950,6900],h:8,k:"rug",c:"wool",flat:1},
-  {room:"liv",n:"Диван прямой 2200 × 950",r:[2350,6130,4550,7080],h:820,k:"sofa",c:"linen",face:"s",dim:1},
-  {room:"liv",n:"Кресло для чтения",r:[1450,6230,2250,7030],h:850,k:"chair",c:"terr",face:"s"},
-  {room:"liv",n:"Журнальный стол 1000 × 550",r:[2950,5180,3950,5730],h:400,k:"table",c:"oak",dim:1},
-  {room:"liv",n:"ТВ-тумба подвесная 1800",r:[2550,3760,4350,4160],h:400,z0:250,k:"box",c:"oak",dim:1},
-  {room:"liv",n:"Телевизор 55″",r:[2830,3760,4070,3800],h:720,z0:950,k:"tv",c:"black"},
-  {room:"liv",n:"Стеллаж открытый 1750 × 350",r:[4700,3760,6450,4110],h:2000,k:"shelf",c:"oak",dim:1},
-  {room:"liv",n:"Рабочий стол 1300 × 600",r:[4600,6480,5900,7080],h:750,k:"table",c:"oak",dim:1},
-  {room:"liv",n:"Стул рабочий",r:[5020,5960,5480,6420],h:850,k:"chair",c:"graphite",face:"n"},
-  {room:"liv",n:"Торшер",r:[1480,5900,1760,6180],h:1600,k:"lamp",c:"graphite"},
-  {room:"liv",n:"Растение в кашпо",r:[6150,6650,6550,7050],h:1300,k:"plant",c:"green"},
-  {room:"liv",n:"Шторы лён",r:[1350,4360,1420,6460],h:2500,k:"curtain",c:"linen"},
+  {room:"liv",n:"Ковёр шерсть 2000 × 3000, однотонный",r:[1950,4900,4950,6900],h:8,k:"rug",c:"wool",flat:1},
+  {room:"liv",n:"Диван прямой букле 2200 × 950, низкий",r:[2350,6130,4550,7080],h:760,k:"sofa",c:"boucle",face:"s",dim:1},
+  {room:"liv",n:"Кресло кожаное, коньяк",r:[1450,6230,2250,7030],h:850,k:"chair",c:"cognac",face:"s"},
+  {room:"liv",n:"Журнальный стол-монолит травертин 1000 × 550",r:[2950,5180,3950,5730],h:380,k:"box",c:"trav",dim:1},
+  {room:"liv",n:"ТВ-тумба подвесная орех 1800, без ручек",r:[2550,3780,4350,4160],h:380,z0:250,k:"box",c:"walnut",dim:1},
+  {room:"liv",n:"Телевизор 55″ на стене из реек",r:[2830,3780,4070,3820],h:720,z0:950,k:"tv",c:"black"},
+  {room:"liv",n:"Стеллаж: чёрный металл и полки орех, 1750 × 350",r:[4700,3760,6450,4110],h:2000,k:"shelf",c:"walnut",dim:1},
+  {room:"liv",n:"Рабочий стол орех 1300 × 600",r:[4600,6480,5900,7080],h:750,k:"table",c:"walnut",dim:1},
+  {room:"liv",n:"Стул рабочий чёрный",r:[5020,5960,5480,6420],h:830,k:"chair",c:"black",face:"n"},
+  {room:"liv",n:"Торшер чёрный, рассеянный свет",r:[1480,5900,1760,6180],h:1600,k:"lamp",c:"black"},
+  {room:"liv",n:"Растение в бетонном кашпо",r:[6150,6650,6550,7050],h:1300,k:"plant",c:"green"},
+  {room:"liv",n:"Шторы лён в нише потолка",r:[1350,4360,1420,6460],h:2480,k:"curtain",c:"wool"},
   // спальня
-  {room:"bed",n:"Ковёр 1600 × 2300",r:[5900,300,7700,2700],h:8,k:"rug",c:"wool",flat:1},
-  {room:"bed",n:"Кровать 1600 × 2000 с мягким изголовьем",r:[6370,700,8370,2300],h:520,k:"bed",c:"linen",face:"w",dim:1},
-  {room:"bed",n:"Тумба прикроватная",r:[7970,250,8370,650],h:500,k:"box",c:"oak"},
-  {room:"bed",n:"Тумба прикроватная",r:[7970,2350,8370,2750],h:500,k:"box",c:"oak"},
-  {room:"bed",n:"Шкаф-купе 2500 × 600, до 2450",r:[4170,2920,6670,3520],h:2450,k:"wardrobe",c:"white",dim:1},
-  {room:"bed",n:"Зеркальная дверь шкафа 830 × 2350",r:[5840,2914,6670,2920],h:2350,z0:50,k:"mirror",c:"steel"},
-  {room:"bed",n:"Туалетный столик 1200 × 500",r:[4170,1650,4670,2850],h:750,k:"table",c:"oak",dim:1},
-  {room:"bed",n:"Стул",r:[4720,2030,5170,2470],h:820,k:"chair",c:"sage",face:"w"},
-  {room:"bed",n:"Шторы блэкаут",r:[4170,800,4240,2900],h:2500,k:"curtain",c:"greige"},
+  {room:"bed",n:"Ковёр 1600 × 2300",r:[5900,300,7700,2700],h:8,k:"rug",c:"greige",flat:1},
+  {room:"bed",n:"Кровать 1600 × 2000 с изголовьем букле",r:[6370,700,8370,2300],h:520,k:"bed",c:"boucle",face:"w",dim:1},
+  {room:"bed",n:"Тумба прикроватная подвесная орех",r:[7970,250,8370,650],h:300,z0:250,k:"box",c:"walnut"},
+  {room:"bed",n:"Тумба прикроватная подвесная орех",r:[7970,2350,8370,2750],h:300,z0:250,k:"box",c:"walnut"},
+  {room:"bed",n:"Шкаф-купе 2500 × 600 в цвет стен, без ручек",r:[4170,2920,6670,3520],h:2450,k:"wardrobe",c:"wall",dim:1},
+  {room:"bed",n:"Зеркальная дверь шкафа 830 × 2350, бронза",r:[5840,2914,6670,2920],h:2350,z0:50,k:"mirror",c:"steel"},
+  {room:"bed",n:"Туалетный столик орех 1200 × 500",r:[4170,1650,4670,2850],h:750,k:"table",c:"walnut",dim:1},
+  {room:"bed",n:"Стул букле",r:[4720,2030,5170,2470],h:820,k:"chair",c:"boucle",face:"w"},
+  {room:"bed",n:"Шторы блэкаут в нише потолка",r:[4170,800,4240,2900],h:2480,k:"curtain",c:"taupe"},
   // кухня
-  {room:"kit",n:"Нижние модули 2480 × 600",r:[11220,200,11820,2680],h:900,k:"base",c:"sage",dim:1},
-  {room:"kit",n:"Верхние модули 350",r:[11470,200,11820,2680],h:720,z0:1480,k:"box",c:"white"},
-  {room:"kit",n:"Мойка 600",r:[11260,2120,11760,2620],h:4,z0:900,k:"sinkTop",c:"steel"},
+  {room:"kit",n:"Нижние модули 2480 × 600, графит мат, без ручек",r:[11220,200,11820,2680],h:900,k:"base",c:"graphite",dim:1},
+  {room:"kit",n:"Верхние модули 350 в цвет стен, до потолка",r:[11470,200,11820,2680],h:1050,z0:1480,k:"box",c:"wall"},
+  {room:"kit",n:"Мойка 600 под столешницу",r:[11260,2120,11760,2620],h:4,z0:900,k:"sinkTop",c:"steel"},
   {room:"kit",n:"Варочная панель 600",r:[11260,560,11760,1100],h:4,z0:900,k:"hob",c:"black"},
-  {room:"kit",n:"Посудомоечная машина 450 встраиваемая",r:[11215,1630,11820,2080],h:820,z0:100,k:"box",c:"sageD"},
-  {room:"kit",n:"Вытяжка встраиваемая 600, низ на 650 мм над панелью",r:[11300,530,11820,1130],h:180,z0:1550,k:"box",c:"steel",dim:1},
-  {room:"kit",n:"Холодильник 600 × 650",r:[8570,2530,9220,3130],h:2000,k:"box",c:"white",dim:1},
-  {room:"kit",n:"Пенал: духовой шкаф и СВЧ",r:[8570,1900,9170,2530],h:2200,k:"pantry",c:"sage"},
-  {room:"kit",n:"Скамья с ящиками 1600 × 450",r:[8570,300,9020,1900],h:450,k:"bench",c:"oak",dim:1},
-  {room:"kit",n:"Стол обеденный 1100 × 700",r:[9020,500,9720,1600],h:750,k:"table",c:"oak",dim:1},
-  {room:"kit",n:"Стул",r:[9790,600,10230,1040],h:820,k:"chair",c:"sage",face:"w"},
-  {room:"kit",n:"Стул",r:[9790,1150,10230,1590],h:820,k:"chair",c:"sage",face:"w"},
+  {room:"kit",n:"Посудомоечная машина 450 встраиваемая",r:[11215,1630,11820,2080],h:820,z0:100,k:"box",c:"graphite"},
+  {room:"kit",n:"Вытяжка встраиваемая 600, низ на 650 мм над панелью",r:[11300,530,11820,1130],h:180,z0:1550,k:"box",c:"wall",dim:1},
+  {room:"kit",n:"Холодильник встраиваемый в колонне 600",r:[8570,2530,9220,3130],h:2200,k:"box",c:"graphite",dim:1},
+  {room:"kit",n:"Пенал: духовой шкаф и СВЧ",r:[8570,1900,9170,2530],h:2200,k:"pantry",c:"graphite"},
+  {room:"kit",n:"Скамья с ящиками орех 1600 × 450",r:[8570,300,9020,1900],h:450,k:"bench",c:"walnut",dim:1},
+  {room:"kit",n:"Стол обеденный, керамика 1100 × 700",r:[9020,500,9720,1600],h:750,k:"table",c:"quartz",dim:1},
+  {room:"kit",n:"Стул",r:[9790,600,10230,1040],h:820,k:"chair",c:"cognac",face:"w"},
+  {room:"kit",n:"Стул",r:[9790,1150,10230,1590],h:820,k:"chair",c:"cognac",face:"w"},
   // прихожая и коридор
-  {room:"hall",n:"Шкаф для одежды 1000 × 600",r:[6830,6090,7430,7080],h:2450,k:"wardrobe",c:"white",dim:1},
-  {room:"hall",n:"Обувница с сиденьем 780 × 300",r:[8170,5040,8470,5820],h:480,k:"bench",c:"oak"},
-  {room:"hall",n:"Зеркало в рост",r:[8455,5100,8470,5760],h:1300,z0:650,k:"mirror",c:"steel"},
-  {room:"hall",n:"Коврик у двери",r:[7600,5880,8400,6650],h:6,k:"rug",c:"greige",flat:1},
+  {room:"hall",n:"Шкаф для одежды 1000 × 600 в цвет стен",r:[6830,6090,7430,7080],h:2450,k:"wardrobe",c:"wall",dim:1},
+  {room:"hall",n:"Обувница с сиденьем орех 780 × 300",r:[8170,5040,8470,5820],h:480,k:"bench",c:"walnut"},
+  {room:"hall",n:"Зеркало в рост, тонкая чёрная рама",r:[8455,5100,8470,5760],h:1300,z0:650,k:"mirror",c:"steel"},
+  {room:"hall",n:"Коврик у двери",r:[7600,5880,8400,6650],h:6,k:"rug",c:"graphite",flat:1},
   // ванная и туалет
   {room:"bath",n:"Ванна 1480 × 700 (по замеру)",r:[11120,3200,11820,4680],h:600,k:"tub",c:"white",dim:1},
-  {room:"bath",n:"Тумба под раковину 400",r:[10120,4150,10520,4680],h:820,k:"vanity",c:"oak"},
+  {room:"bath",n:"Тумба под раковину орех 400",r:[10120,4150,10520,4680],h:820,k:"vanity",c:"walnut"},
   {room:"bath",n:"Стиральная машина 600 × 450 под столешницей",r:[10520,4200,11120,4680],h:820,k:"washer",c:"white"},
-  {room:"bath",n:"Столешница 1000 × 530 с накладной раковиной",r:[10120,4150,11120,4680],h:30,z0:820,k:"counter",c:"oak",dim:1},
+  {room:"bath",n:"Столешница кварц 1000 × 530 с накладной раковиной",r:[10120,4150,11120,4680],h:30,z0:820,k:"counter",c:"quartz",dim:1},
   {room:"bath",n:"Раковина накладная",r:[10160,4250,10500,4600],h:140,z0:850,k:"bowl",c:"white"},
   {room:"bath",n:"Зеркало-шкаф с подсветкой",r:[10170,4660,10870,4680],h:700,z0:1150,k:"mirror",c:"steel"},
-  {room:"bath",n:"Полотенцесушитель",r:[10700,3200,11050,3230],h:800,z0:900,k:"box",c:"steel"},
+  {room:"bath",n:"Полотенцесушитель чёрный",r:[10700,3200,11050,3230],h:800,z0:900,k:"box",c:"black"},
   {room:"wc",n:"Унитаз подвесной",r:[11250,4905,11820,5265],h:400,k:"wc",c:"white"},
-  {room:"wc",n:"Шкафчик над унитазом",r:[11570,4780,11820,5390],h:700,z0:1300,k:"box",c:"oak"},
+  {room:"wc",n:"Шкафчик над унитазом орех",r:[11570,4780,11820,5390],h:700,z0:1300,k:"box",c:"walnut"},
   // балконы
-  {room:"b1",n:"Столик откидной и 2 стула",r:[150,5300,700,5900],h:740,k:"table",c:"oak"},
-  {room:"b1",n:"Шкаф балконный 900 × 400",r:[150,3820,550,4720],h:1800,k:"box",c:"white"},
+  {room:"b1",n:"Столик откидной и 2 стула",r:[150,5300,700,5900],h:740,k:"table",c:"walnut"},
+  {room:"b1",n:"Шкаф балконный 900 × 400",r:[150,3820,550,4720],h:1800,k:"box",c:"wall"},
   {room:"b2",n:"Сушилка настенная",r:[2900,1200,3050,2600],h:900,z0:900,k:"box",c:"steel"},
-  {room:"b2",n:"Шкаф балконный 1200 × 400",r:[3350,200,3750,1400],h:1800,k:"box",c:"white"}];
-/* свет: t — тип, lm — световой поток, h — высота, amb — входит в общий свет */
-const L=[];const sp=(room,x,y,lm,k,n)=>L.push({room,t:"spot",x,y,lm,k,h:H-50,amb:1,n});
-[2025,3375,4725,6075].forEach(x=>{sp("liv",x,4600,1100,3000,"Встраиваемый GX53, 12 Вт");sp("liv",x,6250,1100,3000,"Встраиваемый GX53, 12 Вт")});
-[[5320,1100],[7120,1100],[5320,2600],[7120,2600]].forEach(([x,y])=>sp("bed",x,y,900,2700,"Встраиваемый GX53, 10 Вт"));
-[[9450,900],[10500,900],[9450,2000],[10500,2000],[10250,2700],[9850,2850]].forEach(([x,y])=>sp("kit",x,y,800,3000,"Встраиваемый GX53, 9 Вт"));
-[[7650,4500],[7650,5600],[7650,6600]].forEach(([x,y])=>sp("hall",x,y,700,3000,"Встраиваемый GX53, 8 Вт"));
-sp("cor",9320,4300,900,3000,"Встраиваемый GX53, 10 Вт, с датчиком движения");
-sp("bath",10620,3950,700,4000,"Встраиваемый IP44, 8 Вт");sp("bath",11470,3950,700,4000,"Встраиваемый IP44, 8 Вт");
-sp("wc",10900,5085,500,3000,"Встраиваемый IP44, 6 Вт");
-L.push({room:"liv",t:"strip",r:[2600,3765,4300,3780],h:1400,lm:900,k:2700,n:"Лента за телевизором, 9 Вт/м, на диммере"},
-  {room:"liv",t:"strip",r:[4720,3780,6430,3800],h:1990,lm:1300,k:2700,n:"Лента в полках стеллажа, 2 линии"},
-  {room:"liv",t:"floor",x:1620,y:6040,h:1550,lm:800,k:2700,n:"Торшер у кресла, 300–500 лк на книгу"},
+  {room:"b2",n:"Шкаф балконный 1200 × 400",r:[3350,200,3750,1400],h:1800,k:"box",c:"wall"}];
+/* свет: t — тип (rail — магнитный трек, lin — линейный модуль или световой профиль, tspot — трековый спот,
+   spot — встроенный спот, strip — лента), lm — поток, h — высота, amb — входит в общий свет,
+   uf — доля потока в расчёте (скрытая подсветка светит в потолок), sc — уровень в сценариях 0…1 */
+const L=[];
+const rail=(room,r,n)=>L.push({room,t:"rail",r,h:H-5,lm:0,k:0,n});
+const lin=(room,r,lm,k,n,o)=>L.push(Object.assign({room,t:"lin",r,h:H-5,lm,k,amb:1,n},o||{}));
+const ts=(room,x,y,lm,k,n,o)=>L.push(Object.assign({room,t:"tspot",x,y,h:H-150,lm,k,n},o||{}));
+const sp=(room,x,y,lm,k,n,o)=>L.push(Object.assign({room,t:"spot",x,y,lm,k,h:H-50,amb:1,n},o||{}));
+[4600,6250].forEach(y=>{rail("liv",[1700,y-15,6400,y+15],"Магнитный трек встраиваемый 48 В, 4,7 м, чёрный");
+  [2000,3500,5000].forEach(x=>lin("liv",[x,y-15,x+600,y+15],1500,3000,"Линейный модуль на трек 600 мм, 15 Вт, рассеянный"))});
+ts("liv",4450,4600,450,3000,"Трековый спот 24°, 6 Вт, на рейки за ТВ",{sc:{eve:1,film:.4}});
+ts("liv",6100,4600,450,3000,"Трековый спот 24°, 6 Вт, на стеллаж",{sc:{eve:1,film:.3}});
+ts("liv",1850,6250,450,3000,"Трековый спот 24°, 6 Вт, над креслом");
+ts("liv",4400,6250,450,4000,"Трековый спот 36°, 6 Вт, на рабочий стол");
+[[4200,230,8340,260,"4,1"],[4200,3460,8340,3490,"4,1"],[4200,260,4230,3460,"3,2"],[8310,260,8340,3460,"3,2"]].forEach(([a,b,c,d,len])=>
+  L.push({room:"bed",t:"strip",r:[a,b,c,d],h:H-30,lm:Math.round(Math.max(c-a,d-b)*.45),k:2700,amb:1,uf:.5,cove:1,sc:{eve:.6},n:"Парящий потолок: скрытый LED-профиль "+len+" м, 4,8 Вт/м"}));
+sp("bed",5000,2700,600,3000,"Встроенный поворотный спот 24°, чёрный, на шкаф");sp("bed",6200,2700,600,3000,"Встроенный поворотный спот 24°, чёрный, на шкаф");
+rail("kit",[10435,500,10465,2500],"Магнитный трек встраиваемый 48 В, 2 м, чёрный");
+lin("kit",[10435,560,10465,1160],1500,3000,"Линейный модуль на трек 600 мм, 15 Вт");lin("kit",[10435,1840,10465,2440],1500,3000,"Линейный модуль на трек 600 мм, 15 Вт");
+ts("kit",10450,1300,800,4000,"Трековый спот 36°, 8 Вт, на столешницу",{amb:1});ts("kit",10450,1700,800,4000,"Трековый спот 36°, 8 Вт, на столешницу",{amb:1});
+lin("hall",[7630,4000,7670,6800],2400,3000,"Встроенный световой профиль 2,8 м, 25 Вт");
+lin("cor",[9300,3800,9340,5300],1200,3000,"Встроенный световой профиль 1,5 м, 12 Вт, датчик движения",{sc:{eve:.7,night:.3}});
+sp("bath",10620,3950,700,4000,"Встроенный спот IP44, 8 Вт, чёрный");sp("bath",11470,3950,700,4000,"Встроенный спот IP44, 8 Вт, чёрный");
+sp("wc",10900,5085,500,3000,"Встроенный спот IP44, 6 Вт, чёрный");
+L.push({room:"liv",t:"strip",r:[2600,3780,4300,3795],h:1400,lm:900,k:2700,sc:{eve:.6,film:1},n:"Лента за телевизором, 9 Вт/м, на диммере"},
+  {room:"liv",t:"strip",r:[4720,3780,6430,3800],h:1990,lm:1300,k:2700,sc:{eve:1,film:.3},n:"Лента в полках стеллажа, 2 линии"},
+  {room:"liv",t:"strip",r:[1360,4360,1375,6460],h:2520,lm:900,k:2700,sc:{eve:1,film:.4},n:"Скрытая подсветка в нише штор"},
+  {room:"liv",t:"floor",x:1620,y:6040,h:1550,lm:800,k:2700,sc:{eve:1,film:.2},n:"Торшер у кресла, 300–500 лк на книгу"},
   {room:"liv",t:"desk",x:5650,y:6900,h:1150,lm:600,k:4000,n:"Настольная лампа, 500 лк на столе"},
-  {room:"bed",t:"wall",x:8350,y:500,h:1050,lm:300,k:2700,n:"Бра для чтения с поворотом"},
-  {room:"bed",t:"wall",x:8350,y:2500,h:1050,lm:300,k:2700,n:"Бра для чтения с поворотом"},
-  {room:"bed",t:"strip",r:[6400,690,8350,700],h:80,lm:300,k:2200,n:"Ночная подсветка под кроватью, датчик движения"},
-  {room:"bed",t:"strip",r:[4200,2930,6650,2945],h:2420,lm:900,k:3000,n:"Лента в шкафу, включается дверью"},
+  {room:"bed",t:"pend",x:8170,y:450,h:1150,lm:350,k:2700,rad:90,n:"Подвес у кровати на тонком шнуре, низ на 650 мм над тумбой"},
+  {room:"bed",t:"pend",x:8170,y:2550,h:1150,lm:350,k:2700,rad:90,n:"Подвес у кровати на тонком шнуре, низ на 650 мм над тумбой"},
+  {room:"bed",t:"strip",r:[6400,690,8350,700],h:80,lm:300,k:2200,sc:{eve:.5,night:1},n:"Ночная подсветка под кроватью, датчик движения"},
+  {room:"bed",t:"strip",r:[4200,2930,6650,2945],h:2420,lm:900,k:3000,sc:{eve:0},n:"Лента в шкафу, включается дверью"},
   {room:"bed",t:"desk",x:4420,y:2250,h:1500,lm:500,k:4000,n:"Подсветка зеркала столика, 4000 K, CRI 90+"},
   {room:"kit",t:"strip",r:[11230,220,11460,2660],h:1470,lm:2400,k:4000,n:"Лента под верхними модулями, 14 Вт/м: 500+ лк на столешнице"},
-  {room:"kit",t:"pend",x:9370,y:1050,h:1700,lm:900,k:2700,n:"Подвес над столом, низ на 750 мм над столешницей"},
-  {room:"hall",t:"wall",x:8455,y:5430,h:1950,lm:500,k:3000,n:"Светильник над зеркалом"},
+  {room:"kit",t:"strip",r:[11222,210,11232,2670],h:40,lm:200,k:2700,sc:{eve:.5,night:.6},n:"Подсветка цоколя кухни, ночная"},
+  {room:"kit",t:"pend",x:9370,y:1050,h:1700,lm:900,k:2700,rad:110,n:"Подвес-цилиндр чёрный, низ на 750 мм над столом"},
+  {room:"hall",t:"wall",x:8455,y:5430,h:1950,lm:500,k:3000,n:"Линейный светильник над зеркалом"},
+  {room:"hall",t:"strip",r:[8170,5040,8185,5820],h:60,lm:150,k:2700,sc:{eve:.5,night:1},n:"Подсветка под обувницей, датчик движения"},
+  {room:"bath",t:"strip",r:[11805,3350,11815,4550],h:1500,lm:400,k:2700,n:"Ниша над ванной с LED-профилем, IP65"},
   {room:"bath",t:"wall",x:10520,y:4650,h:1880,lm:600,k:4000,n:"Подсветка зеркала-шкафа, IP44"},
-  {room:"b1",t:"wall",x:980,y:6000,h:1900,lm:400,k:2700,n:"Настенный IP54"},
-  {room:"b2",t:"wall",x:3800,y:2400,h:1900,lm:400,k:3000,n:"Настенный IP54"});
+  {room:"wc",t:"strip",r:[11790,4905,11800,5265],h:30,lm:120,k:2700,sc:{eve:.5,night:.6},n:"Подсветка под подвесным унитазом"},
+  {room:"b1",t:"wall",x:980,y:6000,h:1900,lm:400,k:2700,n:"Настенный IP54, чёрный"},
+  {room:"b2",t:"wall",x:3800,y:2400,h:1900,lm:400,k:3000,n:"Настенный IP54, чёрный"});
+/* сценарии */
+const SCN=[
+  {id:"day",n:"День",d:"Свет выключен, работают окна. На кухне и в ванной общий свет включают по необходимости."},
+  {id:"eve",n:"Вечер",d:"Общий свет на 70 %, все акценты: споты на рейки и стеллаж, торшер, ленты, подвесы. В спальне парящий потолок на 60 %."},
+  {id:"film",n:"Кино",d:"В гостиной лента за ТВ на 100 %, споты на рейки и подсветка штор на 40 %, стеллаж на 30 %. Общий свет выключен."},
+  {id:"night",n:"Ночь",d:"Только по датчикам движения: подсветка под кроватью и под обувницей, цоколь кухни, профиль коридора на 30 %, подсветка под унитазом."}];
+const lev=(l,s)=>s==="day"?0:(l.sc&&l.sc[s]!=null)?l.sc[s]:(s==="eve"?(l.amb?.7:1):0);
 const UF=.5,MF=.8;
 const area=r=>(r[2]-r[0])*(r[3]-r[1])/1e6;
 const lux=id=>{const R=ROOMS.find(q=>q.id===id);let a=area(R.r);if(id==="cor")a-=area(SOLID[0].r);if(id==="kit")a-=area(SOLID[1].r);
-  const lm=L.filter(l=>l.room===id&&l.amb).reduce((s,l)=>s+l.lm,0);return{a,lm,E:lm*UF*MF/a}};
+  const lm=L.filter(l=>l.room===id&&l.amb).reduce((s,l)=>s+l.lm*(l.uf||1),0);return{a,lm,E:lm*UF*MF/a}};
 /* разбиение на ячейки: стена, окно, проём */
 function cells(){
   const xs=new Set(),ys=new Set();const add=r=>{xs.add(r[0]);xs.add(r[2]);ys.add(r[1]);ys.add(r[3])};
@@ -1352,22 +1382,25 @@ function cells(){
   return m}
 /* отделка и палитра */
 const PAL=[
-  {n:"Тёплый белый",code:"NCS S 0502-Y",hex:"#F2EFE8",w:"Все стены и потолки, кроме акцентов"},
-  {n:"Глина",code:"NCS S 3020-Y50R",hex:"#B7846A",w:"Стена за телевизором в гостиной"},
-  {n:"Шалфей",code:"NCS S 3010-G50Y",hex:"#9AA387",w:"Стена за кроватью, низ кухни"},
-  {n:"Дуб натуральный",code:"доска 33 кл., 1-полосная",hex:"#C39A6B",w:"Пол везде кроме мокрых зон, столешницы, мебель"},
-  {n:"Лён песочный",code:"ткань 100 % лён",hex:"#D8CCB7",w:"Диван, шторы гостиной, покрывало"},
-  {n:"Камень светлый",code:"керамогранит 60 × 120, мат",hex:"#DAD4CA",w:"Ванная, туалет, пол прихожей у двери"},
-  {n:"Графит",code:"NCS S 7502-B",hex:"#3A3D40",w:"Мелкие акценты: светильники, ручки, рамы"}];
+  {n:"Тёплый светло-серый",code:"NCS S 1002-Y",hex:"#E4E1DB",w:"Стены, двери скрытого монтажа и шкафы в цвет стен"},
+  {n:"Дуб натуральный",code:"инженерная доска, браш, масло",hex:"#B59A7C",w:"Пол в комнатах, прихожей и коридоре"},
+  {n:"Орех американский",code:"шпон, матовый лак",hex:"#6E4F3A",w:"Рейки за ТВ, тумбы, столы, полки"},
+  {n:"Графит",code:"NCS S 7502-Y, мат",hex:"#46474A",w:"Кухонные фасады, колонна с техникой"},
+  {n:"Тауп",code:"декоративная штукатурка",hex:"#8F857C",w:"Стена изголовья, шторы спальни"},
+  {n:"Микроцемент",code:"тёплый серый",hex:"#B7AFA5",w:"Стены и пол ванной и туалета"},
+  {n:"Кварц светлый",code:"кварцевый агломерат 20 мм",hex:"#E3DED6",w:"Столешницы кухни и ванной, фартук, подоконники"},
+  {n:"Букле и лён",code:"ткани",hex:"#D8D1C6",w:"Диван, изголовье, стул спальни, шторы гостиной"},
+  {n:"Коньяк",code:"кожа, анилин",hex:"#8A5A3B",w:"Кресло и стулья кухни — единственный тёплый акцент"},
+  {n:"Чёрный металл",code:"RAL 9005, мат",hex:"#1F2022",w:"Треки, профили, смесители, рамы"}];
 const FIN={
-  liv:{floor:"Инженерная доска дуб, светлое масло",walls:"Тёплый белый; стена ТВ — глина с бархатной фактурой",ceil:"Натяжной матовый, опуск 50 мм"},
-  bed:{floor:"Инженерная доска дуб",walls:"Тёплый белый; стена изголовья — шалфей",ceil:"Натяжной матовый, опуск 50 мм"},
-  kit:{floor:"Керамогранит 60 × 60 «тёплый камень» или доска с лаком",walls:"Тёплый белый моющаяся краска; фартук — плитка 7,5 × 15 светлая глазурь",ceil:"Натяжной матовый, опуск 50 мм"},
-  hall:{floor:"Керамогранит камень 1,2 м от двери, дальше доска",walls:"Тёплый белый моющаяся краска",ceil:"Натяжной матовый, опуск 50 мм"},
-  cor:{floor:"Инженерная доска дуб",walls:"Тёплый белый моющаяся краска",ceil:"Натяжной матовый, опуск 50 мм"},
-  bath:{floor:"Керамогранит 60 × 120 камень, мат R10",walls:"Тот же керамогранит, полоса зелёной плитки за ванной",ceil:"Натяжной влагостойкий"},
-  wc:{floor:"Керамогранит 60 × 120 камень",walls:"Керамогранит до 1,2 м, выше влагостойкая краска шалфей",ceil:"Натяжной влагостойкий"}};
-return{H,DOOR_H,SILL,WIN_TOP,C,ROOMS,SOLID,ENV,OPEN,SWING,F,L,UF,MF,area,lux,cells,PAL,FIN}})();
+  liv:{floor:"Инженерная доска дуб, браш, масло",walls:"Тёплый светло-серый; стена ТВ — рейки ореха 40 × 20 с шагом 60 мм",ceil:"Натяжной матовый, опуск 70 мм под встроенные треки, ниша для штор"},
+  bed:{floor:"Инженерная доска дуб",walls:"Тёплый светло-серый; стена изголовья — штукатурка тауп",ceil:"Натяжной парящий: LED-профиль по периметру, ниша для штор"},
+  kit:{floor:"Керамогранит 60 × 120 под тёплый бетон",walls:"Моющаяся краска светло-серая; фартук — кварц в цвет столешницы",ceil:"Натяжной матовый, опуск 70 мм под трек"},
+  hall:{floor:"Керамогранит под бетон 1,2 м от двери, дальше доска",walls:"Моющаяся краска светло-серая, двери скрытого монтажа в цвет стен",ceil:"Натяжной матовый со световой линией"},
+  cor:{floor:"Инженерная доска дуб",walls:"Моющаяся краска светло-серая",ceil:"Натяжной матовый со световой линией"},
+  bath:{floor:"Микроцемент, нескользящий лак",walls:"Микроцемент; ниша над ванной с подсветкой",ceil:"Натяжной влагостойкий"},
+  wc:{floor:"Микроцемент",walls:"Микроцемент, инсталляция зашита в короб с полкой",ceil:"Натяжной влагостойкий"}};
+return{H,DOOR_H,SILL,WIN_TOP,C,ROOMS,SOLID,ENV,OPEN,SWING,F,L,UF,MF,area,lux,cells,PAL,FIN,SCN,lev}})();
 if(typeof module!=="undefined")module.exports=KV;
 </script>
 <script>
@@ -1396,32 +1429,33 @@ function Cyl(x,y,rad,z0,z1,mat,grp,rt){const me=new THREE.Mesh(new THREE.Cylinde
   me.position.set(px,m((z0+z1)/2),pz);me.castShadow=true;me.receiveShadow=true;(grp||G.furn).add(me);return me}
 const H=K.H;
 /* полы */
-const floorMat={liv:M(C.oak,{roughness:.7}),bed:M(C.oak,{roughness:.7}),cor:M(C.oak,{roughness:.7}),hall:M(C.oak,{roughness:.7}),kit:M(C.stone,{roughness:.6}),bath:M(C.stone,{roughness:.5}),wc:M(C.stone,{roughness:.5}),b1:M(C.greige),b2:M(C.greige)};
+const floorMat={liv:M(C.oak,{roughness:.7}),bed:M(C.oak,{roughness:.7}),cor:M(C.oak,{roughness:.7}),hall:M(C.oak,{roughness:.7}),kit:M(C.stone,{roughness:.6}),bath:M(C.micro,{roughness:.6}),wc:M(C.micro,{roughness:.6}),b1:M(C.greige),b2:M(C.greige)};
 K.ROOMS.forEach(q=>B(q.r,-30,0,floorMat[q.id],G.floor));
 B([7500,5820,8470,6710],0,2,M(C.stone,{roughness:.6}),G.floor);
 /* основание под стенами */
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:col("#C9CFCB"),roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.035;ground.receiveShadow=true;scene.add(ground);
 const ceilM=M("#F7F5F0",{roughness:.6,side:THREE.DoubleSide});K.ROOMS.filter(q=>!q.balc).forEach(q=>B(q.r,H,H+20,ceilM,G.ceil,1));G.ceil.visible=false;
 /* стены */
-const wm=M(C.white,{roughness:.9}),gm=new THREE.MeshStandardMaterial({color:col(C.glass),transparent:true,opacity:.28,roughness:.05,metalness:.1});
+const wm=M(C.wall,{roughness:.9}),gm=new THREE.MeshStandardMaterial({color:col(C.glass),transparent:true,opacity:.28,roughness:.05,metalness:.1});
 K.cells().forEach(c=>{const r=c.r,v=r[2]-r[0]<r[3]-r[1];
   const mid=v?[(r[0]+r[2])/2-12,r[1],(r[0]+r[2])/2+12,r[3]]:[r[0],(r[1]+r[3])/2-12,r[2],(r[1]+r[3])/2+12];
   if(c.t==="wall")B(r,0,H,wm,G.walls);
   else if(c.t==="door"||c.t==="open")B(r,K.DOOR_H,H,wm,G.walls);
   else if(c.t==="win"){B(r,0,K.SILL,wm,G.walls);B(r,K.WIN_TOP,H,wm,G.walls);B(mid,K.SILL,K.WIN_TOP,gm,G.walls,1);
-B(v?[r[2]-20,r[1],r[2]+120,r[3]]:[r[0],r[3]-20,r[2],r[3]+150],K.SILL-30,K.SILL,M(C.white,{roughness:.5}),G.walls)}
+B(v?[r[2]-20,r[1],r[2]+120,r[3]]:[r[0],r[3]-20,r[2],r[3]+150],K.SILL-30,K.SILL,M(C.quartz,{roughness:.4}),G.walls)}
   else if(c.t==="bdoor"){B(r,K.WIN_TOP,H,wm,G.walls);B(mid,0,K.WIN_TOP,gm,G.walls,1)}});
 /* балконы: ограждение и остекление */
 [[30,3720,60,7080],[30,3690,1000,3720],[30,7080,1000,7110],[2820,100,2850,3520],[2820,70,3820,100]].forEach(r=>{B(r,0,1050,M(C.greige),G.walls);B(r,1050,2400,gm,G.walls,1)});
 K.SOLID.forEach(s=>B(s.r,0,s.h,M(C[s.c]),G.walls));
-/* акценты */
-B([2300,3760,4800,3772],0,H,M(C.clay,{roughness:.95}),G.walls);
-B([8358,200,8370,3520],0,H,M(C.sage,{roughness:.95}),G.walls);
-B([11808,200,11820,2680],900,1480,M("#E9E4DA",{roughness:.3}),G.walls);
-B([11112,3200,11120,4680],0,1800,M(C.green,{roughness:.35}),G.walls);
-B([10120,3200,11820,3208],0,H,M(C.stone,{roughness:.4}),G.walls);B([10120,4672,11820,4680],0,H,M(C.stone,{roughness:.4}),G.walls);
+/* акценты: рейки ореха за ТВ, тауп за кроватью, кварцевый фартук, микроцемент в ванной */
+B([2250,3760,4600,3768],0,H,M(C.walnutD,{roughness:.9}),G.walls);for(let x=2250;x<4600;x+=60)B([x,3768,x+40,3780],0,H,M(C.walnut,{roughness:.7}),G.walls);
+B([8358,200,8370,3520],0,H,M(C.taupe,{roughness:.95}),G.walls);
+B([11808,200,11820,2680],900,1480,M(C.quartz,{roughness:.3}),G.walls);
+B([11112,3200,11120,4680],0,600,M(C.micro,{roughness:.6}),G.walls);
+B([10120,3200,11820,3208],0,H,M(C.micro,{roughness:.6}),G.walls);B([10120,4672,11820,4680],0,H,M(C.micro,{roughness:.6}),G.walls);
+B([11806,3350,11820,4550],1300,1700,M(C.microD,{roughness:.6}),G.walls);
 /* двери: открытые створки */
-K.SWING.slice(0,7).forEach(([h,c,o],i)=>{const L=Math.hypot(o[0]-h[0],o[1]-h[1]);const me=new THREE.Mesh(geo,M(i===3?C.graphite:C.oak,{roughness:.6}));
+K.SWING.slice(0,7).forEach(([h,c,o],i)=>{const L=Math.hypot(o[0]-h[0],o[1]-h[1]);const me=new THREE.Mesh(geo,M(i===3?C.black:C.wall,{roughness:.6}));
   me.scale.set(m(L),m(K.DOOR_H-10),.04);const[hx,hz]=P(h[0],h[1]),[ox,oz]=P(o[0],o[1]);me.position.set((hx+ox)/2,m(K.DOOR_H/2),(hz+oz)/2);
   me.rotation.y=-Math.atan2(oz-hz,ox-hx);me.castShadow=true;G.walls.add(me)});
 /* мебель */
@@ -1431,64 +1465,74 @@ function backSide(r,face,t){return{s:[r[0],r[3]-t,r[2],r[3]],n:[r[0],r[1],r[2],r
 const lampMats=[];
 const build={
   rug:f=>B(f.r,0,f.h,mat(f.c)),
-  sofa:f=>{const r=f.r,mt=mat(f.c);B([r[0]+20,r[1]+20,r[2]-20,r[3]-20],80,420,mt);legs(r,80,mat("oakD"));
+  sofa:f=>{const r=f.r,mt=mat(f.c);B([r[0]+20,r[1]+20,r[2]-20,r[3]-20],80,420,mt);legs(r,80,mat("black"));
     B(backSide(r,f.face,220),80,f.h,mt);B([r[0],r[1],r[0]+160,r[3]],80,620,mt);B([r[2]-160,r[1],r[2],r[3]],80,620,mt);
-    const w=(r[2]-r[0]-320)/2;[0,1].forEach(i=>B([r[0]+160+i*w+10,r[1]+30,r[0]+160+(i+1)*w-10,r[3]-230],420,500,M("#E2D8C6")));
-    B([r[0]+400,r[3]-330,r[0]+850,r[3]-220],500,800,M(C.sage));B([r[2]-850,r[3]-330,r[2]-400,r[3]-220],500,800,M(C.clay))},
-  chair:f=>{const r=f.r,mt=mat(f.c),big=f.h>840;legs(r,big?250:430,mat(big?"oakD":"graphite"));
+    const w=(r[2]-r[0]-320)/2;[0,1].forEach(i=>B([r[0]+160+i*w+10,r[1]+30,r[0]+160+(i+1)*w-10,r[3]-230],420,500,M("#E3DDD3")));
+    B([r[0]+400,r[3]-330,r[0]+850,r[3]-220],500,800,M(C.taupe));B([r[2]-850,r[3]-330,r[2]-400,r[3]-220],500,800,M(C.cognac))},
+  chair:f=>{const r=f.r,mt=mat(f.c),big=f.h>840;legs(r,big?250:430,mat("black"));
     B([r[0]+20,r[1]+20,r[2]-20,r[3]-20],big?250:430,big?430:470,mt);B(backSide(r,f.face,big?150:60),big?250:470,f.h,mt);
     if(big){const v=(f.face==="s"||f.face==="n");B(v?[r[0],r[1],r[0]+110,r[3]]:[r[0],r[1],r[2],r[1]+110],250,620,mt);B(v?[r[2]-110,r[1],r[2],r[3]]:[r[0],r[3]-110,r[2],r[3]],250,620,mt)}},
-  table:f=>{const r=f.r;B(r,f.h-30,f.h,mat(f.c));legs(r,f.h-30,mat(f.room==="liv"&&f.h<500?"oakD":"oakD"))},
-  bed:f=>{const r=f.r;B([r[0],r[1],r[2]-80,r[3]],80,300,mat("oak"));B([r[0]+30,r[1]+30,r[2]-110,r[3]-30],300,500,M("#F4F1EA"));
-    B([r[0]+10,r[1]+10,r[2]-620,r[3]-10],470,540,M(C.linen));B([r[0]+10,r[1]+10,r[0]+450,r[3]-10],540,560,M(C.sageD));
-    B([r[2]-80,r[1]-40,r[2],r[3]+40],0,1100,M(C.greige));
+  table:f=>{const r=f.r;B(r,f.h-30,f.h,mat(f.c));legs(r,f.h-30,mat("black"))},
+  bed:f=>{const r=f.r;B([r[0],r[1],r[2]-80,r[3]],80,300,mat(f.c));B([r[0]+30,r[1]+30,r[2]-110,r[3]-30],300,500,M("#F4F1EA"));
+    B([r[0]+10,r[1]+10,r[2]-620,r[3]-10],470,540,M("#E9E5DE"));B([r[0]+10,r[1]+10,r[0]+450,r[3]-10],540,560,M(C.taupe));
+    B([r[2]-80,r[1]-40,r[2],r[3]+40],0,1100,M(C.boucle));
     [[r[1]+110,(r[1]+r[3])/2-30],[(r[1]+r[3])/2+30,r[3]-110]].forEach(([a,b])=>B([r[2]-560,a,r[2]-130,b],500,640,M("#FBFAF6")))},
   wardrobe:f=>{const r=f.r;B(r,0,f.h,mat(f.c));const v=r[2]-r[0]<r[3]-r[1];
-    if(!v){const n=Math.round((r[2]-r[0])/830);for(let i=1;i<n;i++){const x=r[0]+i*(r[2]-r[0])/n;B([x-4,r[1]-3,x+4,r[1]],20,f.h-20,M(C.greige))}}
-    else{B([r[2],r[1]+(r[3]-r[1])/2-4,r[2]+3,r[1]+(r[3]-r[1])/2+4],20,f.h-20,M(C.greige))}},
-  shelf:f=>{const r=f.r,mt=mat(f.c);B([r[0],r[1],r[2],r[1]+18],0,f.h,M(C.white));for(let z=0;z<=f.h;z+=f.h/5)B([r[0],r[1],r[2],r[3]],Math.min(z,f.h-22),Math.min(z,f.h-22)+22,mt);
-    for(let x=r[0];x<=r[2]+1;x+=(r[2]-r[0])/5)B([Math.min(x,r[2]-22),r[1],Math.min(x,r[2]-22)+22,r[3]],0,f.h,mt);
-    [[4800,450,800],[5250,850,300],[5700,1250,700],[6050,450,250]].forEach(([x,z,w])=>B([x,r[1]+40,x+w*.5,r[3]-60],z+22,z+22+Math.min(260,w*.6),M([C.sage,C.clay,C.linen,C.graphite][(x/50)%4|0])))},
+    if(!v){const n=Math.round((r[2]-r[0])/830);for(let i=1;i<n;i++){const x=r[0]+i*(r[2]-r[0])/n;B([x-4,r[1]-3,x+4,r[1]],20,f.h-20,M("#CFCAC2"))}}
+    else{B([r[2],r[1]+(r[3]-r[1])/2-4,r[2]+3,r[1]+(r[3]-r[1])/2+4],20,f.h-20,M("#CFCAC2"))}},
+  shelf:f=>{const r=f.r,mt=mat(f.c);B([r[0],r[1],r[2],r[1]+18],0,f.h,M(C.wall));for(let z=0;z<=f.h;z+=f.h/5)B([r[0],r[1],r[2],r[3]],Math.min(z,f.h-22),Math.min(z,f.h-22)+22,mt);
+    for(let x=r[0];x<=r[2]+1;x+=(r[2]-r[0])/5)B([Math.min(x,r[2]-22),r[1],Math.min(x,r[2]-22)+22,r[3]],0,f.h,M(C.black));
+    [[4800,450,800],[5250,850,300],[5700,1250,700],[6050,450,250]].forEach(([x,z,w])=>B([x,r[1]+40,x+w*.5,r[3]-60],z+22,z+22+Math.min(260,w*.6),M([C.taupe,C.cognac,C.boucle,C.black][(x/50)%4|0])))},
   box:f=>B(f.r,f.z0||0,(f.z0||0)+f.h,mat(f.c)),
   tv:f=>B(f.r,f.z0,f.z0+f.h,M("#1C1D1F",{roughness:.3,metalness:.2})),
-  base:f=>{const r=f.r;B([r[0]+60,r[1],r[2],r[3]],0,100,M(C.graphite));B([r[0],r[1],r[2],r[3]],100,f.h-40,mat(f.c));B([r[0]-20,r[1],r[2],r[3]],f.h-40,f.h,mat("oak"))},
+  base:f=>{const r=f.r;B([r[0]+60,r[1],r[2],r[3]],0,100,M(C.black));B([r[0],r[1],r[2],r[3]],100,f.h-40,mat(f.c));B([r[0]-20,r[1],r[2],r[3]],f.h-40,f.h,mat("quartz"))},
   pantry:f=>{const r=f.r;B(r,0,f.h,mat(f.c));B([r[2],r[1]+40,r[2]+5,r[3]-40],800,1400,M("#202123",{roughness:.2}));B([r[2],r[1]+40,r[2]+5,r[3]-40],1450,1800,M("#202123",{roughness:.2}))},
-  bench:f=>{const r=f.r;B(r,0,f.h-40,mat(f.c));B(r,f.h-40,f.h,M(C.linen))},
+  bench:f=>{const r=f.r;B(r,0,f.h-40,mat(f.c));B(r,f.h-40,f.h,M(C.boucle))},
   sinkTop:f=>B(f.r,f.z0,f.z0+f.h,M(C.steel,{metalness:.7,roughness:.3})),
   hob:f=>B(f.r,f.z0,f.z0+f.h,M("#151618",{roughness:.15})),
-  mirror:f=>B(f.r,f.z0,f.z0+f.h,M("#CFD8DC",{metalness:.9,roughness:.08})),
+  mirror:f=>B(f.r,f.z0,f.z0+f.h,M(/бронза/.test(f.n)?"#B3A595":"#D3DBDE",{metalness:.3,roughness:.12})),
   tub:f=>{const r=f.r;B(r,0,f.h,M("#FAFAF8",{roughness:.3}));B([r[0]+80,r[1]+80,r[2]-80,r[3]-80],f.h-4,f.h+1,M("#DCE7EA",{roughness:.1}))},
-  wc:f=>{const r=f.r;B([r[0]+60,r[1]+30,r[2]-80,r[3]-30],380,420,M("#FAFAF8",{roughness:.3}));B([r[0]+100,r[1]+60,r[2]-80,r[3]-60],200,380,M("#FAFAF8",{roughness:.3}));B([r[2]-30,r[1]-60,r[2],r[3]+60],0,1150,M(C.stone))},
+  wc:f=>{const r=f.r;B([r[0]+60,r[1]+30,r[2]-80,r[3]-30],380,420,M("#FAFAF8",{roughness:.3}));B([r[0]+100,r[1]+60,r[2]-80,r[3]-60],200,380,M("#FAFAF8",{roughness:.3}));B([r[2]-30,r[1]-60,r[2],r[3]+60],0,1150,M(C.micro))},
   washer:f=>{const r=f.r;B(r,0,f.h,M("#F7F7F5",{roughness:.4}));const me=Cyl((r[0]+r[2])/2,r[1]+5,150,0,1,M("#9AA4AA",{metalness:.5,roughness:.2}));me.rotation.x=Math.PI/2;me.scale.y=.01;me.position.y=m(450)},
   vanity:f=>B(f.r,0,f.h,mat(f.c)),
   counter:f=>B(f.r,f.z0,f.z0+f.h,mat(f.c)),
   bowl:f=>Cyl((f.r[0]+f.r[2])/2,(f.r[1]+f.r[3])/2,170,f.z0,f.z0+f.h,M("#FAFAF8",{roughness:.3}),null,190),
-  lamp:f=>{const x=(f.r[0]+f.r[2])/2,y=(f.r[1]+f.r[3])/2;Cyl(x,y,140,0,25,M(C.graphite));Cyl(x,y,12,25,f.h-250,M(C.graphite));const lm=M("#EFE6D4",{emissive:col("#FFD9A0"),emissiveIntensity:0});lampMats.push(lm);Cyl(x,y,200,f.h-250,f.h,lm,null,150)},
-  plant:f=>{const x=(f.r[0]+f.r[2])/2,y=(f.r[1]+f.r[3])/2;Cyl(x,y,170,0,420,M(C.terr),null,190);const s=new THREE.Mesh(new THREE.IcosahedronGeometry(m(330),1),M(C.green,{flatShading:true}));const[px,pz]=P(x,y);s.position.set(px,m(820),pz);s.scale.y=1.4;s.castShadow=true;G.furn.add(s)},
-  curtain:f=>{const r=f.r;[[r[1],r[1]+380],[r[3]-380,r[3]]].forEach(([a,b])=>B([r[0],a,r[2],b],40,f.h,mat(f.c)));B([r[0],r[1]-80,r[2]+20,r[3]+80],f.h,f.h+30,M(C.graphite))}};
+  lamp:f=>{const x=(f.r[0]+f.r[2])/2,y=(f.r[1]+f.r[3])/2;Cyl(x,y,140,0,25,M(C.black));Cyl(x,y,12,25,f.h-250,M(C.black));const lm=M("#EFE6D4",{emissive:col("#FFD9A0"),emissiveIntensity:0});lampMats.push(lm);Cyl(x,y,200,f.h-250,f.h,lm,null,150)},
+  plant:f=>{const x=(f.r[0]+f.r[2])/2,y=(f.r[1]+f.r[3])/2;Cyl(x,y,170,0,420,M(C.micro),null,190);const s=new THREE.Mesh(new THREE.IcosahedronGeometry(m(330),1),M(C.green,{flatShading:true}));const[px,pz]=P(x,y);s.position.set(px,m(820),pz);s.scale.y=1.4;s.castShadow=true;G.furn.add(s)},
+  curtain:f=>{const r=f.r;[[r[1],r[1]+380],[r[3]-380,r[3]]].forEach(([a,b])=>B([r[0],a,r[2],b],40,f.h,mat(f.c)));B([r[0],r[1]-80,r[2]+20,r[3]+80],f.h,f.h+30,M(C.black))}};
 K.F.forEach(f=>(build[f.k]||build.box)(f));
-/* светильники */
-const fixMat=M("#FFFFFF",{emissive:col("#FFE7C2"),emissiveIntensity:.15,roughness:.4});
-const stripMat=M("#FFF3DE",{emissive:col("#FFC977"),emissiveIntensity:.2});
-const pls=[];
-K.L.forEach(l=>{
-  if(l.t==="spot")Cyl(l.x,l.y,55,H-12,H,fixMat,G.lights);
-  else if(l.t==="strip"){const r=l.r;B([r[0],r[1],Math.max(r[2],r[0]+15),Math.max(r[3],r[1]+15)],l.h-10,l.h+5,stripMat,G.lights,1)}
-  else if(l.t==="pend"){Cyl(l.x,l.y,4,l.h+180,H,M(C.graphite),G.lights);const pm=M(C.clay,{emissive:col("#FFC680"),emissiveIntensity:.1});lampMats.push(pm);Cyl(l.x,l.y,210,l.h,l.h+180,pm,G.lights,70)}
-  else if(l.t==="wall"||l.t==="desk"){const s=new THREE.Mesh(new THREE.SphereGeometry(m(60),16,12),fixMat);const[px,pz]=P(l.x,l.y);s.position.set(px,m(l.h),pz);G.lights.add(s)}});
+/* светильники: у каждого свой материал, яркость задаёт сценарий */
+const em=k=>new THREE.MeshStandardMaterial({color:col("#FFFFFF"),emissive:col(k>=3900?"#FFF1DC":k>=2900?"#FFE2B8":"#FFD29A"),emissiveIntensity:0,roughness:.4});
+const blk=M(C.black,{roughness:.5});
+const own=l=>!l.amb&&l.lm>=300&&l.t!=="tspot"&&l.t!=="rail"&&!(l.sc&&l.sc.eve===0)&&!/^b\d/.test(l.room);
+const LV=K.L.map(l=>{const e=em(l.k);let mats=[e];
+  if(l.t==="rail"){B(l.r,H-10,H,blk,G.lights,1);mats=[]}
+  else if(l.t==="lin"){const r=l.r,v=r[2]-r[0]<r[3]-r[1];B(v?[r[0]+5,r[1],r[2]-5,r[3]]:[r[0],r[1]+5,r[2],r[3]-5],H-22,H-8,e,G.lights,1)}
+  else if(l.t==="tspot"){Cyl(l.x,l.y,32,H-170,H-10,blk,G.lights);Cyl(l.x,l.y,26,H-176,H-170,e,G.lights)}
+  else if(l.t==="spot")Cyl(l.x,l.y,45,H-12,H,e,G.lights);
+  else if(l.t==="strip"){const r=l.r;B([r[0],r[1],Math.max(r[2],r[0]+15),Math.max(r[3],r[1]+15)],l.h-10,l.h+5,e,G.lights,1)}
+  else if(l.t==="pend"){const rad=l.rad||110;Cyl(l.x,l.y,3,l.h+220,H,blk,G.lights);Cyl(l.x,l.y,rad,l.h+10,l.h+220,blk,G.lights);Cyl(l.x,l.y,rad-12,l.h,l.h+10,e,G.lights)}
+  else if(l.t==="floor")mats=lampMats;
+  else{const sp=new THREE.Mesh(new THREE.SphereGeometry(m(60),16,12),e);const[px,pz]=P(l.x,l.y);sp.position.set(px,m(l.h),pz);G.lights.add(sp)}
+  return{l,mats}});
 /* свет сцены */
 const hemi=new THREE.HemisphereLight(0xffffff,0xb9b2a5,.75);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xfff2e0,.9);sun.position.set(-8,14,6);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
 Object.assign(sun.shadow.camera,{left:-9,right:9,top:7,bottom:-7,near:1,far:40});sun.shadow.bias=-.0005;scene.add(sun);
 const amb=new THREE.AmbientLight(0xffffff,.15);scene.add(amb);
-/* вечер: одна точка на комнату по общему свету и отдельные точки у торшера, подвеса, бра */
-K.ROOMS.filter(q=>!q.balc).forEach(q=>{const lm=K.lux(q.id).lm;const r=q.r;const p=new THREE.PointLight(0xffd8a8,0,Math.max(r[2]-r[0],r[3]-r[1])/1000*1.4,1.6);
-  const[x,z]=P((r[0]+r[2])/2,(r[1]+r[3])/2);p.position.set(x,m(H-300),z);p.userData.i=lm/2600;scene.add(p);pls.push(p)});
-K.L.filter(l=>["floor","pend","desk","wall"].includes(l.t)&&!/^b/.test(l.room)).forEach(l=>{const p=new THREE.PointLight(l.k>3500?0xfff1df:0xffc98a,0,2.2,2);const[x,z]=P(l.x,l.y);
-  p.position.set(x,m(l.h-(l.t==="pend"?60:0)),z);if(l.t==="wall")p.position.x+=(l.x>8000&&l.room==="bed")?-.15:0;p.userData.i=l.lm/500;scene.add(p);pls.push(p)});
-function evening(on){hemi.intensity=on?.06:.75;sun.intensity=on?0:.9;amb.intensity=on?.05:.15;
-  pls.forEach(p=>p.intensity=on?p.userData.i:0);fixMat.emissiveIntensity=on?2.2:.15;stripMat.emissiveIntensity=on?3:.2;lampMats.forEach(x=>x.emissiveIntensity=on?1.4:0);
-  scene.background=col(on?"#1A1C22":getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#DCE2DF");renderer.toneMappingExposure=on?1.1:1}
+/* одна точка на комнату за общий свет и мелкие источники, свои точки у лент, торшера, подвесов, бра */
+const roomPL=K.ROOMS.filter(q=>!q.balc).map(q=>{const r=q.r;const p=new THREE.PointLight(0xffd8a8,0,Math.max(r[2]-r[0],r[3]-r[1])/1000*1.4,1.6);
+  const[x,z]=P((r[0]+r[2])/2,(r[1]+r[3])/2);p.position.set(x,m(H-300),z);scene.add(p);return{q,p}});
+const accPL=K.L.filter(own).map(l=>{const q=K.ROOMS.find(o=>o.id===l.room).r,cx=(q[0]+q[2])/2,cy=(q[1]+q[3])/2;
+  let x0=l.x,y0=l.y;if(l.r){x0=(l.r[0]+l.r[2])/2;y0=(l.r[1]+l.r[3])/2;const d=Math.hypot(cx-x0,cy-y0)||1;x0+=(cx-x0)/d*250;y0+=(cy-y0)/d*250}
+  const p=new THREE.PointLight(l.k>3500?0xfff1df:0xffc98a,0,2.2,2);const[x,z]=P(x0,y0);p.position.set(x,m(l.h-(l.t==="pend"?60:0)),z);scene.add(p);return{l,p}});
+function setScene(s){const day=s==="day";
+  hemi.intensity=day?.75:s==="night"?.02:.06;sun.intensity=day?.9:0;amb.intensity=day?.15:.04;
+  LV.forEach(o=>{const v=K.lev(o.l,s);o.mats.forEach(x=>x.emissiveIntensity=v*(o.l.t==="strip"?3:o.l.t==="floor"?1.4:2.4))});
+  roomPL.forEach(({q,p})=>{p.intensity=K.L.filter(l=>l.room===q.id&&!own(l)).reduce((a,l)=>a+l.lm*(l.uf||1)*K.lev(l,s),0)/2600*1.25});
+  accPL.forEach(({l,p})=>p.intensity=l.lm/500*K.lev(l,s));
+  scene.background=col(day?(getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#DCE2DF"):"#1A1C22");renderer.toneMappingExposure=day?1:1.1;
+  document.querySelectorAll("#scn button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s===s))}
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
 /* виды */
 const V={
@@ -1510,7 +1554,8 @@ document.querySelectorAll("#views button").forEach(b=>b.onclick=()=>go(b.textCon
 function setWH(v){G.walls.scale.y=v/H;$("who").textContent=v+" мм"}
 $("wh").oninput=e=>setWH(+e.target.value);
 $("cFurn").onchange=e=>{G.furn.visible=e.target.checked};
-$("cEve").onchange=e=>evening(e.target.checked);
+$("scn").innerHTML=K.SCN.map(x=>`<button type="button" data-s="${x.id}" title="${x.d}">${x.n}</button>`).join("");
+document.querySelectorAll("#scn button").forEach(b=>b.onclick=()=>setScene(b.dataset.s));
 $("cTags").onchange=e=>{$("tags").hidden=!e.target.checked};
 $("toggle").onclick=()=>{const p=$("panel");p.classList.toggle("min");$("toggle").textContent=p.classList.contains("min")?"Развернуть":"Свернуть"};
 if(matchMedia("(max-width:640px)").matches){$("panel").classList.add("min");$("toggle").textContent="Развернуть"}
@@ -1522,7 +1567,7 @@ function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cam.asp
   if(!anim&&!resize.done){const v=w<640?V["Телефон"]:V["Сверху"];cam.position.set(...v.p);ctl.target.set(...v.t);resize.done=1}}
 addEventListener("resize",resize);resize();
 document.querySelector("#views button").setAttribute("aria-pressed","true");
-evening(false);
+setScene("day");
 const tmp=new THREE.Vector3();
 (function loop(t){requestAnimationFrame(loop);
   if(anim){const k=Math.min(1,(t-anim.t0)/900),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam.position.lerpVectors(anim.p0,anim.p1,e);ctl.target.lerpVectors(anim.q0,anim.q1,e);if(k>=1)anim=null}
