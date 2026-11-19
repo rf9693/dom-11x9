@@ -70,6 +70,7 @@ button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid va
 .section-svg{width:100%;height:auto;display:block}
 table{border-collapse:collapse;width:100%;font-size:13.5px}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td a,#sel a,#tip a{color:var(--accent,inherit);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
 th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
 td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 .tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
@@ -159,7 +160,7 @@ ul.plain li{margin:3px 0}
 
   <!-- ===== РАСТЕНИЯ ===== -->
   <section data-panel="plants" hidden>
-    <p>Все растения выдерживают зиму зоны USDA 5а (до −29 °C) и продаются в питомниках Беларуси. Плодовые — в основном белорусской селекции. На участке будут дети и собаки, поэтому ядовитые растения в план не включены: нет тиса, бересклета, волчеягодника, ландыша, наперстянки, аконита, клематиса, можжевельника казацкого и туи. Вдоль проездов растут колючие и плотные кусты, через которые собака не пролезет. Коды совпадают с подписями на генплане, количество посчитано по чертежу. Сорта плодовых перед покупкой сверьте с наличием в питомнике.</p>
+    <p>Все растения выдерживают зиму зоны USDA 5а (до −29 °C) и продаются в питомниках Беларуси. Плодовые — проверенные сорта, районированные для средней полосы; у каждого в таблице ссылка на статью о сорте и о виде. На участке будут дети и собаки, поэтому ядовитые растения в план не включены: нет тиса, бересклета, волчеягодника, ландыша, наперстянки, аконита, клематиса, можжевельника казацкого и туи. Вдоль проездов растут колючие и плотные кусты, через которые собака не пролезет. Коды совпадают с подписями на генплане, количество посчитано по чертежу. Сорта плодовых перед покупкой сверьте с наличием в питомнике.</p>
     <div class="tbl"><table id="plantTable"></table></div>
     <h2 style="margin-top:22px">Цветники</h2>
     <div class="tbl"><table id="bedTable"></table></div>
@@ -326,16 +327,16 @@ const BEDS_FL=[
 const PL={
  'Д1':{n:'Клён остролистный «Globosum»',l:'Acer platanoides',h:'4–6 м, шар Ø4 м',t:'tree',r:2.0,note:'Акцент перед южным фасадом, крону не нужно формировать'},
  'Д3':{n:'Рябина обыкновенная',l:'Sorbus aucuparia',h:'6–8 м',t:'tree',r:2.0,note:'После обеда даёт тень детской площадке, ягоды для птиц'},
- 'П1':{n:'Яблоня «Антоновка обыкновенная»',l:'Malus domestica',h:'4–5 м (подвой 54-118)',t:'fruit',r:2.1,note:'Зимний сорт, очень зимостойкая'},
- 'П2':{n:'Яблоня «Имант»',l:'Malus domestica',h:'3,5–4 м (подвой 54-118)',t:'fruit',r:2.0,note:'Белорусская селекция, иммунна к парше'},
- 'П3':{n:'Яблоня «Белорусское сладкое»',l:'Malus domestica',h:'3,5–4 м (подвой 54-118)',t:'fruit',r:2.0,note:'Белорусская селекция'},
- 'П4':{n:'Яблоня «Память Коваленко»',l:'Malus domestica',h:'3,5–4 м (подвой 54-118)',t:'fruit',r:2.0,note:'Белорусская селекция. Четыре сорта яблонь опыляют друг друга'},
- 'П5':{n:'Груша «Чижовская»',l:'Pyrus communis',h:'3–4 м',t:'fruit',r:1.9,note:'Позднелетняя, частично самоплодная'},
- 'П6':{n:'Груша «Просто Мария»',l:'Pyrus communis',h:'3–4 м',t:'fruit',r:1.9,note:'Белорусская селекция, опылитель — «Чижовская»'},
- 'П7':{n:'Слива «Венгерка белорусская»',l:'Prunus domestica',h:'3–3,5 м',t:'fruit',r:1.8,note:'Белорусская селекция'},
- 'П8':{n:'Слива «Кромань»',l:'Prunus domestica',h:'3–3,5 м',t:'fruit',r:1.8,note:'Белорусская селекция, вторая слива для опыления'},
- 'П9':{n:'Вишня «Вянок»',l:'Prunus cerasus',h:'2,5–3 м',t:'fruit',r:1.6,note:'Самоплодная, белорусская селекция'},
- 'П10':{n:'Вишня «Ласуха»',l:'Prunus cerasus',h:'2,5–3 м',t:'fruit',r:1.6,note:'Белорусская селекция, вторая вишня для лучшей завязи'},
+ 'П1':{n:'Яблоня «Антоновка обыкновенная»',l:'Malus domestica',h:'4–5 м (подвой 54-118)',t:'fruit',r:2.1,f:'apple',sea:'зимний',sn:'Яблоня домашняя',su:'https://ru.wikipedia.org/wiki/Яблоня_домашняя',u:'https://ru.wikipedia.org/wiki/Антоновка_(сортотип_яблони)',note:'Старинный зимний сорт, зимостойкость относительно высокая. В прохладном подвале плоды лежат до января и дольше'},
+ 'П2':{n:'Яблоня «Папировка (Налив белый)»',l:'Malus domestica',h:'3,5–4 м (подвой 54-118)',t:'fruit',r:2.0,f:'apple',sea:'раннелетний',sn:'Яблоня домашняя',su:'https://ru.wikipedia.org/wiki/Яблоня_домашняя',u:'https://ru.wikipedia.org/wiki/Папировка',note:'Старинный зимостойкий сорт. Плоды зеленовато-жёлтые, едят сразу с дерева; кожица тонкая, при ударах темнеет'},
+ 'П3':{n:'Яблоня «Мелба»',l:'Malus domestica',h:'3,5–4 м (подвой 54-118)',t:'fruit',r:2.0,f:'apple',sea:'летний, 2-я декада августа',sn:'Яблоня домашняя',su:'https://ru.wikipedia.org/wiki/Яблоня_домашняя',u:'https://ru.wikipedia.org/wiki/Мелба',note:'Скороплодная: на карликовом подвое плодоносит с 3-го года. Зимостойкость умеренная, поэтому место у тёплой стены сада'},
+ 'П4':{n:'Яблоня «Осеннее полосатое (Штрейфлинг)»',l:'Malus domestica',h:'4–5 м (подвой 54-118)',t:'fruit',r:2.1,f:'apple',sea:'осенний, август–сентябрь',sn:'Яблоня домашняя',su:'https://ru.wikipedia.org/wiki/Яблоня_домашняя',u:'https://ru.wikipedia.org/wiki/Осеннее_полосатое',note:'Сильнорослое, крона шаровидная. Самобесплодное: нужен опылитель, подходит Антоновка (П1)'},
+ 'П5':{n:'Груша «Чижовская»',l:'Pyrus communis',h:'3–4 м',t:'fruit',r:1.9,f:'pear',sea:'позднелетний',sn:'Груша обыкновенная',su:'https://ru.wikipedia.org/wiki/Груша_обыкновенная',u:'https://ru.wikipedia.org/wiki/Чижовская_(сорт_груши)',note:'Практически самоплодная, высокая зимостойкость. Плодоносит с 3–4-го года после прививки'},
+ 'П6':{n:'Груша «Памяти Яковлева»',l:'Pyrus communis',h:'2,5–3 м',t:'fruit',r:1.7,f:'pear',sea:'раннеосенний',sn:'Груша обыкновенная',su:'https://ru.wikipedia.org/wiki/Груша_обыкновенная',u:'https://ru.wikipedia.org/wiki/Памяти_Яковлева',note:'Самоплодная, скороплодная, устойчива к парше. Дерево небольшое'},
+ 'П7':{n:'Слива «Венгерка Московская»',l:'Prunus domestica',h:'3–3,5 м',t:'fruit',r:1.8,f:'plum',sea:'позднелетний',sn:'Слива домашняя',su:'https://ru.wikipedia.org/wiki/Слива_домашняя',u:'https://ru.wikipedia.org/wiki/Слива_домашняя_%27Венгерка_Московская%27',note:'Самоплодная, скороплодная, плодоносит почти каждый год. Крона округлая, раскидистая'},
+ 'П8':{n:'Слива «Утро»',l:'Prunus domestica',h:'3–3,5 м',t:'fruit',r:1.8,f:'plum',sea:'среднеранний, 7–14 августа',sn:'Слива домашняя',su:'https://ru.wikipedia.org/wiki/Слива_домашняя',u:'https://ru.wikipedia.org/wiki/Слива_домашняя_%27Утро%27',note:'Самоплодная, относительно зимостойкая. Косточка отделяется сухо'},
+ 'П9':{n:'Вишня «Владимирка»',l:'Prunus cerasus',h:'2,5–3 м, кустовидная',t:'fruit',r:1.6,f:'cherry',sea:'летний, июль',sn:'Вишня обыкновенная',su:'https://ru.wikipedia.org/wiki/Вишня_обыкновенная',u:'https://ru.wikipedia.org/wiki/Владимирка_(вишня)',note:'Кисло-сладкая, тёмно-красная. Сама опыляется плохо: нужен другой сорт вишни рядом, совместимость с П10 уточнить в питомнике'},
+ 'П10':{n:'Вишня «Морель (Morello)»',l:'Prunus cerasus',h:'2,5–3 м',t:'fruit',r:1.6,f:'cherry',sea:'поздний',sn:'Вишня обыкновенная',su:'https://ru.wikipedia.org/wiki/Вишня_обыкновенная',u:'https://en.wikipedia.org/wiki/Morello_cherry',note:'Обычно самоплодная и может опылять другие вишни. Холодостойкая, не любит жару и засуху, мирится с полутенью. Статья на английском'},
  'Х1':{n:'Ель обыкновенная, стриженая изгородь',l:'Picea abies',h:'держать стрижкой 1,8–2 м',t:'hedge',r:0.5,note:'Закрывает патио и террасу от пожарного проезда, шаг 0,7 м. Колючая и не ядовитая'},
  'Х2':{n:'Сосна горная «Mops»',l:'Pinus mugo',h:'0,8–1,2 м',t:'con',r:0.8,note:'У калитки'},
  'Х3':{n:'Можжевельник обыкновенный «Repanda»',l:'Juniperus communis',h:'0,3–0,5 м, Ø2 м',t:'con',r:0.9,note:'Почвопокровный, у калитки. Казацкий можжевельник ядовит, его не берём'},
@@ -531,7 +532,7 @@ BUILD.forEach(b=>{const fill=b.kind==='house'?'var(--pl-house)':b.kind==='hoz'?'
 /* посадки */
 const plg=G.plants;
 const tCol={tree:'var(--pl-tree)',con:'var(--pl-con)',fruit:'var(--pl-fruit)',shrub:'var(--pl-shrub)',hedge:'var(--pl-con)',berry:'var(--pl-berry)',vine:'var(--pl-flower)'};
-PLANTS.forEach(p=>{const d=PL[p.c],q=P(p.x,p.y),r=d.r*S;const g=tipAttr(el('g',{},plg),`${p.c} · ${d.n}`,`${d.l}. ${d.h}. ${d.note}.`);
+PLANTS.forEach(p=>{const d=PL[p.c],q=P(p.x,p.y),r=d.r*S;const g=tipAttr(el('g',{},plg),`${p.c} · ${d.n}`,d.u?`${d.sn} (${d.l}). Сорт ${d.sea}, ${d.h}. ${d.note}. <a href="${d.u}" target="_blank" rel="noopener">Сорт в Википедии ↗</a>`:`${d.l}. ${d.h}. ${d.note}.`);
  if(d.t==='con'||d.t==='hedge'){let path='';const n=d.t==='hedge'?8:12;for(let k=0;k<n*2;k++){const a=k/(n*2)*Math.PI*2,rr=k%2?r*0.72:r;path+=(k?'L':'M')+(q[0]+rr*Math.cos(a)).toFixed(1)+' '+(q[1]+rr*Math.sin(a)).toFixed(1);}el('path',{d:path+'z',fill:tCol[d.t],stroke:'var(--pl-tree-s)','stroke-width':.8,opacity:.92},g);}
  else if(d.t==='tree'||d.t==='fruit'){el('circle',{cx:q[0],cy:q[1],r,fill:tCol[d.t],opacity:.55,stroke:'var(--pl-tree-s)','stroke-width':1.2,'stroke-dasharray':d.t==='fruit'?'3 2':'none'},g);el('circle',{cx:q[0],cy:q[1],r:2.5,fill:'var(--pl-tree-s)'},g);}
  else if(d.t==='vine'){el('path',{d:`M${q[0]-r} ${q[1]}q${r/2} ${-r} ${r} 0t${r} 0`,stroke:tCol.vine,'stroke-width':2.2,fill:'none'},g);el('circle',{cx:q[0],cy:q[1],r:2,fill:'var(--pl-berry)'},g);}
@@ -614,8 +615,8 @@ svg.addEventListener('click',e=>{const t=e.target.closest('[data-tip]');if(t){se
 /* ---------- таблицы ---------- */
 const nf=(v,d)=>v.toFixed(d==null?1:d).replace('.',',');
 (function(){const t=document.getElementById('plantTable');const cats=[['Деревья декоративные','Д'],['Плодовые','П'],['Хвойные','Х'],['Кустарники','К'],['Ягодные','Я'],['Лианы','Л']];
- let h='<thead><tr><th>Код</th><th>Растение</th><th>Латынь</th><th>Размер</th><th class="num">Шт.</th><th>Зачем и где</th></tr></thead><tbody>';
- cats.forEach(([cn,pre])=>{h+=`<tr><th colspan="6" style="padding-top:14px">${cn}</th></tr>`;Object.keys(PL).filter(k=>k[0]===pre&&PL[k].q).forEach(k=>{const d=PL[k];h+=`<tr><td><span class="code">${k}</span></td><td><b>${d.n}</b></td><td><i>${d.l}</i></td><td>${d.h}</td><td class="num">${k==='Я3'?nf((PL[k].q-1)*0.6,0)+' м ряда':k==='Х1'?d.q+' (≈'+nf((PL[k].q-1)*0.7,0)+' м)':d.q}</td><td>${d.note}</td></tr>`;});});
+ let h='<thead><tr><th>Код</th><th>Растение</th><th>Вид / латынь</th><th>Размер</th><th class="num">Шт.</th><th>Зачем и где</th></tr></thead><tbody>';
+ cats.forEach(([cn,pre])=>{h+=`<tr><th colspan="6" style="padding-top:14px">${cn}</th></tr>`;Object.keys(PL).filter(k=>k[0]===pre&&PL[k].q).forEach(k=>{const d=PL[k];h+=`<tr><td><span class="code">${k}</span></td><td>${d.u?`<b><a href="${d.u}" target="_blank" rel="noopener">${d.n}</a></b><br><span class="muted">сорт ${d.sea}</span>`:`<b>${d.n}</b>`}</td><td>${d.su?`<a href="${d.su}" target="_blank" rel="noopener">${d.sn}</a><br><i>${d.l}</i>`:`<i>${d.l}</i>`}</td><td>${d.h}</td><td class="num">${k==='Я3'?nf((PL[k].q-1)*0.6,0)+' м ряда':k==='Х1'?d.q+' (≈'+nf((PL[k].q-1)*0.7,0)+' м)':d.q}</td><td>${d.note}</td></tr>`;});});
  t.innerHTML=h+'</tbody>';
  let b='<thead><tr><th>Код</th><th>Цветник</th><th class="num">Площадь</th><th>Состав</th></tr></thead><tbody>';BEDS_FL.forEach(x=>{b+=`<tr><td><span class="code">${x.code}</span></td><td><b>${x.name}</b></td><td class="num">${nf(Math.abs(sArea(x.poly)))} м²</td><td>${x.sp}</td></tr>`;});document.getElementById('bedTable').innerHTML=b+'</tbody>';})();
 (function(){/* нормы */
@@ -787,9 +788,28 @@ function init(){
  gBox(D.GATE.a1,D.BN-0.03,D.GATE.a2,D.BN+0.03,0.05,1.85,M('#2d3236'));
  /* растения */
  const sph=new THREE.SphereGeometry(1,14,10),cone=new THREE.ConeGeometry(1,1,10),cyl=new THREE.CylinderGeometry(.1,.14,1,6);
- const hmap={'Д1':5,'Д3':6.5,'П1':4.5,'П2':4,'П3':4,'П4':4,'П5':4,'П6':4,'П7':3.6,'П8':3.6,'П9':3,'П10':3,'Х1':2,'Х2':1,'Х3':.5,'К1':1.7,'К2':.7,'К3':2.2,'К4':2.2,'К5':2.8,'К6':2.3,'Я1':1.3,'Я2':1.1,'Я3':1.5,'Я4':1.5,'Я5':1.4};
+ const hmap={'Д1':5,'Д3':6.5,'П1':4.5,'П2':4,'П3':4,'П4':4.5,'П5':4,'П6':3,'П7':3.4,'П8':3.4,'П9':2.8,'П10':2.8,'Х1':2,'Х2':1,'Х3':.5,'К1':1.7,'К2':.7,'К3':2.2,'К4':2.2,'К5':2.8,'К6':2.3,'Я1':1.3,'Я2':1.1,'Я3':1.5,'Я4':1.5,'Я5':1.4};
+ /* плодовые: форма кроны и цвет плодов по виду */
+ const FR={apple:{leaf:M('#5f9a3e'),fruit:['#c8442f','#d9c24a'],tr:.32,cz:.6,sx:1,sz:.38},
+  pear:{leaf:M('#4e8a3a'),fruit:['#d8c24a'],tr:.3,cz:.58,sx:.72,sz:.5},
+  plum:{leaf:M('#55893f'),fruit:['#4b3a78'],tr:.3,cz:.6,sx:.9,sz:.42},
+  cherry:{leaf:M('#4f8f3a'),fruit:['#8e1422'],tr:.22,cz:.55,sx:1,sz:.42}};
+ const fMat={},fSph=new THREE.SphereGeometry(1,8,6);
+ function fruitTree(p,d,h,r){const k=FR[d.f];
+  const stems=d.f==='cherry'?3:1;for(let i=0;i<stems;i++){const ox=stems>1?Math.cos(i*2.1)*.25:0,oy=stems>1?Math.sin(i*2.1)*.25:0;const tr=add(cyl,mats.trunk,p.x+ox,p.y+oy,h*k.tr);tr.scale.set(stems>1?.9:1.4,h*k.tr*2,stems>1?.9:1.4);}
+  const cz=h*k.cz,rx=r*k.sx,rz=h*k.sz;let crown;
+  if(d.f==='pear'){crown=add(new THREE.ConeGeometry(1,1,12),k.leaf,p.x,p.y,cz);crown.scale.set(rx,rz*1.5,rx);}
+  else{crown=add(sph,k.leaf,p.x,p.y,cz);crown.scale.set(rx,rz,rx);}
+  if(d.f==='apple'){const c2=add(sph,k.leaf,p.x+rx*.35,p.y-rx*.2,cz+rz*.25);c2.scale.set(rx*.6,rz*.6,rx*.6);}
+  const fs=d.f==='cherry'?.07:d.f==='plum'?.09:.12,n=d.f==='cherry'?22:16;
+  for(let i=0;i<n;i++){const col=k.fruit[i%k.fruit.length];fMat[col]=fMat[col]||new THREE.MeshStandardMaterial({color:col,roughness:.5});
+   const a=i*2.399,t=(i%5)/5*1.1-0.35;let px,py,pz;
+   if(d.f==='pear'){const zz=-0.45+(i%5)/5*0.7,w=(0.5-zz)*0.95;px=Math.cos(a)*rx*w;py=Math.sin(a)*rx*w;pz=cz+zz*rz*1.5;}
+   else{const cs=Math.cos(t);px=Math.cos(a)*rx*cs*0.97;py=Math.sin(a)*rx*cs*0.97;pz=cz+Math.sin(t)*rz*0.97;}
+   const o=add(fSph,fMat[col],p.x+px,p.y+py,pz,{noShadow:true});o.scale.setScalar(fs);}}
  D.PLANTS.forEach(p=>{const d=D.PL[p.c],h=hmap[p.c]||1,r=d.r;if(d.t==='vine')return;
-  if(d.t==='tree'||d.t==='fruit'){const tr=add(cyl,mats.trunk,p.x,p.y,h*0.25);tr.scale.set(1.3,h*0.5,1.3);const c=add(sph,d.t==='fruit'?mats.fruit:mats.tree,p.x,p.y,h*0.62);c.scale.set(r,h*0.42,r);}
+  if(d.t==='fruit'&&d.f){fruitTree(p,d,h,r);}
+  else if(d.t==='tree'||d.t==='fruit'){const tr=add(cyl,mats.trunk,p.x,p.y,h*0.25);tr.scale.set(1.3,h*0.5,1.3);const c=add(sph,d.t==='fruit'?mats.fruit:mats.tree,p.x,p.y,h*0.62);c.scale.set(r,h*0.42,r);}
   else if(d.t==='con'||d.t==='hedge'){if(p.c==='Х3'){const c=add(sph,mats.con,p.x,p.y,h*0.3);c.scale.set(r,h*0.5,r);}else if(p.c==='Х2'){const c=add(sph,mats.con,p.x,p.y,h*0.45);c.scale.set(r,h*0.55,r);}else if(p.c==='Х1'){const c=add(new THREE.BoxGeometry(1,1,1),mats.con,p.x,p.y,h/2);c.scale.set(0.8,h,0.8);}else{const c=add(cone,mats.con,p.x,p.y,h/2+0.3);c.scale.set(r,h,r);}}
   else{const c=add(sph,d.t==='berry'?mats.berry:(p.c==='К4'?M('#5b2f3a'):p.c==='К2'?M('#c9a23a'):p.c==='К1'?M('#d8e6b8'):mats.shrub),p.x,p.y,h*0.5);c.scale.set(r,h*0.5,r);}});
  /* лианы на опорах */
@@ -821,3 +841,16 @@ function init(){
  (function loop(){requestAnimationFrame(loop);ctr.update();renderer.render(scene,cam);})();
 }
 </script>
+<!--PNAV--><style id="pnav-css">
+#pnav{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:2147483000;display:flex;gap:2px;align-items:center;max-width:calc(100vw - 24px);overflow-x:auto;
+  padding:4px;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid rgba(0,0,0,.14);box-shadow:0 4px 16px rgba(0,0,0,.18);
+  font:500 13px/1.2 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);scrollbar-width:none}
+#pnav::-webkit-scrollbar{display:none}
+#pnav b{padding:7px 10px 7px 12px;color:#6b6b6b;font-weight:600;white-space:nowrap}
+#pnav a,#pnav span{padding:7px 12px;border-radius:999px;white-space:nowrap;text-decoration:none;color:#1f2a33}
+#pnav a:hover{background:rgba(0,0,0,.07)}
+#pnav span{background:#1f2a33;color:#fff}
+@media (max-width:640px){#pnav b{display:none}#pnav{font-size:12px}#pnav a,#pnav span{padding:7px 9px}}
+@media print{#pnav{display:none}}
+body{padding-bottom:60px}
+</style><nav id="pnav" aria-label="Страницы проекта"><b>Дом 11×9</b><a href="../">3D-модель</a><a href="../dom-11x9.html">План и проект</a><a href="../potolki-shtukaturka.html">Потолки</a><a href="../ventilyaciya.html">Вентиляция</a><a href="../kuhnya-chertezh.html">Кухня</a><span aria-current="page">Генплан участка</span></nav><!--/PNAV-->
