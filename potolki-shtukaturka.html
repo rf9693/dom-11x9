@@ -1,0 +1,555 @@
+<title>Потолки и штукатурка — дом 11×9</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Лист рабочей документации: слева чертёж (план или развёртка + узел), справа карточка этапа; ниже параметры и сводная ведомость */
+:root{
+  --bg:#F2F2F0;--paper:#FFFFFF;--ink:#212427;--muted:#6A6E72;--line:#DCDDDA;
+  --acc:#C7651F;--acc-soft:#F6E6D8;--blue:#3D6E8F;--frame:#8A8F93;--gkl:#E8E4DA;--box:#EFE6D4;--led:#E9A93A;--ok:#4D7A4F;
+  --f-disp:"Unbounded",system-ui,sans-serif;--f-body:"Manrope",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161819;--paper:#1F2224;--ink:#ECEDEB;--muted:#9DA1A5;--line:#33373A;
+  --acc:#F08A45;--acc-soft:#3A2A1E;--blue:#7FB2D3;--frame:#8E9599;--gkl:#34332F;--box:#3B352B;--led:#F2BC55;--ok:#86B888;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161819;--paper:#1F2224;--ink:#ECEDEB;--muted:#9DA1A5;--line:#33373A;
+  --acc:#F08A45;--acc-soft:#3A2A1E;--blue:#7FB2D3;--frame:#8E9599;--gkl:#34332F;--box:#3B352B;--led:#F2BC55;--ok:#86B888;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1{font:500 clamp(22px,3.2vw,34px)/1.15 var(--f-disp);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font:500 19px/1.25 var(--f-disp);margin:0;text-wrap:balance}
+h3{font:600 13px/1.3 var(--f-body);margin:0;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+p{margin:0}
+.mono,td.n,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.lead{color:var(--muted);max-width:78ch}
+a{color:var(--blue)}
+header{display:flex;flex-direction:column;gap:10px}
+.links{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+.seq{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.seq span{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:3px 8px}
+.seq span.on{border-color:var(--acc);color:var(--acc);font-weight:600}
+.seq i{color:var(--muted);font-style:normal}
+.bar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.seg{display:inline-flex;flex-wrap:wrap;max-width:100%;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper)}
+.seg button{font:500 14px var(--f-body);color:var(--ink);background:transparent;border:0;padding:7px 13px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button:focus-visible,.stp button:focus-visible,.nav button:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr)}}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.stp{display:flex;gap:4px;flex-wrap:wrap}
+.stp button{font:500 12px var(--f-mono);min-width:34px;height:30px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:4px;cursor:pointer}
+.stp button.done{background:var(--acc-soft);border-color:transparent}
+.stp button[aria-current="step"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.draw{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+.draw svg{display:block;width:100%;height:auto;min-width:520px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend b{display:inline-block;width:18px;height:10px;vertical-align:-1px;margin-right:5px;border-radius:2px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card .eyebrow{font:500 12px var(--f-mono);color:var(--acc);letter-spacing:.04em}
+.card ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.card ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.nav button{font:600 14px var(--f-body);padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.nav button.pri{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.nav button:disabled{opacity:.4;cursor:default}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+td.n{text-align:right;white-space:nowrap}
+.tbl{overflow-x:auto}
+.warn{border-left:3px solid var(--acc);padding:6px 10px;background:var(--acc-soft);border-radius:0 4px 4px 0;font-size:14px}
+.chk{border-left:3px solid var(--ok);padding:6px 10px;font-size:14px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv div{border:1px solid var(--line);border-radius:4px;padding:8px 10px;min-width:0}
+.kv small{display:block;color:var(--muted);font-size:12px}
+.kv span{font:500 17px var(--f-mono)}
+details.params{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 16px}
+details.params summary{cursor:pointer;font:500 16px var(--f-disp)}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 18px;margin-top:14px}
+.pg label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.pg input,.pg select{font:500 14px var(--f-mono);padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
+.pg fieldset{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pg legend{font:600 12px var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--ink);padding:0 4px}
+svg text{font-family:var(--f-mono)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Потолки ГКЛ и штукатурка стен</h1>
+  <p class="lead">Пошаговая инструкция для дома 11 × 9 по варианту Б из проекта: в каждой комнате короб из ГКЛ на 2650 мм, край короба повторяет контур с плана света, в нише по краю лента, в центре потолок на 2800 мм. Стены штукатурятся по маякам до монтажа потолка. Чертёж и все количества считаются по размерам комнат и параметрам внизу страницы.</p>
+  <div class="links"><a href="./">3D-модель дома</a><a href="dom-11x9.html">Проект (2D)</a></div>
+  <div class="seq" id="seq" aria-label="Порядок работ в доме"></div>
+</header>
+
+<div class="bar">
+  <div class="seg" id="rooms" role="group" aria-label="Комната"></div>
+  <div class="seg" id="modes" role="group" aria-label="Вид работ"><button id="m-ceil" data-m="ceil" aria-pressed="true">Потолок</button><button id="m-wall" data-m="wall" aria-pressed="false">Стены</button></div>
+  <div class="seg" id="walls" role="group" aria-label="Стена" hidden></div>
+</div>
+
+<div class="grid">
+  <section class="sheet" aria-label="Чертёж">
+    <div class="stp" id="steps" role="group" aria-label="Этапы"></div>
+    <div class="draw" id="plan"></div>
+    <div class="legend" id="legend"></div>
+    <h3 id="detT">Узел</h3>
+    <div class="draw" id="detail"></div>
+  </section>
+  <aside class="card" id="card" aria-live="polite"></aside>
+</div>
+
+<section class="sheet">
+  <h2 id="sumT">Ведомость материалов</h2>
+  <p class="lead" id="sumL"></p>
+  <div class="tbl" id="sum"></div>
+</section>
+
+<details class="params" id="params">
+  <summary>Параметры расчёта</summary>
+  <div class="pg">
+    <fieldset><legend>Высоты</legend>
+      <label for="p-slab">Низ плиты перекрытия, мм<input id="p-slab" type="number" value="2850" step="5"></label>
+      <label for="p-up">Верхний уровень (центр), мм<input id="p-up" type="number" value="2800" step="5"></label>
+      <label for="p-box">Низ короба, мм<input id="p-box" type="number" value="2650" step="5"></label>
+      <label for="p-upk">Верхний уровень делаем<select id="p-upk"><option value="gkl">ГКЛ на прямых подвесах</option><option value="slab">шпаклёвкой по плите</option></select></label>
+    </fieldset>
+    <fieldset><legend>Каркас и обшивка</legend>
+      <label for="p-s">Шаг профилей CD, мм<select id="p-s"><option>400</option><option selected>500</option><option>600</option></select></label>
+      <label for="p-h">Шаг подвесов, мм<input id="p-h" type="number" value="700" step="50"></label>
+      <label for="p-e">Первый подвес от стены, мм<input id="p-e" type="number" value="250" step="10"></label>
+      <label for="p-sl">Длина листа ГКЛ 1200 × …, мм<select id="p-sl"><option>2000</option><option selected>2500</option><option>3000</option></select></label>
+      <label for="p-sc">Шаг шурупов, мм<input id="p-sc" type="number" value="170" step="10"></label>
+    </fieldset>
+    <fieldset><legend>Штукатурка</legend>
+      <label for="p-t">Средняя толщина слоя, мм<input id="p-t" type="number" value="15" step="1"></label>
+      <label for="p-r">Длина правила, мм<select id="p-r"><option>1500</option><option selected>2000</option><option>2500</option></select></label>
+      <label for="p-b">Шаг маяков, мм<input id="p-b" type="number" value="1500" step="50"></label>
+      <label for="p-bh">Маяк<select id="p-bh"><option value="6">6 мм (слой 10–20 мм)</option><option value="10">10 мм (слой от 15 мм)</option></select></label>
+      <label for="p-g">Гипсовая: расход на 10 мм, кг/м²<input id="p-g" type="number" value="8.5" step=".1"></label>
+      <label for="p-c">Цементная (санузел): на 10 мм, кг/м²<input id="p-c" type="number" value="17" step=".5"></label>
+    </fieldset>
+  </div>
+</details>
+</div>
+
+<script>
+/* ---------- исходные данные дома (из 3D-модели) ---------- */
+const RR={kid:[340,360,4780,3460],bath:[4990,360,7320,3460],bed:[7620,360,10750,5560],liv:[340,3660,7320,8760],hall:[7620,5760,10750,8760]};
+const RB={kid:[60,530,60,410],bath:[560,820,60,410],bed:[855,1200,60,620],liv:[60,820,440,985],hall:[855,1210,655,985]};
+const mp=(r,x,y)=>{const a=RB[r],b=RR[r];return[b[0]+(x-a[0])/(a[1]-a[0])*(b[2]-b[0]),b[1]+(y-a[2])/(a[3]-a[2])*(b[3]-b[1])]};
+function sEll(cx,cy,rx,ry,n,k){k=k||72;const p=[];for(let i=0;i<k;i++){const t=i/k*Math.PI*2,c=Math.cos(t),s=Math.sin(t);p.push([cx+rx*Math.sign(c)*Math.pow(Math.abs(c),2/n),cy+ry*Math.sign(s)*Math.pow(Math.abs(s),2/n)])}return p}
+function smooth(P,k){const n=P.length,d=[];const g=i=>P[(i+n)%n];
+  for(let i=0;i<n;i++){const p0=g(i-1),p1=g(i),p2=g(i+1),p3=g(i+2),D=(a,b)=>Math.max(1e-4,Math.pow(Math.hypot(b[0]-a[0],b[1]-a[1]),.5));
+    const t0=0,t1=D(p0,p1),t2=t1+D(p1,p2),t3=t2+D(p2,p3),L=(a,b,ta,tb,t)=>[a[0]*(tb-t)/(tb-ta)+b[0]*(t-ta)/(tb-ta),a[1]*(tb-t)/(tb-ta)+b[1]*(t-ta)/(tb-ta)];
+    for(let j=0;j<16;j++){const t=t1+(t2-t1)*j/16,A1=L(p0,p1,t0,t1,t),A2=L(p1,p2,t1,t2,t),A3=L(p2,p3,t2,t3,t),B1=L(A1,A2,t0,t2,t),B2=L(A2,A3,t1,t3,t);d.push(L(B1,B2,t1,t2,t))}}
+  const c=[0];for(let i=1;i<=d.length;i++)c.push(c[i-1]+Math.hypot(d[i%d.length][0]-d[i-1][0],d[i%d.length][1]-d[i-1][1]));
+  const T=c[c.length-1],o=[];let j=0;for(let i=0;i<k;i++){const s=T*i/k;while(c[j+1]<s)j++;const f=(s-c[j])/(c[j+1]-c[j]||1),a=d[j],b=d[(j+1)%d.length];o.push([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f])}return o}
+const CONT={
+  kid:smooth([[230,102],[290,100],[345,103],[395,120],[405,165],[392,228],[405,300],[395,350],[350,368],[290,370],[230,368],[180,355],[170,300],[185,228],[168,160],[175,125]],90),
+  bath:sEll(692,292,118,83,2),bed:sEll(1027,217,143,103,3.2),hall:sEll(1030,819,135,131,2),liv:sEll(392,689,308,146,5,110)};
+const P2=(r,a)=>a.map(p=>mp(r,p[0],p[1]));
+const FIX={
+  kid:{spots:P2("kid",[[185,118],[385,118],[185,228],[385,228],[185,350],[385,350],[210,75],[93,213]])},
+  bath:{spots:P2("bath",[[605,228],[778,228],[605,350],[778,350],[605,118],[770,118]])},
+  bed:{spots:P2("bed",[[915,123],[1027,123],[1137,123],[915,312],[1137,312],[915,505],[1027,505],[1137,505]])},
+  liv:{spots:P2("liv",[[168,487],[132,599],[380,543],[403,543],[607,543],[630,543],[153,835],[175,835],[380,835],[403,835],[607,835],[630,835]]),
+       tracks:[P2("liv",[[388,797],[616,797]]),P2("liv",[[743,585],[743,812]])],chand:P2("liv",[[293,679]])},
+  hall:{spots:P2("hall",[[932,727],[932,913],[1130,727],[1130,913]])}};
+/* проёмы: стена (N — верх плана, E — справа, S — низ, W — слева), диапазон в координатах плана, низ и верх проёма */
+const OPS={
+  kid:[["N",530,2680,900,2500,"окно"],["W",600,2720,900,2500,"окно"],["S",3800,4600,0,2100,"дверь"]],
+  bath:[["N",5600,6200,0,2500,"окно"],["S",5600,6400,0,2100,"дверь"]],
+  bed:[["N",8340,10490,0,2500,"окно"],["W",3900,4700,0,2100,"дверь"]],
+  liv:[["N",3800,4600,0,2100,"дверь в детскую"],["N",5600,6400,0,2100,"дверь в санузел"],["E",3900,4700,0,2100,"дверь в спальню"],["E",7700,8500,0,2100,"дверь в прихожую"],["S",2200,5400,0,2500,"окно"],["W",6700,8400,0,2500,"окно"]],
+  hall:[["S",8200,9100,0,2100,"входная дверь"],["S",9700,10400,900,2500,"окно"],["W",7700,8500,0,2100,"дверь в гостиную"]]};
+const ROOMS=[["liv","Кухня-гостиная"],["kid","Детская"],["bed","Спальня"],["bath","Санузел"],["hall","Прихожая"]];
+const WN={N:"А · верх плана",E:"Б · справа",S:"В · низ плана",W:"Г · слева"};
+
+/* ---------- параметры ---------- */
+const $=id=>document.getElementById(id);
+const P=()=>({slab:+$("p-slab").value,up:+$("p-up").value,box:+$("p-box").value,upk:$("p-upk").value,s:+$("p-s").value,h:+$("p-h").value,e:+$("p-e").value,
+  sl:+$("p-sl").value,sc:+$("p-sc").value,t:+$("p-t").value,rule:+$("p-r").value,bs:+$("p-b").value,bh:+$("p-bh").value,g:+$("p-g").value,c:+$("p-c").value});
+const fmt=(v,d=0)=>(+v).toLocaleString("ru-RU",{minimumFractionDigits:d,maximumFractionDigits:d});
+const up=x=>Math.ceil(x-1e-9);
+
+/* ---------- геометрия ---------- */
+function inside(poly,x,z){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>z)!==(b[1]>z)&&x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0])c=!c}return c}
+function polyArea(p){let a=0;for(let i=0,j=p.length-1;i<p.length;j=i++)a+=(p[j][0]+p[i][0])*(p[j][1]-p[i][1]);return Math.abs(a/2)}
+function polyLen(p){let l=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];l+=Math.hypot(b[0]-a[0],b[1]-a[1])}return l}
+function room(k){const r=RR[k],L=r[2]-r[0],W=r[3]-r[1],loc=([x,z])=>[x-r[0],z-r[1]];
+  const f=FIX[k],poly=CONT[k].map(p=>loc(mp(k,p[0],p[1])));
+  return{k,L,W,poly,spots:f.spots.map(loc),tracks:(f.tracks||[]).map(t=>t.map(loc)),chand:(f.chand||[]).map(loc)}}
+
+/* ---------- расчёт потолка ---------- */
+function ceil(k,p){const R=room(k),{L,W,poly}=R,A=L*W/1e6,Ai=polyArea(poly)/1e6,Pi=polyLen(poly)/1000,Ab=A-Ai,Pr=2*(L+W)/1000,wet=k==="bath";
+  const gkl=p.upk==="gkl",vert=W<=L;           // CD верхнего уровня параллельно короткой стороне
+  const cd=[],hu=[];
+  if(gkl){const lo=vert?L:W,sh=vert?W:L,n=Math.floor((lo-1)/p.s),m=Math.max(2,up((sh-2*p.e)/p.h)+1);
+    for(let i=1;i<=n;i++){const a=i*p.s;cd.push(vert?[a,0,a,W]:[0,a,L,a]);for(let j=0;j<m;j++){const b=p.e+(sh-2*p.e)*j/(m-1);hu.push(vert?[a,b]:[b,a])}}}
+  // перемычки короба: от стены перпендикулярно до контура, шаг s
+  const cr=[],hb=[];
+  const ray=(x,z,dx,dz,max)=>{for(let t=20;t<max;t+=10)if(inside(poly,x+dx*t,z+dz*t))return t;return max};
+  const add=(x,z,dx,dz,max)=>{const t=ray(x,z,dx,dz,max);if(t<60||t>=max)return;cr.push([x,z,x+dx*t,z+dz*t,t]);const nh=Math.floor((t-100)/p.h);for(let j=0;j<nh;j++){const q=t-60-j*p.h;if(q<p.e*.6)break;hb.push([x+dx*q,z+dz*q])}};
+  for(let x=p.s/2;x<L;x+=p.s){add(x,0,0,1,W/2);add(x,W,0,-1,W/2)}
+  for(let z=p.s/2;z<W;z+=p.s){add(0,z,1,0,L/2);add(L,z,-1,0,L/2)}
+  const crLen=cr.reduce((a,c)=>a+c[4],0)/1000;
+  const cdUpLen=cd.reduce((a,c)=>a+Math.hypot(c[2]-c[0],c[3]-c[1]),0)/1000;
+  const ext=cd.reduce((a,c)=>a+Math.max(0,up(Math.hypot(c[2]-c[0],c[3]-c[1])/3000)-1),0);
+  // ниша: торец (бортик) 70, полка 150, задняя стенка до верхнего уровня
+  const hBort=70,shelf=150,back=Math.max(60,(p.up-p.box)-35);
+  const flatUp=gkl?Ai*1.12+Pi*0.15:0,flatBox=Ab*1.15+Pi*shelf/1000*1.3,arch=Pi*(hBort+back)/1000*1.15;
+  const shA=1.2*p.sl/1000,sheets=up((flatUp+flatBox)/shA),archS=up(arch/(1.2*2.5));
+  const Ag=(gkl?Ai:0)+Ab+Pi*(hBort+shelf+back)/1000, Apaint=Ab+Ai+Pi*(hBort+shelf+back)/1000;
+  const q={A,Ai,Pi,Ab,Pr,L,W,gkl,wet,
+    udUp:gkl?Pr:0,udLo:Pr,udBent:3*Pi,cdUp:cdUpLen,cdBox:crLen+Pi/0.4*((hBort+back)/1000),
+    hangUp:hu.length,hangBox:hb.length,posts:up(Pi/0.4)*2,ext,
+    dowel:up((gkl?2:1)*Pr/0.5)+8,anchor:(hu.length+hb.length)*2,
+    ln:2*(hu.length+hb.length)+2*cd.length+2*cr.length+up(Pi/0.4)*4,
+    sheets,archS,tn:up((flatUp+flatBox)*(1000/p.s)*(1000/p.sc)*1.4+arch*30),
+    tape:up(Pr*(gkl?2:1)),joint:up((flatUp+flatBox)*1.25+Pi*2),bead:up(3*Pi/3),
+    fugen:Ag*0.3+(gkl?0:Ai*0.5),finish:Apaint*1.5,primer:Apaint*0.1*3,paint:Apaint*0.12*2,
+    led:Pi*1.05,holes:R.spots.length,Apaint,Ag,hBort,shelf,back};
+  q.bags={fugen:up(q.fugen/25),finish:up(q.finish/20),primer:up(q.primer/10),paint:up(q.paint/9),cd:up((q.cdUp+q.cdBox)*1.05/3),ud:up((q.udUp+q.udLo+q.udBent)*1.08/3),bead:q.bead};
+  return{R,cd,hu,cr,hb,q,vert}}
+
+/* ---------- расчёт стен ---------- */
+function walls(k,p){const r=RR[k],L=r[2]-r[0],W=r[3]-r[1],H=p.up,wet=k==="bath";
+  const def={N:L,E:W,S:L,W:W},out={};
+  for(const w of ["N","E","S","W"]){const len=def[w],ops=[];
+    for(const o of OPS[k])if(o[0]===w){let a,b;
+      if(w==="N"){a=o[1]-r[0];b=o[2]-r[0]}else if(w==="E"){a=o[1]-r[1];b=o[2]-r[1]}else if(w==="S"){a=r[2]-o[2];b=r[2]-o[1]}else{a=r[3]-o[2];b=r[3]-o[1]}
+      ops.push({a,b,lo:o[3],hi:Math.min(o[4],H),n:o[5]})}
+    // маяки: 150 от углов и от откосов, промежутки делим равномерно не шире шага
+    const fixed=[150,len-150];ops.forEach(o=>{if(o.a-150>300)fixed.push(o.a-150);if(o.b+150<len-300)fixed.push(o.b+150)});
+    fixed.sort((a,b)=>a-b);const pos=[];
+    for(let i=0;i<fixed.length;i++){pos.push(fixed[i]);if(i<fixed.length-1){const g=fixed[i+1]-fixed[i];const inOp=ops.some(o=>fixed[i]<o.a&&fixed[i+1]>o.b&&o.lo<300&&o.hi>=2000);
+      if(!inOp){const n=up(g/p.bs);for(let j=1;j<n;j++)pos.push(fixed[i]+g*j/n)}else{const o=ops.find(o=>fixed[i]<o.a&&fixed[i+1]>o.b);}}}
+    const uniq=[...new Set(pos.map(v=>Math.round(v)))].filter(v=>v>=100&&v<=len-100);
+    const seg=[];uniq.forEach(x=>{const o=ops.find(o=>x>o.a-60&&x<o.b+60);
+      if(!o)seg.push([x,100,H-100]);else{if(o.lo>400)seg.push([x,100,o.lo-100]);if(H-o.hi>400)seg.push([x,o.hi+100,H-100])}});
+    // ряд над широкими проёмами: маяки над окном/дверью
+    ops.forEach(o=>{const n=up((o.b-o.a)/p.bs);for(let j=1;j<n;j++){const x=Math.round(o.a+(o.b-o.a)*j/n);if(seg.some(s=>Math.abs(s[0]-x)<300))continue;if(o.lo>400)seg.push([x,100,o.lo-100]);if(H-o.hi>400)seg.push([x,o.hi+100,H-100])}});
+    const gross=len*H/1e6,opA=ops.reduce((a,o)=>a+(o.b-o.a)*(o.hi-o.lo)/1e6,0);
+    const beadL=ops.reduce((a,o)=>a+2*(o.hi-o.lo)+(o.lo>0?2:1)*(o.b-o.a),0)/1000;
+    out[w]={len,H,ops,seg,area:gross-opA,beadL,reveal:ops.reduce((a,o)=>a+(2*(o.hi-o.lo)+(o.lo>0?2:1)*(o.b-o.a))*0.2/1e3,0)}}
+  const area=Object.values(out).reduce((a,w)=>a+w.area+w.reveal,0),segs=Object.values(out).flatMap(w=>w.seg);
+  // маяки длиной 3000: раскрой «первый подходящий»
+  const bars=[];segs.map(s=>s[2]-s[1]).sort((a,b)=>b-a).forEach(l=>{const b=bars.find(b=>b+l<=3000);if(b!==undefined)bars[bars.indexOf(b)]+=l;else bars.push(l)});
+  const cons=wet?p.c:p.g,kg=area*p.t/10*cons*1.05,bag=wet?25:30;
+  const beadL=Object.values(out).reduce((a,w)=>a+w.beadL,0);
+  return{W:out,q:{area,kg,bags:up(kg/bag),bag,cons,wet,beacons:bars.length,beaconM:segs.reduce((a,s)=>a+s[2]-s[1],0)/1000,dabs:segs.reduce((a,s)=>a+up((s[2]-s[1])/350)+1,0),
+    primer:area*0.15*2,primerC:up(area*0.3/10),bead:up(beadL*1.05/3),beadL,dry:Math.round(p.t*(wet?1.5:1))}}}
+
+/* ---------- этапы ---------- */
+const SEQ=["Электрика и закладные","Штукатурка стен по маякам","Сушка 1–3 недели","Каркас потолка","Обшивка ГКЛ","Швы и шпаклёвка потолка","Свет и покраска потолка","Финиш стен"];
+const CST=[
+ {t:"Разметка и подготовка",tools:"лазерный нивелир, рулетка 5 м, отбивочный шнур, перфоратор",
+  do:(c,p)=>[`Стены оштукатурены и высохли, электрика к светильникам проложена. Листы ГКЛ лежат в комнате 48 часов, влажность до 70 %, температура от +10 °C.`,
+   `Лазером найдите самую низкую точку плиты. Чтобы встал верхний уровень, от неё до низа ГКЛ нужно не меньше 27 + 12,5 + 5 ≈ 45 мм. При отметке ${fmt(p.up)} и плите ${fmt(p.slab)} запас ${fmt(p.slab-p.up)} мм.`,
+   `Отбейте по периметру две линии: низ верхнего уровня ${fmt(p.up)} мм и низ короба ${fmt(p.box)} мм. Отметки берите от лазера, не от пола.`,
+   `Контур ниши (оранжевый пунктир) разметьте на полу по точкам с чертежа, затем перенесите на плиту лазерным отвесом. Удобно сделать шаблон из полос ДВП.`,
+   `Отметьте на плите центры светильников: ${c.q.holes} спотов${FIX[c.R.k].chand?", люстра":""}${FIX[c.R.k].tracks?", 2 трека":""}.`],
+  mat:c=>[["Шнур отбивочный с краской",1,"шт"]],
+  chk:"Линия уровня сходится в углах с точностью 1–2 мм.",err:"Ошибка: брать отметки рулеткой от пола. Перепад пола уйдёт в потолок и будет виден по ленте в нише."},
+ {t:"Направляющие UD верхнего уровня",tools:"перфоратор, бур 6 мм, ножницы по металлу, молоток",
+  do:(c,p)=>c.q.gkl?[`На спинку профиля UD 28 × 27 наклейте демпферную ленту, она гасит звук и мостик холода.`,
+   `Прикрепите UD по линии ${fmt(p.up)} мм дюбель-гвоздями 6 × 40 через 500 мм, первый дюбель в 100 мм от угла.`,`Длина по периметру ${fmt(c.q.Pr,2)} м. Профили стыкуйте встык, без нахлёста.`]
+   :[`Верхний уровень делается шпаклёвкой по плите, направляющие на ${fmt(p.up)} не нужны. Проверьте плиту правилом: перепады больше 5 мм между плитами сначала выровняйте.`],
+  mat:c=>c.q.gkl?[["Профиль UD 28 × 27, 3 м",up(c.q.Pr*1.08/3),"шт"],["Лента демпферная 30 мм",up(c.q.Pr),"м"],["Дюбель-гвоздь 6 × 40",up(c.q.Pr/0.5)+4,"шт"]]:[],
+  chk:"Профиль лежит точно по линии, под ним нет зазоров.",err:"Ошибка: крепить UD реже чем через 500 мм. Профиль играет, и в углах трескаются швы."},
+ {t:"Профили CD и прямые подвесы",tools:"перфоратор, бур 6 мм, шуруповёрт, лазер, правило 2 м",
+  do:(c,p)=>c.q.gkl?[`Профили CD 60 × 27 идут параллельно короткой стене, шаг ${p.s} мм. Получается ${c.cd.length} линий.`,
+   `Прямые подвесы ставьте через ${p.h} мм, первый не дальше ${p.e} мм от стены: всего ${c.q.hangUp} шт. Каждый подвес крепите к плите двумя анкер-клиньями 6 × 40. В пустотную плиту используйте дюбели для пустот.`,
+   `CD заведите в UD, выставьте по лазеру и прикрепите к подвесам клопами LN 9 по 2 на сторону. Свободные «усы» подвесов отогните вверх.`,
+   `Если линия длиннее 3 м, профиль наращивают удлинителем (${c.q.ext} шт). Стыки соседних линий разносите вразбежку.`]
+   :[`Верхний уровень по плите: этот этап пропускается. Короб будет висеть на подвесах прямо к плите.`],
+  mat:c=>c.q.gkl?[["Профиль CD 60 × 27, 3 м",up(c.q.cdUp*1.05/3),"шт"],["Подвес прямой",c.q.hangUp,"шт"],["Анкер-клин 6 × 40",c.q.hangUp*2,"шт"],["Удлинитель CD",c.q.ext,"шт"],["Саморез LN 9 (клоп)",c.q.hangUp*2+c.cd.length*2,"шт"]]:[],
+  chk:"Правило 2 м под каркасом: зазор не больше 1 мм.",err:"Ошибка: подвес на один дюбель. На потолке это недопустимо: вес ГКЛ с шпаклёвкой около 12 кг/м²."},
+ {t:"Каркас короба и ниши по контуру",tools:"ножницы по металлу, шуруповёрт, лазер, шаблон контура",
+  do:(c,p)=>[`Нижний UD по стенам ставится на отметке ${fmt(p.box+12.5,1)} мм. Низ листа окажется на ${fmt(p.box)}.`,
+   `По контуру ниши ставятся три гнутых UD (суммарно ${fmt(c.q.udBent,1)} м): низ короба, полка ниши и верх задней стенки, который крепится к верхнему каркасу. Чтобы согнуть профиль по дуге, полки надрезают через 50–100 мм.`,
+   `Перемычки CD ставятся от стенового UD до контура шагом ${p.s} мм: ${c.cr.length} шт, от ${fmt(Math.min(...c.cr.map(x=>x[4])))} до ${fmt(Math.max(...c.cr.map(x=>x[4])))} мм длиной. На перемычках ${c.q.hangBox} подвесов.`,
+   `Стойки по контуру ставятся через 400 мм, по 2 на точку: торец ${c.q.hBort} мм и задняя стенка ниши ${c.q.back} мм.`],
+  mat:c=>[["Профиль UD 28 × 27, 3 м",up((c.q.udLo+c.q.udBent)*1.08/3),"шт"],["Профиль CD 60 × 27, 3 м",up(c.q.cdBox*1.05/3),"шт"],["Подвес прямой",c.q.hangBox,"шт"],["Дюбель-гвоздь 6 × 40",up(c.q.Pr/0.5)+4,"шт"],["Лента демпферная 30 мм",up(c.q.Pr),"м"],["Саморез LN 9 (клоп)",c.q.hangBox*2+c.cr.length*2+c.q.posts*2,"шт"]],
+  chk:"Линия контура плавная, без изломов. Проверяйте гибкой рейкой: лента в нише покажет любой излом.",err:"Ошибка: гнуть UD без надрезов. Профиль гнётся гранями, и кромка ниши получается многоугольником."},
+ {t:"Закладные и проводка до обшивки",tools:"перфоратор, гофра, стяжки, клеммы Wago, мультиметр",
+  do:(c,p)=>{const f=FIX[c.R.k],o=[`К каждому споту выведите кабель в гофре, закреплённый к плите, с запасом 300 мм. Спотов ${c.q.holes}, все в коробе: в нём ${fmt(p.slab-p.box)} мм высоты, этого хватает для корпуса светильника.`,
+   `Ленту в нише запитайте отдельно. Блок питания ставится в доступном месте: в шкаф или за ревизионный люк, не глухо в короб.`];
+   if(f.chand)o.push("Под люстру C16 к плите на анкерах крепится фанера 18 мм или брус. Крюк и вес люстры на ГКЛ не вешают.");
+   if(f.tracks)o.push("Для встраиваемых магнитных треков C17 и C18 закладной профиль ставится в каркас до обшивки: края ГКЛ заходят в его полки. Проектор крепится на закладную к плите.");
+   o.push("Сфотографируйте каркас с проводкой и рулеткой в кадре. Потом будет видно, где профиль, а где кабель.");return o},
+  mat:c=>{const f=FIX[c.R.k],m=[["Гофра 16 мм",up(c.q.holes*2.5+8),"м"]];if(f.chand)m.push(["Фанера 18 мм, 400 × 400",1,"шт"]);if(f.tracks)m.push(["Закладной профиль трека 2 м",2,"шт"]);return m},
+  chk:"До обшивки прозвоните каждую линию мультиметром.",err:"Ошибка: прятать блок питания ленты в глухой короб. Он греется и выходит из строя первым."},
+ {t:"Обшивка ГКЛ",tools:"шуруповёрт с ограничителем, нож, рубанок кромочный, домкрат для ГКЛ",
+  do:(c,p)=>[`${c.q.wet?"В санузле только влагостойкий ГКЛВ (зелёный) 12,5 мм. ":""}Листы 1200 × ${p.sl} кладутся длинной стороной поперёк профилей, торцы приходятся на профиль. Торцы соседних рядов сдвинуты не меньше чем на 600 мм (на чертеже ${fmt(Math.max(600,Math.round(p.sl/2/p.s)*p.s))} мм).`,
+   `От стен оставляйте зазор 5–7 мм, между торцами 2–3 мм под шпаклёвку.`,
+   `Шурупы TN 25 ставятся через ${p.sc} мм, в 10–15 мм от кромки и утапливаются на 0,5–1 мм без разрыва картона. Сначала верхний уровень, затем низ короба.`,
+   `Полку ниши режут из плоского листа по шаблону. Торец и заднюю стенку ниши делают из арочного ГКЛ 6,5 мм (${c.q.archS} л.) в два слоя со смещением швов.`],
+  mat:c=>[[`ГКЛ${c.q.wet?"В":""} 12,5 × 1200 × ${P().sl}`,c.q.sheets,"л."],["ГКЛ арочный 6,5 × 1200 × 2500",c.q.archS*2,"л."],["Шуруп TN 25",up(c.q.tn/100)*100,"шт"]],
+  chk:"Шляпка утоплена на 0,5–1 мм. Порванный картон — шуруп переставить в 50 мм рядом.",err:"Ошибка: стык четырёх углов листов в одной точке. Там почти наверняка пойдёт трещина."},
+ {t:"Швы, ленты и углы",tools:"шпатели 100 и 250 мм, кромочный рубанок, валик, миксер",
+  do:(c,p)=>[`Резаные кромки снимите рубанком под 45° на 2/3 толщины, обеспыльте и прогрунтуйте.`,
+   `Швы заполните гипсовой шпаклёвкой для швов, в первый слой вдавите бумажную армирующую ленту. Длина швов около ${fmt(c.q.joint)} м.`,
+   `На внешние углы торца и бортика ниши поставьте перфоуголки (${c.q.bead} шт по 3 м) на шпаклёвку.`,
+   `Второй слой по шву нанесите после высыхания первого, шириной 200–250 мм. Шляпки шурупов зашпаклюйте крест-накрест.`],
+  mat:c=>[["Шпаклёвка для швов, 25 кг",up(c.q.fugen/25),"меш."],["Лента армирующая бумажная",up(c.q.joint),"м"],["Уголок перфорированный, 3 м",c.q.bead,"шт"],["Грунт глубокого проникновения",up(c.q.Apaint*0.1),"л"]],
+  chk:"Шов после второго слоя не выше плоскости листа. Проверяйте шпателем на просвет.",err:"Ошибка: серпянка вместо бумажной ленты на торцевых швах потолка. Шов чаще трескается."},
+ {t:"Финишная шпаклёвка и шлифовка",tools:"шпатель 350–450 мм, тёрка с сеткой P150–180, лампа «в упор», пылесос",
+  do:(c,p)=>[`Прогрунтуйте поверхность. Финишную шпаклёвку нанесите в 2 тонких слоя на всю площадь ${fmt(c.q.Apaint,1)} м², включая нишу.`,
+   `Шлифуйте сеткой P150–180 под боковым светом лампы, который показывает каждую волну.`,`Обеспыльте и прогрунтуйте под покраску.`],
+  mat:c=>[["Шпаклёвка финишная, 20 кг",up(c.q.finish/20),"меш."],["Сетка шлифовальная P150–180",up(c.q.Apaint/8),"шт"],["Грунт глубокого проникновения",up(c.q.Apaint*0.2),"л"]],
+  chk:"Под лампой, поставленной вдоль потолка, не видно теней от швов.",err:"Ошибка: толстый слой финиша за один проход. Он даёт усадочные трещины."},
+ {t:"Свет и покраска",tools:"коронка по ГКЛ, валик 18 см с ворсом 9–12 мм, кисть, малярный скотч",
+  do:(c,p)=>[`Вырежьте отверстия под ${c.q.holes} спотов коронкой по паспорту светильника (обычно 60–85 мм). Режьте до последнего слоя краски.`,
+   `Ленту в алюминиевом профиле положите на полку ниши светом к верхнему уровню: ${fmt(c.q.led,1)} м. Проверьте свечение до покраски, на тёплом белом 2700–3000 К.`,
+   `Покрасьте в 2 слоя матовой краской для потолков. Последний слой катайте от окна, вдоль падающего света.`,
+   ...(c.R.k==="liv"?["Теневой профиль по стенам гостиной ставится до финиша стен, как показано в проекте."]:[])],
+  mat:c=>[["Краска для потолков, 9 л",up(c.q.paint/9),"в."],["LED-лента 24 В в профиле",Math.ceil(c.q.led),"м"],["Блок питания 24 В",Math.max(1,up(c.q.led*10/0.8/100)),"шт"]],
+  chk:"Свет из ниши ровный, без пятен. Если видны точки, ленту углубляют или ставят рассеиватель.",err:"Ошибка: красить, пока шпаклёвка не высохла. Проявятся пятна и швы."}];
+const WST=[
+ {t:"Проверка стен и толщина слоя",tools:"лазерный нивелир, правило 2 м, рулетка, маркер",
+  do:(w,p,c)=>[`На каждой линии будущего маяка (синие линии на развёртке) замерьте отклонение от лазерной плоскости вверху, посередине и внизу.`,
+   `Самая выступающая точка стены задаёт плоскость. Слой над ней должен быть не меньше 5 мм вместе с маяком ${p.bh} мм.`,
+   `Средний слой в расчёте ${p.t} мм. Если по замерам выходит больше 30 мм, считайте заново: гипс тогда кладут в 2 прохода.`,
+   `Очистите стену от пыли, наплывов раствора и масляных пятен.`],
+  mat:()=>[],chk:"Таблица отклонений по каждой точке записана прямо на стене маркером.",err:"Ошибка: выравнивать «на глаз» от угла. Плоскость стен не будет прямой к полу."},
+ {t:"Грунтование",tools:"валик, кисть, ведро",
+  do:(w,p,c)=>[`Газосиликат грунтуйте глубоким грунтом в 2 слоя с перерывом 2–4 ч. Бетон грунтуйте Бетонконтактом.`,`Сушите 4–6 ч. Пыль на ладони — значит, повторите грунт.`],
+  mat:(w,p,c)=>[["Грунт глубокого проникновения, 10 л",c.q.primerC,"кан."]],chk:"Грунт не меловой, поверхность равномерно впитала состав.",err:"Ошибка: штукатурить пересушенный газосиликат без грунта. Блок вытянет воду, слой отслоится."},
+ {t:"Установка маяков",tools:"правило 2 м, лазер, кельма, ножницы по металлу",
+  do:(w,p,c)=>[`Маяки ставятся в 150 мм от углов и от откосов, промежутки делятся поровну, не шире ${p.bs} мм. Правило ${p.rule} мм должно опираться на два маяка с запасом 200 мм.`,
+   `На этой стене ${w.seg.length} маяков. В комнате их ${c.q.beacons} шт по 3 м, ${fmt(c.q.beaconM,1)} м после раскроя.`,
+   `Лепёшки раствора кладите через 300–400 мм по вертикали. Маяк вдавите правилом и выставьте по лазеру, проверьте натянутым крест-накрест шнуром между соседними маяками.`,
+   `Дайте лепёшкам схватиться 30–40 мин. Маяк не должен прогибаться под нажимом.`],
+  mat:(w,p,c)=>[[`Маяк ${p.bh} мм, 3 м`,c.q.beacons,"шт"],[c.q.wet?"Раствор на лепёшки (из общего)":"Гипс на лепёшки (из общего)",up(c.q.dabs*0.25),"кг"]],
+  chk:"Все маяки в одной плоскости. Шнур крест-накрест касается каждого маяка.",err:"Ошибка: маяк короче на 5 мм, чем расстояние до плоскости. На стене останется ступенька."},
+ {t:"Откосы и углы",tools:"ножницы по металлу, кельма, уровень 1 м",
+  do:(w,p,c)=>[`На внешние углы откосов ставьте штукатурные уголки на раствор. В комнате ${fmt(c.q.beadL,1)} м уголков.`,
+   `Внутренние углы между стенами вытягивайте угловым правилом после того, как оштукатурены обе стены.`,
+   w.ops.length?`На этой стене ${w.ops.map(o=>o.n+" "+fmt(o.b-o.a)+" мм").join(", ")}.`:`На этой стене проёмов нет.`],
+  mat:(w,p,c)=>[["Уголок штукатурный, 3 м",c.q.bead,"шт"]],chk:"Уголок вертикален по уровню и стоит заподлицо с маяками.",err:"Ошибка: откосы потом. Угол откоса станет волной."},
+ {t:"Нанесение и вытягивание",tools:"миксер, ведро 40 л, кельма, сокол, правило-трапеция",
+  do:(w,p,c)=>[`Замешивайте ${c.q.wet?"цементную смесь":"гипсовую смесь"} на одну захватку. ${c.q.wet?"Цементную используйте 1,5–2 ч":"Гипс схватывается за 50–60 мин"}.`,
+   `Набрасывайте раствор снизу вверх между двумя маяками, на 3–5 мм толще маяков.`,
+   `Вытягивайте правилом по маякам снизу вверх, покачивая влево-вправо. Пустоты добавьте и протяните ещё раз.`,
+   `За один проход ${c.q.wet?"до 20 мм":"до 50 мм"}. Толще — в 2 слоя по сетке.`],
+  mat:(w,p,c)=>[[c.q.wet?`Штукатурка цементная, ${c.q.bag} кг`:`Штукатурка гипсовая, ${c.q.bag} кг`,c.q.bags,"меш."]],
+  chk:(w,p,c)=>`Расход ≈ ${fmt(c.q.cons,1)} кг/м² на 10 мм. ${fmt(c.q.area,1)} м² × ${p.t} мм = ${fmt(c.q.kg)} кг с запасом 5 %.`,err:"Ошибка: доливать воду в схватывающийся гипс. Он теряет прочность."},
+ {t:"Подрезка и затирка",tools:"правило-трапеция, губчатая тёрка, широкий шпатель",
+  do:(w,p,c)=>[`Когда слой схватился (через 40–60 мин, палец не продавливает), срежьте наплывы трапецией.`,
+   c.q.wet?"Под плитку затирка не нужна: оставьте шероховатую поверхность для клея.":"Через 10–20 мин смочите и затрите губчатой тёркой круговыми движениями. Для покраски через 3–4 ч заглаживают широким шпателем («глянцевание»).",
+   ...(w===null?[]:[])],
+  mat:()=>[],chk:"Правило 2 м по любой линии: зазор не больше 2 мм.",err:"Ошибка: затирать мокрый слой. Получаются волны и раковины."},
+ {t:"Удаление маяков",tools:"плоскогубцы, шпатель, кельма",
+  do:(w,p,c)=>[`Вытащите маяки, пока слой схватился, но не высох (через 2–6 ч). Пустые борозды заполните тем же раствором заподлицо.`,
+   c.q.wet?"В санузле удалять маяки обязательно: оцинковка под плиткой ржавеет и даёт пятна и трещины.":"Под покраску удалять обязательно, иначе по линиям маяков проступит ржавчина."],
+  mat:()=>[],chk:"Заполненная борозда не видна под правилом.",err:"Ошибка: тянуть маяки из сухой штукатурки. Края борозды крошатся."},
+ {t:"Сушка и приёмка",tools:"правило 2 м, угольник, гигрометр",
+  do:(w,p,c)=>[`Сушите около ${c.q.dry} суток при ${p.t} мм: проветривайте, но без сквозняка и без тепловых пушек.`,
+   `Приёмка: правило 2 м даёт зазор не больше 2 мм, отклонение от вертикали не больше 1 мм на 1 м, углы 90° по угольнику.`,
+   `Потолочный каркас начинайте только после сушки. Иначе влага из стен поведёт ГКЛ.`],
+  mat:()=>[],chk:"Влажность стены не больше 1 % по гигрометру. Ровный светлый цвет без тёмных пятен.",err:"Ошибка: шпаклевать и красить по сырому. Появятся пятна и отслоение."}];
+
+/* ---------- состояние ---------- */
+const S={room:"liv",mode:"ceil",st:0,wall:"S"};
+try{const v=JSON.parse(localStorage.getItem("gkl-st")||"null");if(v&&RR[v.room])Object.assign(S,v)}catch(e){}
+const save=()=>{try{localStorage.setItem("gkl-st",JSON.stringify(S))}catch(e){}};
+
+/* ---------- SVG ---------- */
+const NS="http://www.w3.org/2000/svg";
+const el=(t,a,par)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(par)par.appendChild(e);return e};
+const txt=(par,x,y,s,a)=>{const e=el("text",Object.assign({x,y,fill:"var(--ink)"},a||{}),par);e.textContent=s;return e};
+function dim(g,x1,y1,x2,y2,off,label,fs){const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),nx=-dy/L*off,ny=dx/L*off,a=[x1+nx,y1+ny],b=[x2+nx,y2+ny];
+  el("line",{x1,y1,x2:a[0],y2:a[1],stroke:"var(--muted)","stroke-width":fs/14},g);el("line",{x1:x2,y1:y2,x2:b[0],y2:b[1],stroke:"var(--muted)","stroke-width":fs/14},g);
+  el("line",{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:"var(--muted)","stroke-width":fs/14},g);
+  const tk=fs*.35;[a,b].forEach(p=>el("line",{x1:p[0]-tk,y1:p[1]+tk,x2:p[0]+tk,y2:p[1]-tk,stroke:"var(--ink)","stroke-width":fs/9},g));
+  const t=txt(g,(a[0]+b[0])/2,(a[1]+b[1])/2-fs*.3,label,{"font-size":fs,"text-anchor":"middle",fill:"var(--muted)"});
+  if(Math.abs(dy)>Math.abs(dx))t.setAttribute("transform",`rotate(-90 ${(a[0]+b[0])/2} ${(a[1]+b[1])/2})`)}
+const col=(i,st)=>i===st?"var(--acc)":"var(--ink)";
+
+function drawCeil(c,p,st){const {R,cd,hu,cr,hb,q}=c,{L,W,poly}=R,m=700,fs=Math.max(110,Math.min(L,W)/30);
+  const svg=el("svg",{viewBox:`${-m} ${-m} ${L+2*m} ${W+2*m}`,role:"img","aria-label":"План потолка, этап "+(st+1)});
+  const defs=el("defs",{},svg);
+  const pd="M"+poly.map(p=>p.join(",")).join("L")+"Z";
+  el("path",{id:"cpi",d:pd},el("clipPath",{id:"cin"},defs));
+  el("path",{d:`M0,0H${L}V${W}H0Z `+pd,"clip-rule":"evenodd"},el("clipPath",{id:"cbox"},defs));el("rect",{x:0,y:0,width:L,height:W},el("clipPath",{id:"croom"},defs));
+  const pat=el("pattern",{id:"hat",width:120,height:120,patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);el("line",{x1:0,y1:0,x2:0,y2:120,stroke:"var(--frame)","stroke-width":10,opacity:.45},pat);
+  // стены
+  el("rect",{x:-200,y:-200,width:L+400,height:W+400,fill:"var(--ink)"},svg);el("rect",{x:0,y:0,width:L,height:W,fill:"var(--paper)"},svg);
+  const rk=R.k;OPS[rk].forEach(o=>{const r=RR[rk];let x,y,w,h;if(o[0]==="N"){x=o[1]-r[0];y=-200;w=o[2]-o[1];h=200}else if(o[0]==="S"){x=o[1]-r[0];y=W;w=o[2]-o[1];h=200}else if(o[0]==="W"){x=-200;y=o[1]-r[1];w=200;h=o[2]-o[1]}else{x=L;y=o[1]-r[1];w=200;h=o[2]-o[1]}
+    el("rect",{x,y,width:w,height:h,fill:o[5].includes("окно")?"var(--blue)":"var(--paper)",opacity:o[5].includes("окно")?.55:1},svg)});
+  // зоны: короб и верхний уровень
+  el("rect",{x:0,y:0,width:L,height:W,fill:"url(#hat)","clip-path":"url(#cbox)"},svg);
+  if(st>=7){el("rect",{x:0,y:0,width:L,height:W,fill:"var(--box)","clip-path":"url(#cbox)",opacity:.9},svg);el("path",{d:pd,fill:"var(--gkl)",opacity:.8},svg)}
+  const G=(i)=>el("g",{opacity:i<=st?1:0},svg);
+  // 1. разметка
+  const g1=G(0);el("path",{d:pd,fill:"none",stroke:"var(--acc)","stroke-width":18,"stroke-dasharray":"80 50"},g1);
+  R.spots.forEach(s=>{el("line",{x1:s[0]-90,y1:s[1],x2:s[0]+90,y2:s[1],stroke:col(0,st),"stroke-width":14},g1);el("line",{x1:s[0],y1:s[1]-90,x2:s[0],y2:s[1]+90,stroke:col(0,st),"stroke-width":14},g1)});
+  // 2. UD верх
+  const g2=G(1);if(q.gkl)el("rect",{x:14,y:14,width:L-28,height:W-28,fill:"none",stroke:col(1,st),"stroke-width":28},g2);
+  // 3. CD верх и подвесы
+  const g3=G(2);cd.forEach(l=>el("line",{x1:l[0],y1:l[1],x2:l[2],y2:l[3],stroke:col(2,st),"stroke-width":st===2?30:18,opacity:st>=5&&st!==2?.35:1},g3));
+  hu.forEach(h=>el("rect",{x:h[0]-35,y:h[1]-35,width:70,height:70,fill:st===2?"var(--acc)":"var(--ink)",opacity:st>=5&&st!==2?.35:1},g3));
+  // 4. короб
+  const g4=G(3);el("rect",{x:45,y:45,width:L-90,height:W-90,fill:"none",stroke:col(3,st),"stroke-width":22,"stroke-dasharray":"10 0"},g4);
+  cr.forEach(l=>el("line",{x1:l[0],y1:l[1],x2:l[2],y2:l[3],stroke:col(3,st),"stroke-width":20},g4));
+  hb.forEach(h=>el("circle",{cx:h[0],cy:h[1],r:38,fill:st===3?"var(--acc)":"var(--ink)"},g4));
+  el("path",{d:pd,fill:"none",stroke:col(3,st),"stroke-width":36},g4);
+  // 5. закладные и кабели
+  const g5=G(4);const near=s=>{const d=[[s[0],0],[s[0],W],[0,s[1]],[L,s[1]]];return d.sort((a,b)=>Math.hypot(a[0]-s[0],a[1]-s[1])-Math.hypot(b[0]-s[0],b[1]-s[1]))[0]};
+  R.spots.forEach(s=>{const n=near(s);el("path",{d:`M${s[0]},${s[1]}L${n[0]},${n[1]}`,stroke:col(4,st),"stroke-width":12,"stroke-dasharray":"40 30",fill:"none"},g5)});
+  R.chand.forEach(s=>{el("rect",{x:s[0]-200,y:s[1]-200,width:400,height:400,fill:"none",stroke:col(4,st),"stroke-width":20},g5);txt(g5,s[0],s[1]+fs*.35,"C16",{"font-size":fs,"text-anchor":"middle",fill:col(4,st)})});
+  R.tracks.forEach(t=>el("line",{x1:t[0][0],y1:t[0][1],x2:t[1][0],y2:t[1][1],stroke:col(4,st),"stroke-width":44},g5));
+  // 6. листы
+  const g6=G(5);const sl=p.sl,off=Math.max(600,Math.round(sl/2/p.s)*p.s),vert=c.vert,lo=vert?L:W,sh=vert?W:L,gs=el("g",{"clip-path":"url(#croom)"},g6);
+  for(let r=0;r*1200<sh;r++){const o0=(r%2)?-off:0;for(let x=o0;x<lo;x+=sl){const rc=vert?{x,y:r*1200,width:sl,height:1200}:{x:r*1200,y:x,width:1200,height:sl};
+    el("rect",Object.assign({fill:"var(--gkl)",stroke:st>=6?"var(--acc)":"var(--muted)","stroke-width":st>=6?22:12,opacity:.75},rc),gs)}}
+  if(!q.gkl)gs.setAttribute("clip-path","url(#cbox)");
+  if(st===5){const sc=el("g",{},g6);cd.forEach(l=>{const len=Math.hypot(l[2]-l[0],l[3]-l[1]);for(let t=p.sc/2;t<len;t+=p.sc){const x=l[0]+(l[2]-l[0])*t/len,y=l[1]+(l[3]-l[1])*t/len;if(inside(poly,x,y))el("circle",{cx:x,cy:y,r:16,fill:"var(--acc)"},sc)}});
+    cr.forEach(l=>{for(let t=p.sc/2;t<l[4];t+=p.sc)el("circle",{cx:l[0]+(l[2]-l[0])*t/l[4],cy:l[1]+(l[3]-l[1])*t/l[4],r:16,fill:"var(--acc)"},sc)})}
+  // 7. углы ниши
+  const g7=G(6);el("path",{d:pd,fill:"none",stroke:col(6,st),"stroke-width":st===6?40:20},g7);
+  // 9. свет
+  const g9=G(8);el("path",{d:pd,fill:"none",stroke:"var(--led)","stroke-width":90,opacity:.35},g9);el("path",{d:pd,fill:"none",stroke:"var(--led)","stroke-width":24},g9);
+  R.spots.forEach(s=>el("circle",{cx:s[0],cy:s[1],r:45,fill:st>=8?"var(--led)":"none",stroke:"var(--ink)","stroke-width":12},svg));
+  // размеры и подписи
+  const gd=el("g",{},svg);dim(gd,0,0,L,0,-450,fmt(L),fs);dim(gd,0,0,0,W,450,fmt(W),fs);
+  const cx=poly.reduce((a,p)=>a+p[0],0)/poly.length,cy=poly.reduce((a,p)=>a+p[1],0)/poly.length;
+  txt(svg,cx,cy-fs*.3,(q.gkl?"ГКЛ ":"плита ")+fmt(p.up),{"font-size":fs*1.1,"text-anchor":"middle"});
+  txt(svg,cx,cy+fs*1.1,fmt(q.Ai,1)+" м²",{"font-size":fs*.9,"text-anchor":"middle",fill:"var(--muted)"});
+  txt(svg,fs*.6,fs*1.6,"короб "+fmt(p.box)+" · "+fmt(q.Ab,1)+" м²",{"font-size":fs*.9,fill:"var(--muted)"});
+  // штамп
+  const sw=Math.min(L*.55,3600),sx=L+m-sw-40,sy=W+m-fs*2.6-40,stg=el("g",{},svg);
+  el("rect",{x:sx,y:sy,width:sw,height:fs*2.6,fill:"var(--paper)",stroke:"var(--ink)","stroke-width":10},stg);
+  txt(stg,sx+fs*.5,sy+fs*1.15,ROOMS.find(r=>r[0]===R.k)[1]+" · потолок",{"font-size":fs*.85});
+  txt(stg,sx+fs*.5,sy+fs*2.2,`этап ${st+1}/9 · М 1:${Math.round(Math.max(L,W)/120)}`,{"font-size":fs*.75,fill:"var(--muted)"});
+  return svg}
+
+function drawCeilDet(c,p,st){const q=c.q,H=(p.slab-p.box)+60,B=620,W0=1000,k=2;
+  const svg=el("svg",{viewBox:`-120 -110 ${W0+340} ${H*k+170}`,role:"img","aria-label":"Узел короба и ниши в разрезе"});
+  const Y=y=>y*k;const up_=p.slab-p.up,bx=p.slab-p.box;
+  const hl=(i,on,off)=>i===st?on:i<=st?off:"none";
+  const defs=el("defs",{},svg),pt=el("pattern",{id:"hs",width:16,height:16,patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);el("line",{x1:0,y1:0,x2:0,y2:16,stroke:"var(--muted)","stroke-width":3},pt);
+  el("rect",{x:-100,y:Y(-45),width:W0+200,height:Y(45),fill:"url(#hs)",stroke:"var(--muted)"},svg);txt(svg,W0+90,Y(-15),"плита",{"font-size":22,"text-anchor":"end",fill:"var(--muted)"});
+  el("rect",{x:-100,y:Y(-45),width:100,height:Y(H+45),fill:"url(#hs)",stroke:"var(--muted)"},svg);txt(svg,-90,Y(H)-6,"стена",{"font-size":22,fill:"var(--muted)"});
+  const L=(i,a)=>el("rect",Object.assign({fill:hl(i,"var(--acc)","var(--frame)"),stroke:i<=st?"var(--ink)":"var(--line)","stroke-width":1.5},a),svg);
+  // верхний каркас
+  if(q.gkl){L(1,{x:0,y:Y(up_-12.5-27),width:28,height:Y(27)});L(2,{x:B-150+30,y:Y(up_-12.5-27),width:W0-(B-150)-30,height:Y(27)});L(2,{x:W0-120,y:0,width:12,height:Y(up_-12.5-27)})}
+  // короб
+  L(3,{x:0,y:Y(bx-12.5-27),width:28,height:Y(27)});L(3,{x:28,y:Y(bx-12.5-27),width:B-28-20,height:Y(27)});
+  L(3,{x:B-150,y:q.gkl?Y(up_-12.5):0,width:22,height:Y(bx-12.5-27-(q.gkl?up_-12.5:0))});L(3,{x:B-30,y:Y(bx-12.5-q.hBort+15),width:20,height:Y(q.hBort-15)});
+  // закладная и кабель
+  el("path",{d:`M180,${Y(5)} C180,${Y(60)} 260,${Y(bx-80)} 260,${Y(bx-60)}`,fill:"none",stroke:hl(4,"var(--acc)","var(--ink)"),"stroke-width":4,"stroke-dasharray":"10 6"},svg);
+  // ГКЛ
+  const g=(a)=>el("rect",Object.assign({fill:st>=5?"var(--gkl)":"none",stroke:st>=5?(st===5?"var(--acc)":"var(--ink)"):"var(--line)","stroke-width":st===5?3:1.5},a),svg);
+  g({x:5,y:Y(bx-12.5),width:B-5,height:Y(12.5)});g({x:B-6,y:Y(bx-q.hBort),width:13,height:Y(q.hBort-12.5)});
+  g({x:B-150,y:Y(bx-12.5-27-12.5),width:150-6,height:Y(12.5)});g({x:B-150-13,y:Y(up_),width:13,height:Y(bx-12.5-27-12.5-up_)});
+  if(q.gkl)g({x:B-150,y:Y(up_-12.5),width:W0-(B-150),height:Y(12.5)});
+  // углы и шпаклёвка
+  if(st>=6){[[B+7,Y(bx)],[B+7,Y(bx-q.hBort)]].forEach(([x,y])=>el("path",{d:`M${x-16},${y}L${x},${y}L${x},${y-16}`,fill:"none",stroke:st===6?"var(--acc)":"var(--ink)","stroke-width":4},svg))}
+  if(st>=7)el("path",{d:`M5,${Y(bx)+3}H${B+9}V${Y(bx-q.hBort)}`,fill:"none",stroke:st===7?"var(--acc)":"var(--muted)","stroke-width":5},svg);
+  // свет
+  const ly=Y(bx-12.5-27-12.5);el("rect",{x:B-110,y:ly-20,width:46,height:20,fill:st>=8?"var(--led)":"none",stroke:st>=4?"var(--ink)":"var(--line)","stroke-width":2},svg);
+  if(st>=8)el("path",{d:`M${B-87},${ly-20} L${B+150},${Y(up_)+4} L${B+330},${Y(up_)+4}`,fill:"none",stroke:"var(--led)","stroke-width":5,opacity:.8},svg);
+  el("rect",{x:240,y:Y(bx-80),width:90,height:Y(80),fill:st>=8?"var(--led)":"none",stroke:st>=4?"var(--ink)":"var(--line)","stroke-width":2,rx:6},svg);
+  // размеры
+  const fs=22;dim(svg,W0+60,0,W0+60,Y(up_),0,fmt(up_),fs);dim(svg,W0+150,0,W0+150,Y(bx),0,fmt(bx),fs);dim(svg,0,Y(bx)+20,B,Y(bx)+20,50,"≈"+fmt(B)+" до контура",fs);
+  txt(svg,B+40,Y(up_)+Y(12.5)+30,"щель для света "+fmt(bx-q.hBort-up_)+" мм",{"font-size":20,fill:"var(--muted)"});
+  txt(svg,252,Y(bx)-Y(80)-8,"спот",{"font-size":20,fill:"var(--muted)"});txt(svg,B-140,ly-28,"лента",{"font-size":20,fill:"var(--muted)"});
+  return svg}
+
+function drawWall(wd,p,st,wk){const {len,H,ops,seg}=wd,m=500,fs=Math.max(100,len/38);
+  const svg=el("svg",{viewBox:`${-m} ${-m} ${len+2*m} ${H+2*m}`,role:"img","aria-label":"Развёртка стены"});
+  const Y=y=>H-y;
+  el("rect",{x:0,y:0,width:len,height:H,fill:st>=1?"var(--acc-soft)":"var(--gkl)",stroke:"var(--ink)","stroke-width":16},svg);
+  if(st>=4){const done=st>=5?len:Math.min(len,(seg.length>1?seg.slice().sort((a,b)=>a[0]-b[0])[1][0]:len));el("rect",{x:0,y:0,width:done,height:H,fill:"var(--box)",opacity:.95},svg);
+    const pt=el("pattern",{id:"pl",width:60,height:60,patternUnits:"userSpaceOnUse",patternTransform:"rotate(-35)"},el("defs",{},svg));el("line",{x1:0,y1:0,x2:0,y2:60,stroke:"var(--frame)","stroke-width":6,opacity:.4},pt);
+    if(st===4)el("rect",{x:0,y:0,width:done,height:H,fill:"url(#pl)"},svg)}
+  ops.forEach(o=>{el("rect",{x:o.a,y:Y(o.hi),width:o.b-o.a,height:o.hi-o.lo,fill:o.n.includes("окно")?"var(--blue)":"var(--paper)",opacity:o.n.includes("окно")?.45:1,stroke:"var(--ink)","stroke-width":12},svg);
+    el("path",{d:`M${o.a},${Y(o.hi)}L${o.b},${Y(o.lo)}M${o.b},${Y(o.hi)}L${o.a},${Y(o.lo)}`,stroke:"var(--muted)","stroke-width":6},svg);
+    txt(svg,(o.a+o.b)/2,Y((o.lo+o.hi)/2)+fs*.35,(o.b-o.a)<o.n.length*fs*.55?o.n.split(" ")[0]:o.n,{"font-size":fs*.8,"text-anchor":"middle",fill:"var(--muted)"});
+    if(st>=3)el("path",{d:`M${o.a},${Y(o.lo)}V${Y(o.hi)}H${o.b}V${Y(o.lo)}`+(o.lo>0?`H${o.a}`:""),fill:"none",stroke:st===3?"var(--acc)":"var(--ink)","stroke-width":st===3?34:20},svg)});
+  if(st===0)seg.forEach(s=>[s[1]+80,(s[1]+s[2])/2,s[2]-80].forEach(y=>{const x=s[0];el("path",{d:`M${x-60},${Y(y)}L${x+60},${Y(y)}M${x},${Y(y)-60}L${x},${Y(y)+60}`,stroke:"var(--acc)","stroke-width":14},svg)}));
+  if(st>=2){const rem=st>=6;seg.forEach(s=>{el("line",{x1:s[0],y1:Y(s[1]),x2:s[0],y2:Y(s[2]),stroke:rem?"var(--muted)":(st===2?"var(--acc)":"var(--blue)"),"stroke-width":rem?10:26,"stroke-dasharray":rem?"40 30":"none"},svg);
+    if(st===2)for(let y=s[1];y<=s[2];y+=350)el("circle",{cx:s[0],cy:Y(y),r:45,fill:"var(--muted)",opacity:.6},svg)})}
+  else if(st<2)seg.forEach(s=>el("line",{x1:s[0],y1:Y(s[1]),x2:s[0],y2:Y(s[2]),stroke:"var(--blue)","stroke-width":8,"stroke-dasharray":"30 40",opacity:.7},svg));
+  if(st===7){const r=p.rule;[[len*.3,H*.55,1],[len*.6,H*.3,0]].forEach(([x,y,v])=>el("line",{x1:v?x:x-r/2,y1:v?Y(y+r/2):Y(y),x2:v?x:x+r/2,y2:v?Y(y-r/2):Y(y),stroke:"var(--ok)","stroke-width":40,"stroke-linecap":"round"},svg))}
+  // размеры маяков
+  const xs=[...new Set(seg.map(s=>s[0]))].sort((a,b)=>a-b),gd=el("g",{},svg);let prev=0;
+  xs.forEach(x=>{if(x-prev>200)dim(gd,prev,H,x,H,260,fmt(x-prev),fs*.75);prev=x});if(len-prev>200)dim(gd,prev,H,len,H,260,fmt(len-prev),fs*.75);
+  dim(gd,0,0,len,0,-260,fmt(len),fs);dim(gd,len,0,len,H,-260,fmt(H),fs);
+  return svg}
+
+function drawWallDet(p,st,wet){const t=p.t,k=6,svg=el("svg",{viewBox:"-40 -30 760 330",role:"img","aria-label":"Разрез штукатурного слоя"});
+  const X=v=>200+v*k;
+  const pt=el("pattern",{id:"gs",width:24,height:24,patternUnits:"userSpaceOnUse"},el("defs",{},svg));el("circle",{cx:6,cy:6,r:3,fill:"var(--muted)",opacity:.5},pt);el("circle",{cx:18,cy:16,r:2,fill:"var(--muted)",opacity:.5},pt);
+  el("rect",{x:0,y:0,width:200,height:260,fill:"url(#gs)",stroke:"var(--muted)"},svg);txt(svg,10,280,wet?"стена санузла":"газосиликат",{"font-size":18,fill:"var(--muted)"});
+  if(st>=1)el("rect",{x:196,y:0,width:6,height:260,fill:st===1?"var(--acc)":"var(--ok)",opacity:.8},svg);
+  if(st>=2){[40,130,220].forEach(y=>el("ellipse",{cx:X(t*.45),cy:y,rx:t*k*.45,ry:22,fill:"var(--frame)",opacity:.55},svg));
+    el("path",{d:`M${X(t-p.bh)},10 L${X(t)},10 L${X(t)},250 L${X(t-p.bh)},250`,fill:"none",stroke:st===2?"var(--acc)":"var(--blue)","stroke-width":5,opacity:st>=6?.25:1},svg)}
+  if(st>=4){el("rect",{x:202,y:0,width:t*k-2,height:260,fill:"var(--box)",opacity:st===4?.95:.85,stroke:st===4?"var(--acc)":"none","stroke-width":3},svg)}
+  if(st>=4&&st<=5)el("rect",{x:X(t)+4,y:-10,width:14,height:280,fill:"var(--ink)",opacity:.75},svg);
+  if(st>=5)el("line",{x1:X(t),y1:0,x2:X(t),y2:260,stroke:st===5?"var(--acc)":"var(--ink)","stroke-width":3},svg);
+  dim(svg,200,0,X(t),0,-14,t+" мм",18);txt(svg,X(t)+28,60,st>=2?`маяк ${p.bh} мм`:"",{"font-size":18,fill:"var(--muted)"});
+  txt(svg,X(t)+28,90,st>=4?(wet?"цементная":"гипсовая")+" штукатурка":"",{"font-size":18,fill:"var(--muted)"});txt(svg,X(t)+28,120,st>=4&&st<=5?"правило":"",{"font-size":18,fill:"var(--muted)"});
+  return svg}
+
+/* ---------- отрисовка страницы ---------- */
+function render(){const p=P(),k=S.room;
+  $("rooms").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.r===k));
+  $("modes").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===S.mode));
+  $("walls").hidden=S.mode!=="wall";
+  const ST=S.mode==="ceil"?CST:WST;S.st=Math.min(S.st,ST.length-1);
+  $("steps").innerHTML="";ST.forEach((s,i)=>{const b=document.createElement("button");b.id="st-"+i;b.textContent=String(i+1);b.title=s.t;if(i<S.st)b.className="done";if(i===S.st)b.setAttribute("aria-current","step");b.onclick=()=>{S.st=i;render()};$("steps").appendChild(b)});
+  const seqOn=S.mode==="ceil"?[3,4,5,6]:[1,2];$("seq").innerHTML=SEQ.map((s,i)=>`<span class="${seqOn.includes(i)?"on":""}">${i+1}. ${s}</span>`).join('<i>→</i>');
+  const card=$("card");let st=ST[S.st],body,mat;
+  if(S.mode==="ceil"){const c=ceil(k,p);
+    $("plan").replaceChildren(drawCeil(c,p,S.st));$("detail").replaceChildren(drawCeilDet(c,p,S.st));$("detT").textContent="Узел: край короба и ниша с лентой, разрез";
+    $("legend").innerHTML=`<span><b style="background:var(--acc)"></b>текущий этап</span><span><b style="border:2px dashed var(--acc)"></b>контур ниши</span><span><b style="background:var(--ink)"></b>профили, ■ подвесы верха, ● подвесы короба</span><span><b style="background:var(--gkl);border:1px solid var(--muted)"></b>листы ГКЛ</span><span><b style="background:var(--led)"></b>лента и споты</span>`;
+    body=st.do(c,p);mat=st.mat(c);
+    const kv=`<div class="kv"><div><small>Площадь</small><span>${fmt(c.q.A,1)} м²</span></div><div><small>Центр ${fmt(p.up)}</small><span>${fmt(c.q.Ai,1)} м²</span></div><div><small>Короб ${fmt(p.box)}</small><span>${fmt(c.q.Ab,1)} м²</span></div><div><small>Контур ниши</small><span>${fmt(c.q.Pi,1)} м</span></div></div>`;
+    card.innerHTML=head(st)+kv+list(body)+matT(mat)+foot(st)}
+  else{const c=walls(k,p),ks=["N","E","S","W"];if(!c.W[S.wall])S.wall="N";
+    $("walls").innerHTML=ks.map(w=>`<button id="w-${w}" data-w="${w}" aria-pressed="${w===S.wall}">${WN[w]}</button>`).join("");
+    $("walls").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.wall=b.dataset.w;render()});
+    const wd=c.W[S.wall];$("plan").replaceChildren(drawWall(wd,p,S.st,S.wall));$("detail").replaceChildren(drawWallDet(p,S.st,c.q.wet));$("detT").textContent="Разрез слоя: стена, грунт, маяк, штукатурка";
+    $("legend").innerHTML=`<span><b style="background:var(--blue)"></b>линии маяков</span><span><b style="background:var(--acc)"></b>текущий этап</span><span><b style="background:var(--box)"></b>штукатурка</span><span>Развёртка: вид из комнаты, размеры в мм</span>`;
+    body=st.do(wd,p,c);mat=st.mat(wd,p,c);if(typeof st.chk==="function")st={...st,chk:st.chk(wd,p,c)};
+    const kv=`<div class="kv"><div><small>Стена ${WN[S.wall].split(" ")[0]}</small><span>${fmt(wd.area,1)} м²</span></div><div><small>Комната, с откосами</small><span>${fmt(c.q.area,1)} м²</span></div><div><small>Смесь</small><span>${fmt(c.q.kg)} кг</span></div><div><small>Маяков 3 м</small><span>${c.q.beacons}</span></div></div>`;
+    card.innerHTML=head(st)+kv+list(body)+matT(mat)+foot(st)}
+  $("prev").disabled=S.st===0;$("next").disabled=S.st===ST.length-1;$("prev").onclick=()=>{S.st--;render()};$("next").onclick=()=>{S.st++;render()};
+  summary(p);save()}
+const head=st=>`<div class="eyebrow">ЭТАП ${S.st+1} ИЗ ${(S.mode==="ceil"?CST:WST).length} · ${ROOMS.find(r=>r[0]===S.room)[1].toUpperCase()}</div><h2>${st.t}</h2>`;
+const list=b=>`<ol>${b.map(x=>`<li>${x}</li>`).join("")}</ol>`;
+const matT=m=>m.length?`<div><h3>Материалы на этап</h3><div class="tbl"><table><tbody>${m.map(r=>`<tr><td>${r[0]}</td><td class="n">${fmt(r[1])} ${r[2]}</td></tr>`).join("")}</tbody></table></div></div>`:"";
+const foot=st=>`<div><h3>Инструмент</h3><p>${st.tools}</p></div><div class="chk"><b>Контроль.</b> ${st.chk}</div><div class="warn">${st.err}</div><div class="nav"><button id="prev">← Назад</button><button id="next" class="pri">Следующий этап →</button></div>`;
+
+function summary(p){const rows=[],tot={};const add=(n,v,u)=>{if(!v)return;tot[n]=tot[n]||{v:0,u};tot[n].v+=v};
+  const per=ROOMS.map(([k,n])=>{const c=ceil(k,p),w=walls(k,p),q=c.q;
+    add(`ГКЛ 12,5 × 1200 × ${p.sl} (в санузле ГКЛВ)`,q.sheets,"л.");add("ГКЛ арочный 6,5 × 1200 × 2500",q.archS*2,"л.");
+    add("Профиль CD 60 × 27, 3 м",(q.cdUp+q.cdBox)*1.05/3,"шт");add("Профиль UD 28 × 27, 3 м",(q.udUp+q.udLo+q.udBent)*1.08/3,"шт");add("Подвес прямой",q.hangUp+q.hangBox,"шт");
+    add("Анкер-клин 6 × 40",q.anchor,"шт");add("Дюбель-гвоздь 6 × 40",q.dowel,"шт");add("Саморез LN 9",q.ln,"шт");add("Шуруп TN 25",q.tn,"шт");
+    add("Лента демпферная",q.tape,"м");add("Лента армирующая бумажная",q.joint,"м");add("Уголок перфорированный 3 м",q.Pi*3*1.05/3,"шт");
+    add("Шпаклёвка для швов, 25 кг",q.fugen/25,"меш.");add("Шпаклёвка финишная, 20 кг",q.finish/20,"меш.");add("Краска для потолков, 9 л",q.paint/9,"в.");
+    add("LED-лента 24 В в профиле",Math.ceil(q.led),"м");
+    add("Штукатурка гипсовая, 30 кг",w.q.wet?0:w.q.kg/30,"меш.");add("Штукатурка цементная, 25 кг",w.q.wet?w.q.kg/25:0,"меш.");add(`Маяк ${p.bh} мм, 3 м`,w.q.beacons,"шт");
+    add("Уголок штукатурный 3 м",w.q.beadL*1.05/3,"шт");add("Грунт глубокого проникновения, 10 л",(w.q.area*0.3+q.Apaint*0.3)/10,"кан.");
+    return `<tr><td>${n}</td><td class="n">${fmt(q.A,1)}</td><td class="n">${fmt(q.Pi,1)}</td><td class="n">${q.sheets}+${q.archS*2}</td><td class="n">${q.hangUp+q.hangBox}</td><td class="n">${q.holes}</td><td class="n">${fmt(w.q.area,1)}</td><td class="n">${w.q.beacons}</td><td class="n">${w.q.bags} × ${w.q.bag}</td></tr>`});
+  $("sumL").textContent=`По всем комнатам при параметрах ниже: каркас шаг ${p.s} мм, подвесы через ${p.h} мм, слой штукатурки ${p.t} мм. Запас на подрезку уже учтён. Количество на этап открыто в карточке этапа.`;
+  $("sum").innerHTML=`<table><thead><tr><th>Комната</th><th>Потолок, м²</th><th>Ниша, м</th><th>ГКЛ + арочн., л.</th><th>Подвесы</th><th>Споты</th><th>Стены, м²</th><th>Маяки</th><th>Штукатурка</th></tr></thead><tbody>${per.join("")}</tbody></table>
+  <h3 style="margin:18px 0 6px">Итого на дом</h3><table><tbody>${Object.entries(tot).map(([n,o])=>`<tr><td>${n}</td><td class="n">${fmt(up(o.v))} ${o.u}</td></tr>`).join("")}</tbody></table>`}
+
+$("rooms").innerHTML=ROOMS.map(([k,n])=>`<button id="r-${k}" data-r="${k}" aria-pressed="false">${n}</button>`).join("");
+$("rooms").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.room=b.dataset.r;render()});
+$("modes").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.mode=b.dataset.m;S.st=0;render()});
+document.querySelectorAll(".pg input,.pg select").forEach(i=>i.addEventListener("input",render));
+document.addEventListener("keydown",e=>{if(e.target.closest("input,select"))return;const n=(S.mode==="ceil"?CST:WST).length;if(e.key==="ArrowRight"&&S.st<n-1){S.st++;render()}if(e.key==="ArrowLeft"&&S.st>0){S.st--;render()}});
+render();
+</script>
