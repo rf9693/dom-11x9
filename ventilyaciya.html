@@ -335,7 +335,7 @@ details.params .pg{margin-top:14px}
       <tr><td>Труба НПВХ 160 ↔ труба и фасонина</td><td>Гладкий конец с фаской вставляется в раструб до метки, кольцо смазано силиконовой смазкой. Труба не должна висеть на стыке: хомут ставится не дальше 150 мм от раструба.</td><td>Хомут с резиной Ø160 на шпильке-шурупе М8 × 80, через 1 м.</td></tr>
       <tr><td>Стояки забора и выброса в шкафу</td><td>Хомут ставится на трубу, K-Flex 13 мм натягивается поверх хомута, разрез проклеивается лентой K-Flex.</td><td>Хомут с резиной 180–192 на шпильке М8 × 80 с дюбелем 10 × 50 в заднюю стену шкафа, по 3 на трубу.</td></tr>
       <tr><td>Трубы ↔ балки перекрытия</td><td>Трубы висят под балками на хомутах, верх трубы на 2900. Поперёк балок хомут на балке через одну, вдоль балок на перемычке из бруска 50 × 50 через 1 м. Приток и вытяжка на одной высоте, они не пересекаются.</td><td>Брусок к балке: 2 самореза 5 × 90 в каждую балку. Стойка: 2 уголка 50 × 50 на саморезах 4 × 30.</td></tr>
-      <tr><td>Коллектор 160 ↔ трубы 110</td><td>Серая труба ПП 110 входит в боковой раструб 110 тройника 160/110, последняя в переход 160/110. Параллельные трубы идут с шагом 140–160 мм, повороты двумя отводами по 45°.</td><td>Хомут с резиной Ø110 на шпильке М8 × 80 через 1 м и у каждого поворота.</td></tr>
+      <tr><td>Коллектор 160 ↔ трубы 110</td><td>Серая труба ПП 110 входит в боковой раструб 110 тройника 160/110, торец коллектора закрыт заглушкой 160. Параллельные трубы идут с шагом 140–160 мм, повороты двумя отводами по 45°.</td><td>Хомут с резиной Ø110 на шпильке М8 × 80 через 1 м и у каждого поворота.</td></tr>
       <tr><td>Опуск ↔ потолок ГКЛ</td><td>В ГКЛ отверстие Ø115 коронкой по месту. Низ трубы ровно в плоскости листа, зазор заделывается герметиком.</td><td>Хомут Ø110 на шпильке к балке над опуском.</td></tr>
       <tr><td>Труба ↔ межкомнатная стена</td><td>Отверстие Ø130 (Ø150 под приток в изоляции), под 2–3 трубы проём высотой 150 мм. Зазор запенивается с обеих сторон, чтобы звук не шёл в соседнюю комнату.</td><td>Пена монтажная, уголок 63 × 63 над проёмом шире 300 мм.</td></tr>
       <tr><td>Опуск ↔ клапан Ø100</td><td>Монтажное кольцо клапана обматывается уплотнительной лентой 3 мм и вставляется в трубу 110 (внутри около 103 мм). Клапан вкручивается в кольцо.</td><td>Без саморезов: кольцо держится в трубе на ленте.</td></tr>
@@ -671,7 +671,7 @@ const VST=[
   err:"Ошибка: оставить забор и выброс без изоляции. Зимой на них нарастёт иней, весной он потечёт на потолок."},
  {t:"Коллекторы и магистрали 110",cam:"iso",tools:"Пила по пластику, напильник для фаски, маркер, лазерный уровень, шуруповёрт, сверло 6 мм по дереву.",
   do:(F)=>[`Приток: над вентилятором отвод 87°, горизонтальная вставка над стиральной колонной (место под кондиционер), стояк 160 у левой стенки шкафа и гибкий шумоглушитель Ø160, уложенный горизонтально над шкафом. Вытяжка: шумоглушитель вертикально на патрубке ETA, сжатый по месту до ${fmt(FLX)} мм.`,
-   `Коллектор: за шумоглушителем отвод 160, тройники 160/110 по числу труб и переход 160/110 на последнюю. Из коллектора притока выходят ${F.ns.ncol} трубы 110, из коллектора вытяжки ${F.ne.ncol}.`,
+   `Коллектор: за шумоглушителем отвод 160, тройники 160/110 по числу труб и заглушка 160 в торце. Из коллектора притока выходят ${F.ns.ncol} трубы 110, из коллектора вытяжки ${F.ne.ncol}.`,
    `Магистрали: где расход больше 100 м³/ч, рядом идут 2–3 трубы 110 с шагом ${SP.s} мм на притоке и ${SP.e} мм на вытяжке. В магистралях ${fmt(F.Lm,1)} м трубы. Самая высокая скорость ${fmt(F.vmax,1)} м/с${F.vmax>4?", это много: добавьте трубу":", это тихо"}.`,
    `Ось притока на ${fmt(YS)}, вытяжки на ${fmt(YE)}: верх трубы на 2900, до лотка 50 мм. Выставьте трубы по лазеру, провис между хомутами недопустим, иначе потолок не ляжет.`,
    `Крепление: хомут с резиной на шпильке М8 в балку. Поперёк балок хомут на каждой второй балке, вдоль балок перемычка из бруска 50 × 50 через 1 м. Трубы раструбом навстречу воздуху, кольца на силиконовой смазке.`,
@@ -798,7 +798,7 @@ const std=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness
 const tr=(c,op,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9,transparent:true,opacity:op,depthWrite:false,side:THREE.DoubleSide},o||{}));
 function mats(){MAT={wall:std(0xdcd6cc,{roughness:.95}),floor:std(0xa69d90,{roughness:1}),glass:new THREE.MeshStandardMaterial({color:0xa9cbe0,transparent:true,opacity:.35,depthWrite:false}),
   unit:std(0xf3f3f1,{roughness:.45}),panel:std(0x3a3e42,{roughness:.5}),ins:std(0x2b2d2f,{roughness:.9}),flex:std(0xc3c9ce,{metalness:.6,roughness:.4}),
-  pvc:std(0xd2691e,{roughness:.55}),pp:std(0x8d9196,{roughness:.5}),ppS:std(0x5b9bd5,{roughness:.5}),ppE:std(0xe0786b,{roughness:.5}),tS:std(0x2f78b7,{roughness:.5}),tE:std(0xd0342c,{roughness:.5}),
+  pvc:std(0xd2691e,{roughness:.55}),pp:std(0x8d9196,{roughness:.5}),ppS:std(0x5b9bd5,{roughness:.5}),ppE:std(0xe0786b,{roughness:.5}),pS:std(0x0b3570,{roughness:.45}),fS:std(0x061a33,{roughness:.4}),pE:std(0x700f06,{roughness:.45}),fE:std(0x300804,{roughness:.4}),pvcD:std(0x8a3c0a,{roughness:.5}),fln:new THREE.LineBasicMaterial({color:0x0d1114}),tS:std(0x2f78b7,{roughness:.5}),tE:std(0xd0342c,{roughness:.5}),
   oda:std(0x23527d),eha:std(0x6f7478),hole:new THREE.MeshBasicMaterial({color:0x1d1d1d}),
   gkl:std(0xf4f2ec,{roughness:.95,side:THREE.DoubleSide,transparent:true}),gklS:std(0xece9e1,{roughness:.95,side:THREE.DoubleSide,transparent:true}),
   ceil:tr(0xcbb796,.28),wood:std(0xb58a5a,{roughness:.9}),roof:tr(0x5a4d48,.2),roofS:std(0x3d3635,{roughness:.6}),wool:tr(0xf2cf5b,.5),
@@ -897,32 +897,22 @@ function build(F){G.forEach(g=>root.remove(g));while(root.children.length)root.r
   /* 5 — шумоглушители, стояки и магистрали 160 */
   const g5=grp(5,"rise");
   {const g=new THREE.Group();g5.add(g);duct([[8540,PY,6180],[8540,ACY,6180],[AC.rx,ACY,6180],[AC.rx,YS,6180],[7860,YS,6180]],80,MAT.pvc,g);
-    rod([7860,YS,6180],[8440,YS,6180],92,MAT.flex,g,20);rod([8440,YS,6180],[ROOT.s[0]+40,YS,6180],80,MAT.pvc,g,20);ball([ROOT.s[0],YS,6180],80,MAT.pvc,g)}
-  {const g=new THREE.Group();g5.add(g);rod([8820,u.y1,6180],[8820,FLX,6180],92,MAT.flex,g,20);rod([8820,FLX,6180],[8820,YE,6180],80,MAT.pvc,g,20);ball([8820,YE,6180],80,MAT.pvc,g)}
-  nets(F).forEach(([k,N,y])=>{const tp=k==="s"?MAT.tS:MAT.tE,sp=k==="s"?SP.s:SP.e;N.ED.filter(e=>e.n>1).forEach(e=>{const g=new THREE.Group();g5.add(g);const hz=e.a[1]===e.b[1];
-    for(let j=0;j<e.n;j++){const o=(j-(e.n-1)/2)*sp,ox=hz?0:o,oz=hz?o:0,A=[e.a[0]+ox,y,e.a[1]+oz],B=[e.b[0]+ox,y,e.b[1]+oz];const pm=k==="s"?MAT.ppS:MAT.ppE;rod(A,B,55,pm,g,16);ball(A,55,pm,g);ball(B,55,pm,g);
-      const mx=(A[0]+B[0])/2,mz=(A[2]+B[2])/2,dx=Math.sign(e.b[0]-e.a[0])*40,dz=Math.sign(e.b[1]-e.a[1])*40;rod([mx-dx,y,mz-dz],[mx+dx,y,mz+dz],58,tp,g,16)}})});
-  /* 6 — отводы 110 и опуски */
-  const g6=grp(6,"tubes");
-  nets(F).forEach(([k,N,y])=>N.terms.forEach(t=>{const i=t.ed.findIndex(e=>e.n===1),pts=(i<0?[t.T]:t.nd.slice(i)).map(p=>[p[0],y,p[1]]);pts.push([t.T[0],t.gl,t.T[1]]);
-    const cp=path3(pts,100),segs=Math.max(8,Math.ceil(cp.getLength()/60)),m=new THREE.Mesh(new THREE.TubeGeometry(cp,segs,55,8,false),k==="s"?MAT.ppS:MAT.ppE);g6.add(m);TB.push({m,segs,i:TB.length});
-    rod([t.T[0],y-20,t.T[1]],[t.T[0],y-80,t.T[1]],59,k==="s"?MAT.tS:MAT.tE,g6,16)}));
-  /* 7 — утепление поверх труб */
-  const g7=grp(7,"pop");
-  F.ns.ED.forEach(e=>{const g=new THREE.Group();g7.add(g);const hz=e.a[1]===e.b[1];for(let j=0;j<e.n;j++){const o=(j-(e.n-1)/2)*SP.s,ox=hz?0:o,oz=hz?o:0;
-    rod([e.a[0]+ox,YS,e.a[1]+oz],[e.b[0]+ox,YS,e.b[1]+oz],64,MAT.pef,g,16)}});
+    rod([7860,YS,6180],[8300,YS,6180],92,MAT.flex,g,20)}
+  {const g=new THREE.Group();g5.add(g);rod([8820,u.y1,6180],[8820,FLX,6180],92,MAT.flex,g,20);rod([8820,FLX,6180],[8820,YE,6180],80,MAT.pvc,g,20)}
+  /* 6 — отводы 110 и опуски, 7 — утепление */
+  const g6=grp(6,"rise"),g7=grp(7,"pop");PNB(F,g5,g6,g7);
   /* 8 — потолок ГКЛ, клапаны, перетоки */
   const g8=grp(8,"pop"),ce=new THREE.Group();ce.userData.na=1;g8.add(ce);
   for(const k in RR){const r=RR[k];flat(shp([[r[0],r[1]],[r[2],r[1]],[r[2],r[3]],[r[0],r[3]]]),CEIL,MAT.gkl,ce)}
   if(F.wall)[ODA,EHA].forEach(pp=>{for(let i=1;i<pp.length;i++){const a=pp[i-1],q=pp[i];if(a[1]!==q[1]||a[1]<2750)continue;const w=150;
     bx(Math.min(a[0],q[0])-w,Math.min(10750,Math.max(a[0],q[0])+w),2640,CEIL,Math.min(a[2],q[2])-w,Math.max(a[2],q[2])+w,MAT.gklS,ce)}});
   doors().forEach(d=>bx(d.x0,d.x1,0,18,d.z0,d.z1,MAT.acc,ce));
-  F.terms.forEach(t=>{const g=new THREE.Group();g8.add(g);rod([t.T[0],t.gl-16,t.T[1]],[t.T[0],t.gl-2,t.T[1]],80,MAT.grille,g,24);rod([t.T[0],t.gl-20,t.T[1]],[t.T[0],t.gl-14,t.T[1]],42,t.k==="s"?MAT.tS:MAT.tE,g,20)});
+  F.terms.forEach(t=>{const g=new THREE.Group(),Tq=t.TT||t.T;g8.add(g);rod([Tq[0],t.gl-16,Tq[1]],[Tq[0],t.gl-2,Tq[1]],80,MAT.grille,g,24);rod([Tq[0],t.gl-20,Tq[1]],[Tq[0],t.gl-14,Tq[1]],42,t.k==="s"?MAT.tS:MAT.tE,g,20)});
   const ta=F.ns.terms.find(t=>t.room==="liv")||F.terms[0];
   if(ta){const an=new THREE.Group();g8.add(an);rod([ta.T[0],ta.gl-30,ta.T[1]],[ta.T[0],ta.gl-260,ta.T[1]],120,MAT.dark,an,20);rod([ta.T[0],ta.gl-260,ta.T[1]],[ta.T[0],1100,ta.T[1]],15,MAT.pipe,an,8);an.userData.until=8}
   /* 9 — движение воздуха */
   const g9=grp(9,"none");PT=particles(F,g9);
-  LAB=stageLabels(F)}
+  LAB=stageLabels(F);fitLabels()}
 
 /* самодельный рекуператор: фанерный корпус без крышки, 2 пакета ромбом, упоры XPS, фильтры, патрубки, стрелки потоков */
 const CORE={a:2075,b:1623,hd:212};
@@ -974,7 +964,7 @@ function particles(F,par){const paths=[];
   const SB=0x3b8bd4,EO=0xe0453a,top=(pp,h)=>{const a=pp.map(p=>p.slice());a[a.length-1][1]+=h+20;return a},zc=(UNIT.z0+UNIT.z1)/2;
   add(top(ODA,F.wall?0:MH.oda).reverse(),0x9fd0ff,0x9fd0ff,18,1900);add(top(EHA,F.wall?0:MH.eha),0x8a8f93,0x8a8f93,12,1900);
   add([...BF.s.map(p=>[p[0],p[1],zc]),[8540,PY,zc]],0x9fd0ff,SB,12,520);add([[8820,PY,zc],...BF.e.map(p=>[p[0],p[1],zc])],EO,0x8a8f93,12,520);
-  nets(F).forEach(([k,N,y])=>N.terms.forEach(t=>{const p=[...(k==="s"?[[8540,PY,6180],[8540,ACY,6180],[AC.rx,ACY,6180],[AC.rx,YS,6180]]:[[t.pts[0][0],FLX-700,t.pts[0][1]]]),...t.nd.map(q=>[q[0],y,q[1]]),[t.T[0],t.gl,t.T[1]]];if(k==="s")add(p,SB,SB,10,1600);else add(p.reverse(),EO,EO,10,1600)}));
+  nets(F).forEach(([k,N,y])=>N.terms.forEach(t=>{const p=[...(k==="s"?[[8540,PY,6180],[8540,ACY,6180],[AC.rx,ACY,6180],[AC.rx,YS,6180]]:[[t.pts[0][0],FLX-700,t.pts[0][1]]]),...(t._p3||[...t.nd.map(q=>[q[0],y,q[1]]),[t.T[0],t.gl,t.T[1]]])];if(k==="s")add(p,SB,SB,10,1600);else add(p.reverse(),EO,EO,10,1600)}));
   const ex=k=>F.ne.terms.filter(t=>t.room===k),D={bed:[7470,4300],kid:[4200,3560],bath:[6000,3560],hall:[7470,8100]};
   const room=(T,via,E,n)=>{if(!E)return;const p=[[T.T[0],T.gl-20,T.T[1]],[T.T[0],2100,T.T[1]+(T.T[1]<4500?500:-500)]];via.forEach(v=>p.push([v[0],v[2]||450,v[1]]));p.push([E.T[0],1500,E.T[1]],[E.T[0],E.gl-20,E.T[1]]);add(p,SB,EO,n,750)};
   F.ns.terms.forEach(t=>{const k=t.room,own=ex(k)[0],kit=ex("liv")[0]||own;
@@ -991,6 +981,84 @@ function particles(F,par){const paths=[];
     pos[i*3]=a[0]+(b[0]-a[0])*f;pos[i*3+1]=a[1]+(b[1]-a[1])*f;pos[i*3+2]=a[2]+(b[2]-a[2])*f;tmp.copy(p.c0).lerp(p.c1,s/p.T);col[i*3]=tmp.r;col[i*3+1]=tmp.g;col[i*3+2]=tmp.b});
     geo.attributes.position.needsUpdate=true;geo.attributes.color.needsUpdate=true}}}
 
+
+/* раскладка труб 110 по полосам: какая труба коллектора к какой группе решёток и в каком порядке в пучке — перебором, без пересечений */
+const PK=p=>Math.round(p[0])+","+Math.round(p[1]),PE=(a,c)=>{const x=PK(a),z=PK(c);return x<z?x+"|"+z:z+"|"+x};
+function perms(a){if(a.length<2)return[a];const o=[];a.forEach((x,i)=>perms(a.filter((_,j)=>j!==i)).forEach(r=>o.push([x,...r])));return o}
+function pnet(N,sp){const ED={};N.ED.forEach(e=>ED[PE(e.a,e.b)]=e);
+  const TT=N.terms.map(t=>{const es=[];for(let i=1;i<t.nd.length;i++)es.push(PE(t.nd[i-1],t.nd[i]));return es});
+  const par=N.terms.map((_,i)=>i),f=i=>par[i]===i?i:(par[i]=f(par[i])),own={};
+  TT.forEach((es,i)=>es.forEach(q=>{if(ED[q].n===1){if(own[q]===undefined)own[q]=i;else par[f(i)]=f(own[q])}}));
+  const gid=N.terms.map((_,i)=>f(i)),GR=[...new Set(gid)],gi=i=>GR.indexOf(gid[i]),M=Math.max(...N.ED.map(e=>e.n)),load={};
+  TT.forEach((es,i)=>es.forEach(q=>(load[q]=load[q]||new Set()).add(gi(i))));
+  const valid=[];for(let c=0;c<Math.pow(M,GR.length);c++){const as=[];let x=c;for(let j=0;j<GR.length;j++){as.push(x%M);x=Math.floor(x/M)}
+    if(as[0]!==0)continue;let ok=true;for(const q in load){if(new Set([...load[q]].map(j=>as[j])).size!==ED[q].n){ok=false;break}}if(ok)valid.push(as)}
+  const sd=(p,a,c)=>{const dx=c[0]-a[0],dz=c[1]-a[1],l=dx*dx+dz*dz;let t=l?((p[0]-a[0])*dx+(p[1]-a[1])*dz)/l:0;t=Math.max(0,Math.min(1,t));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dz)};
+  const o3=(p,q,r)=>Math.sign((q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0])),X=(a,c,d,e)=>o3(a,c,d)*o3(a,c,e)<0&&o3(d,e,a)*o3(d,e,c)<0;
+  const SD=(a,c,d,e)=>X(a,c,d,e)?0:Math.min(sd(a,d,e),sd(c,d,e),sd(d,a,c),sd(e,a,c));
+  const geom=(as,lane)=>{const paths=N.terms.map((t,i)=>{const m=as[gi(i)],nd=t.nd,offs=[];let pO=null,pH=null;
+      for(let j=1;j<nd.length;j++){const a=nd[j-1],c=nd[j],q=PE(a,c),e=ED[q],hz=Math.abs(a[1]-c[1])<1;let o;
+        if(e.n>1)o=(lane[q].indexOf(m)-(e.n-1)/2)*sp;else if(pH===hz&&pO!==null)o=pO;else{o=0;if(pH!==null)for(const w of N.ED){if(w.n<2||(Math.abs(w.a[1]-w.b[1])<1)!==hz)continue;const kq=PE(w.a,w.b),L=lane[kq];if(!L||L.indexOf(m)<0)continue;if(PK(w.a)===PK(a)||PK(w.b)===PK(a)){o=(L.indexOf(m)-(w.n-1)/2)*sp;break}}}offs.push({hz,o,d:[Math.sign(c[0]-a[0]),Math.sign(c[1]-a[1])],tr:e.n>1});pO=o;pH=hz}
+      const ov=s=>s.hz?[0,s.o]:[s.o,0],pts=[[nd[0][0]+ov(offs[0])[0],nd[0][1]+ov(offs[0])[1]]],fl=[];
+      for(let j=1;j<nd.length-1;j++){const A=offs[j-1],B=offs[j],n=nd[j],a=ov(A),c=ov(B);
+        if(A.hz!==B.hz){pts.push([n[0]+a[0]+c[0],n[1]+a[1]+c[1]]);fl.push(A.tr)}
+        else if(A.o===B.o){pts.push([n[0]+a[0],n[1]+a[1]]);fl.push(A.tr)}
+        else{const D=Math.abs(B.o-A.o)/2,d=A.d;pts.push([n[0]-d[0]*D+a[0],n[1]-d[1]*D+a[1]]);fl.push(A.tr);pts.push([n[0]+d[0]*D+c[0],n[1]+d[1]*D+c[1]]);fl.push(A.tr&&B.tr)}}
+      const Z=offs[offs.length-1],e=nd[nd.length-1];pts.push([e[0]+ov(Z)[0],e[1]+ov(Z)[1]]);fl.push(Z.tr);return{m,pts,fl}});
+    const sg={};let sc=0;paths.forEach(p=>{for(let j=0;j+1<p.pts.length;j++){const a=p.pts[j],c=p.pts[j+1];sg[p.m+"#"+PE(a,c)]={m:p.m,a,c}}});
+    const L=Object.values(sg);L.forEach(s=>{sc+=Math.hypot(s.c[0]-s.a[0],s.c[1]-s.a[1])*.001;if(Math.abs(s.c[0]-s.a[0])>1&&Math.abs(s.c[1]-s.a[1])>1)sc+=5});
+    for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++)if(L[i].m!==L[j].m&&SD(L[i].a,L[i].c,L[j].a,L[j].c)<130)sc+=1000;
+    return{paths,sc,as,lane}};
+  let best=null;valid.forEach(as=>{const BE=Object.keys(load).filter(q=>ED[q].n>1),opts=BE.map(q=>perms([...new Set([...load[q]].map(j=>as[j]))].sort())),tot=opts.reduce((a,o)=>a*o.length,1);
+    if(tot>20000)return;for(let c=0;c<tot;c++){let x=c;const lane={};BE.forEach((q,i)=>{const o=opts[i];lane[q]=o[x%o.length];x=Math.floor(x/o.length)});const r=geom(as,lane);if(!best||r.sc<best.sc)best=r}});
+  return best}
+/* сборка: трубы, отводы 45° (поворот = 2 × 45°), отводы 87° к клапанам, тройники 110/110, раструбы через 2 м, коллекторы 160 с тройниками 160/110 */
+let FITL=[];
+function PNB(F,g5,g6,g7){FITL=[];const OUT={pipes:[],fit:[],col:[],sc:{}};
+  const col=(a,c,r,mat,par)=>{const m=rod(a,c,r,mat,par,24);m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry,30),MAT.fln));return m};
+  const U=(a,c)=>{const d=[c[0]-a[0],c[1]-a[1],c[2]-a[2]],l=Math.hypot(...d)||1;return d.map(v=>v/l)},ad=(p,d,s)=>[p[0]+d[0]*s,p[1]+d[1]*s,p[2]+d[2]*s],L3=(a,c)=>Math.hypot(a[0]-c[0],a[1]-c[1],a[2]-c[2]);
+  const rr=p=>p.map(v=>Math.round(v)),r3=d=>d.map(v=>+v.toFixed(3));
+  nets(F).forEach(([k,N,y])=>{const sp=k==="s"?SP.s:SP.e,RN=pnet(N,sp),mp=k==="s"?MAT.pS:MAT.pE,mf=k==="s"?MAT.fS:MAT.fE,T3=q=>[q[0],y,q[1]];OUT.sc[k]=RN.sc;
+    const fit=(t,p,ds,ls,par,tr)=>{const g=new THREE.Group();par.add(g);ball(p,t==="tee"?64:61,mf,g);
+      const cl=ds.map((d,i)=>Math.round(Math.max(25,Math.min(t==="tee"?80:70,ls[i]*.45))));ds.forEach((d,i)=>col(p,ad(p,d,cl[i]),63,mf,g));OUT.fit.push({k,t,p:rr(p),d:ds.map(r3),l:cl});FITL.push([k,t,p,tr]);return g};
+    RN.paths.forEach((p,i)=>{const t=N.terms[i],e=p.pts[p.pts.length-1];t._p3=[...p.pts.map(T3),[e[0],t.gl,e[1]]];t.TT=[e[0],e[1]]});
+    const lanes=[];
+    [...new Set(RN.paths.map(p=>p.m))].sort().forEach(m=>{const PP=RN.paths.map((p,i)=>({...p,t:N.terms[i]})).filter(p=>p.m===m),V={},S2={},ADJ={},EG={};
+      PP.forEach(p=>p.pts.forEach(q=>V[PK(q)]=q));const VV=Object.values(V);
+      PP.forEach(p=>{for(let j=0;j+1<p.pts.length;j++){const a=p.pts[j],c=p.pts[j+1],l=Math.hypot(c[0]-a[0],c[1]-a[1]);if(l<1)continue;
+        const ins=VV.map(v=>({v,t:((v[0]-a[0])*(c[0]-a[0])+(v[1]-a[1])*(c[1]-a[1]))/(l*l),cr:Math.abs((v[0]-a[0])*(c[1]-a[1])-(v[1]-a[1])*(c[0]-a[0]))/l})).filter(o=>o.cr<1&&o.t>1e-3&&o.t<1-1e-3).sort((x,z)=>x.t-z.t).map(o=>o.v),ch=[a,...ins,c];
+        for(let i=0;i+1<ch.length;i++){const q=PE(ch[i],ch[i+1]);if(S2[q])S2[q].tr=S2[q].tr||p.fl[j];else S2[q]={a:ch[i],b:ch[i+1],tr:p.fl[j]}}}
+        const e=p.pts[p.pts.length-1];EG[PK(e)]=p.t.gl});
+      const add=(p,q,s)=>{(ADJ[PK(p)]=ADJ[PK(p)]||{p,n:[]}).n.push({q,s})};Object.values(S2).forEach(s=>{add(s.a,s.b,s);add(s.b,s.a,s)});
+      const rk=PK(PP[0].pts[0]),typ={},trim={};
+      for(let ch=true;ch;){ch=false;for(const nk in ADJ){if(nk===rk||EG[nk]!==undefined)continue;const nd=ADJ[nk];if(nd.n.length!==2)continue;const P3=T3(nd.p),[o1,o2]=nd.n,u1=U(P3,T3(o1.q)),u2=U(P3,T3(o2.q));if(u1[0]*u2[0]+u1[2]*u2[2]>-.99)continue;
+        const sg={a:o1.q,b:o2.q,tr:o1.s.tr||o2.s.tr},k1=PK(o1.q),k2=PK(o2.q);ADJ[k1].n=ADJ[k1].n.filter(o=>PK(o.q)!==nk);ADJ[k2].n=ADJ[k2].n.filter(o=>PK(o.q)!==nk);ADJ[k1].n.push({q:o2.q,s:sg});ADJ[k2].n.push({q:o1.q,s:sg});delete ADJ[nk];ch=true;break}}lanes.push({p:PP[0].pts[0],d:[Math.sign(PP[0].pts[1][0]-PP[0].pts[0][0]),Math.sign(PP[0].pts[1][1]-PP[0].pts[0][1])]});
+      for(const nk in ADJ){if(nk===rk)continue;const nd=ADJ[nk],P3=T3(nd.p),ds=nd.n.map(o=>U(P3,T3(o.q))),dn=EG[nk]!==undefined,cnt=ds.length+(dn?1:0);
+        if(cnt>=3)typ[nk]="tee";else if(cnt===2&&dn)typ[nk]="e87";else if(cnt===2){const dt=ds[0][0]*ds[1][0]+ds[0][2]*ds[1][2];
+          if(dt<-.99)typ[nk]=null;else if(Math.abs(dt)<.01){typ[nk]="ch";const c=Math.min(110,...nd.n.map(o=>L3(P3,T3(o.q))*.45));nd.n.forEach(o=>trim[nk+">"+PK(o.q)]=c)}else typ[nk]="e45"}
+        else typ[nk]=null}
+      const seen=new Set([rk]),Q=[rk];
+      while(Q.length){const nk=Q.shift(),nd=ADJ[nk],P3=T3(nd.p),dn=EG[nk]!==undefined,tr=nd.n.every(o=>o.s.tr)&&!dn,par=tr?g5:g6,t=typ[nk];
+        if(t==="ch"){const[o1,o2]=nd.n,u1=U(P3,T3(o1.q)),u2=U(P3,T3(o2.q)),c=trim[nk+">"+PK(o1.q)],A=ad(P3,u1,c),B=ad(P3,u2,c),dg=U(A,B),ld=L3(A,B),g=new THREE.Group();par.add(g);
+          fit("e45",A,[u1,dg],[L3(P3,T3(o1.q))-c,ld],g,tr);fit("e45",B,[u2,dg.map(v=>-v)],[L3(P3,T3(o2.q))-c,ld],g,tr);rod(A,B,55,mp,g,16);OUT.pipes.push({k,a:rr(A),b:rr(B),r:55});FITL.push([k,"ch",P3,tr])}
+        else if(t){const ds=nd.n.map(o=>U(P3,T3(o.q))),ls=nd.n.map(o=>L3(P3,T3(o.q)));if(dn){ds.push([0,-1,0]);ls.push(y-EG[nk])}fit(t,P3,ds,ls,par,tr)}
+        nd.n.forEach(o=>{const qk=PK(o.q);if(seen.has(qk))return;seen.add(qk);Q.push(qk);
+          const b0=T3(o.q),u=U(P3,b0),a=ad(P3,u,trim[nk+">"+qk]||0),c=ad(b0,u,-(trim[qk+">"+nk]||0)),g=new THREE.Group();(o.s.tr?g5:g6).add(g);rod(a,c,55,mp,g,16);OUT.pipes.push({k,a:rr(a),b:rr(c),r:55});
+          const l=L3(a,c);for(let s=2000;s<l-250;s+=2000){const m=ad(a,u,s);col(ad(m,u,-45),ad(m,u,45),62,mf,g);OUT.fit.push({k,t:"sock",p:rr(m),d:[r3(u)]});FITL.push([k,"sock",m,o.s.tr])}
+          if(k==="s"&&l>170){const h=new THREE.Group();g7.add(h);rod(ad(a,u,78),ad(c,u,-78),67,MAT.pef,h,16)}});
+        if(dn){const gl=EG[nk],B=[P3[0],gl,P3[2]],g=new THREE.Group();g6.add(g);rod(P3,B,55,mp,g,16);col(B,[B[0],gl+70,B[2]],63,mf,g);OUT.pipes.push({k,a:rr(P3),b:rr(B),r:55})}}});
+    // коллектор 160: тройники 160/110 по числу труб, заглушка в торце
+    const xs=lanes.map(l=>l.p[0]).sort((a,c)=>a-c),z=lanes[0].p[1],x0=k==="s"?8300:xs[0]-70,x1=xs[xs.length-1]+70,g=new THREE.Group();g5.add(g);
+    col([x0,y,z],[x1,y,z],80,MAT.pvc,g);col([x1,y,z],[x1+16,y,z],86,MAT.pvcD,g);if(k==="e")col([x0-16,y,z],[x0,y,z],86,MAT.pvcD,g);else col([x0-35,y,z],[x0+35,y,z],86,MAT.pvcD,g);
+    lanes.forEach(l=>{const p=[l.p[0],y,l.p[1]],d=[l.d[0],0,l.d[1]];col(ad(p,[1,0,0],-62),ad(p,[1,0,0],62),85,MAT.pvcD,g);col(p,ad(p,d,128),63,mf,g)});
+    if(k==="e")col([8820,y-135,z],[8820,y-70,z],86,MAT.pvcD,g);
+    OUT.col.push({k,x0,x1,y,z,lanes:lanes.map(l=>rr(l.p))});FITL.push([k,"col",[(x0+x1)/2,y,z],lanes.length])});
+  window.PNETX=window.PNETX||{};window.PNETX[F.wall?"wall":"roof"]=OUT}
+function fitLabels(){const one=(k,t,tr)=>FITL.find(f=>f[0]===k&&f[1]===t&&(tr===undefined||f[3]===tr)),L5=(LAB[5]=(LAB[5]||[]).filter(q=>!/^Коллектор:/.test(q[3]))),L6=(LAB[6]=LAB[6]||[]);
+  const put=(A,f,txt,dy)=>{if(f)A.push([f[2][0],f[2][1]+(dy||150),f[2][2],txt,f[0]])};
+  ["s","e"].forEach(k=>{const c=one(k,"col");if(c)put(L5,c,"Коллектор Ø160: тройники 160/110 × "+c[3]+", заглушка",k==="s"?190:-170)});
+  put(L5,one("s","ch",true),"Поворот: 2 отвода 45°");put(L5,one("s","sock",true),"Раструб: стык труб по 2 м",-150);put(L5,one("e","ch",true),"2 отвода 45°");
+  put(L6,one("s","tee",false),"Тройник 110/110");put(L6,one("s","e87"),"Отвод 87° вниз к клапану",-160);put(L6,one("e","tee",false),"Тройник 110/110");put(L6,one("e","e87"),"Отвод 87° к клапану",-160);put(L6,one("e","ch",false),"2 × 45°")}
 /* подписи по этапам: [x,y,z,текст,класс] */
 function stageLabels(F){const c=k=>{const r=RR[k];return[(r[0]+r[2])/2,(r[1]+r[3])/2]},Rf=F.R,out=[],ot=ODA[ODA.length-1],et=EHA[EHA.length-1],u=UNIT,zc=(u.z0+u.z1)/2,W=F.wall;
   const tl=(N,k)=>N.terms.filter(t=>t.room===k)[0],mid=e=>[(e.a[0]+e.b[0])/2,(e.a[1]+e.b[1])/2],big=N=>N.ED.filter(e=>e.n>1).sort((a,b)=>b.n-a.n||b.L-a.L)[0];
