@@ -117,6 +117,10 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
 .pal{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
 .pal span{aspect-ratio:1;border-radius:4px;border:1px solid var(--line)}
 a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
+a.go2d{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--accent);color:#fff;text-decoration:none;border-radius:10px;padding:10px 14px;font:600 14px/1.25 var(--f-body)}
+a.go2d small{display:block;font-weight:400;font-size:11.5px;opacity:.9}
+a.go2d b{font-size:20px;font-weight:500}
+a.go2d:hover{filter:brightness(1.07)}
 #toggle{display:none}
 .tag{position:fixed;left:0;top:0;pointer-events:none;font:600 12px/1.2 var(--f-body);color:#212427;background:#FFFFFFD9;border-radius:6px;padding:3px 7px;white-space:nowrap;transform:translate(-50%,-50%)}
 .tag small{display:block;font-weight:500;color:#686C70;font-size:10.5px}
@@ -144,6 +148,7 @@ a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
     <h1>Квартира 53,76 м²</h1>
     <p class="sub">Две комнаты, кухня 9,5 м², потолок 2,55 м. Современный минимализм: тёплый серый, дуб, орех, графит. Свет — треки, световые линии и сценарии.</p>
   </div>
+  <a class="go2d" href="kvartira.html"><span>Перейти в 2D-план квартиры<small>чертёж, свет, проходы, мебель и материалы</small></span><b>→</b></a>
   <div class="row">
     <span class="lbl">Вид</span>
     <div class="views" id="views"></div>
@@ -171,7 +176,6 @@ a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
     <span class="lbl">Палитра</span>
     <div class="pal" id="pal"></div>
   </div>
-  <a class="link" href="kvartira.html">План, свет и списки мебели →</a>
   <p class="hint more">Вращение — левая кнопка или палец, сдвиг — правая кнопка или два пальца, масштаб — колесо или щипок.</p>
 </div>
 
