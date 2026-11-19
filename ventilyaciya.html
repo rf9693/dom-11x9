@@ -457,7 +457,7 @@ const POLY=Object.fromEntries(Object.keys(RR).map(k=>[k,CONT[k].map(p=>mp(k,p[0]
 const area=k=>{const r=RR[k];return(r[2]-r[0])*(r[3]-r[1])/1e6};
 /* кабельные лотки 100 × 50 по потолку: по периметру каждой комнаты вплотную к стене, низ на H − 50.
    Над коробом рекуператора в прихожей (x 7620–9780) лотка нет: кабели там идут в гофре по верху короба. Отступ трубы от лотка не меньше 50 мм */
-/* V3G */ /* V3H */ /* V3I */ /* V3J */const TRW=100,TRH=50,TRC=50,CAB=[7620,9780];
+/* V3G */ /* V3H */ /* V3I */ /* V3K */ /* V3J */const TRW=100,TRH=50,TRC=50,CAB=[7620,9780];
 const TRAYS=(()=>{const o=[];for(const k in RR){const[x0,z0,x1,z1]=RR[k];
   if(k==="hall"){if(CAB[0]-x0>1)o.push([x0,CAB[0],z0,z0+TRW]);o.push([CAB[1],x1,z0,z0+TRW])}else o.push([x0,x1,z0,z0+TRW]);
   o.push([x0,x1,z1-TRW,z1],[x0,x0+TRW,z0+TRW,z1-TRW],[x1-TRW,x1,z0+TRW,z1-TRW])}return o})();
@@ -1121,10 +1121,20 @@ function cutList(F){const W=F.wall,P=((PNETX[W?"wall":"roof"]||{}).pipes)||[],K=
       for(let j=0;j+1<cuts.length;j+=2){const s1=cuts[j][0],s2=cuts[j+1][0],ln=s2-s1,dd=x=>/отвод|тройник/.test(x)?90:0,c=Math.max(0,ln-dd(cuts[j][1])-dd(cuts[j+1][1])),sm=(s1+s2)/2;if(c<20)continue;
         rows.push({id:(nm==="oda"?"З":"Вб")+(++n),k,d:160,l:ln,c,A:cuts[j][1],B:cuts[j+1][1],m:[a[0]+u[0]*sm,a[1]+u[1]*sm,a[2]+u[2]*sm]})}}});
   CUTL=rows.map(r=>[r.m[0],r.m[1]+(r.d>110?120:80),r.m[2],`${r.id} · ${fmt(Math.round(r.c))}`,r.k+" cut"]);
-  const el=$("cuts");if(el){const st={110:[],160:[]};rows.forEach(r=>{let c=r.c;while(c>2000){st[r.d].push(2000);c-=1940}st[r.d].push(c)});
-    const bins=d=>{const b=[];st[d].slice().sort((x,y)=>y-x).forEach(c=>{const i=b.findIndex(v=>v+c+5<=2000);if(i<0)b.push(c+5);else b[i]+=c+5});return b.length};
-    el.innerHTML=`<table><thead><tr><th>№ на 3D</th><th>Труба</th><th>Где</th><th>Концы</th><th class="n">По осям, мм</th><th class="n">Отрезать ≈, мм</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="${r.k}">${r.id}</td><td>${r.d===160?"НПВХ 160":"ПП 110"}</td><td>${r.m[1]>H?"чердак":roomAt(r.m[0],r.m[2])}</td><td>${r.A} — ${r.B}</td><td class="n">${fmt(Math.round(r.l))}</td><td class="n">${fmt(Math.round(r.c))}${r.c>2000?", из 2 труб на раструбе":""}</td></tr>`).join("")}</tbody></table><p class="lead">По раскрою выходит ПП 110 × 2 м — ${bins(110)} шт, НПВХ 160 × 2 м — ${bins(160)} шт, с пропилом 5 мм. В списках закупки по этапам трубы взяты с запасом.</p>`}
-  const cb=$("cutB");if(cb&&!cb.dataset.on){cb.dataset.on=1;cb.onclick=()=>{CUTON=!CUTON;cb.setAttribute("aria-pressed",CUTON);cb.textContent=CUTON?"Скрыть длины":"Длины труб";labels()}}
+  /* V3K: раскрой из стандартных длин. Длинные трассы из целых труб 3 м на раструбах, куски раскладываются по трубам (лучшая подходящая), остаток трубы — на самую короткую стандартную длину */
+  const el=$("cuts");if(el){const ST={110:[3000,2000,1500,1000,750,500,250],160:[3000,2000,1000,500]},J={110:60,160:90},KF=5,MAP={110:[],160:[]},
+    nm={110:"ПП 110",160:"НПВХ 160"},m1=v=>(v/1000).toLocaleString("ru",{maximumFractionDigits:2});
+  [110,160].forEach(d=>{const L=ST[d][0],ps=[];rows.filter(r=>r.d===d).forEach(r=>{let c=Math.round(r.c),k=0;r.parts=[];if(c<40){r.direct=1;return}
+      while(c>L){ps.push({id:r.id+"."+(++k),c:L,whole:1});r.parts.push(L);c-=L-J[d]}if(k){ps.push({id:r.id+"."+(++k),c});r.parts.push(c)}else ps.push({id:r.id,c})});
+    ps.sort((a,b)=>b.c-a.c);const B=MAP[d];
+    ps.forEach(p=>{let bi=-1,bs=1e9;if(!p.whole)B.forEach((b,i)=>{const f=L-b.u-p.c-KF;if(f>=0&&f<bs){bs=f;bi=i}});if(bi<0)B.push({u:p.c+(p.whole?0:KF),p:[p]});else{B[bi].u+=p.c+KF;B[bi].p.push(p)}});
+    B.forEach(b=>{const need=b.p.length>1||!b.p[0].whole?b.u-KF:b.u;b.s=ST[d].slice().reverse().find(s=>s>=need)||L;b.rest=b.s-need})});
+  const buy=d=>{const c={};MAP[d].forEach(b=>c[b.s]=(c[b.s]||0)+1);return Object.keys(c).sort((a,b)=>b-a).map(s=>`${m1(+s)} м × ${c[s]}`).join(", ")},
+    sum=(d,f)=>MAP[d].reduce((s,b)=>s+f(b),0),eff=d=>Math.round(100*(1-sum(d,b=>b.rest)/Math.max(1,sum(d,b=>b.s))));
+  el.innerHTML=`<table><thead><tr><th>№ на 3D</th><th>Труба</th><th>Где</th><th>Концы</th><th class="n">По осям, мм</th><th class="n">Отрезать ≈, мм</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="${r.k}">${r.id}</td><td>${nm[r.d]}</td><td>${r.m[1]>H?"чердак":roomAt(r.m[0],r.m[2])}</td><td>${r.A} — ${r.B}</td><td class="n">${fmt(Math.round(r.l))}</td><td class="n">${r.direct?"без трубы: фитинг прямо в фитинг":fmt(Math.round(r.c))+(r.parts.length?`: ${r.parts.map(x=>fmt(x)).join(" + ")}, стыки на раструбе`:"")}</td></tr>`).join("")}</tbody></table>
+    <h3 style="margin:18px 0 6px">Что купить и как резать</h3>
+    <p class="lead">Покупать: ${[110,160].map(d=>`<b>${nm[d]}</b> — ${buy(d)}`).join("; ")}. В дело идёт ${eff(110)}% трубы 110 и ${eff(160)}% трубы 160. Отходом считается только то, что не уходит ни в один кусок; на пропил заложено 5 мм. Длинные трассы собраны из целых труб 3 м, на стыке раструб забирает около ${J[110]} мм (у 160 около ${J[160]} мм). Где сказано «фитинг прямо в фитинг», гладкий конец фитинга вставляют в раструб соседнего, трубы там нет. Сначала режьте длинные куски, обрезки подписывайте номером.</p>
+    <table><thead><tr><th>Труба</th><th class="n">Длина, м</th><th>Какие куски из неё резать</th><th class="n">Остаток, мм</th></tr></thead><tbody>${[110,160].map(d=>MAP[d].map((b,i)=>`<tr><td>${nm[d]} № ${i+1}</td><td class="n">${m1(b.s)}</td><td>${b.p.map(p=>p.whole?`${p.id}: целая`:`${p.id} — ${fmt(p.c)}`).join(", ")}</td><td class="n">${b.rest<20?"—":fmt(b.rest)}</td></tr>`).join("")).join("")}</tbody></table>`}  const cb=$("cutB");if(cb&&!cb.dataset.on){cb.dataset.on=1;cb.onclick=()=>{CUTON=!CUTON;cb.setAttribute("aria-pressed",CUTON);cb.textContent=CUTON?"Скрыть длины":"Длины труб";labels()}}
   if(CUTON)labels()}
 /* подписи по этапам: [x,y,z,текст,класс] */
 function stageLabels(F){const c=k=>{const r=RR[k];return[(r[0]+r[2])/2,(r[1]+r[3])/2]},Rf=F.R,out=[],ot=ODA[ODA.length-1],et=EHA[EHA.length-1],u=UNIT,zc=(u.z0+u.z1)/2,W=F.wall;
