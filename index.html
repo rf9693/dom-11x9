@@ -1076,32 +1076,33 @@ const KANIM=[];
   [[0,850],[850,1700]].forEach(([a,b])=>{box(x,z,x+600,z+600,a,b-10,mWhite);const dr=cyl(x+300,z+610,170,a+390,a+410,mGraphite,32);dr.rotation.x=Math.PI/2;dr.position.z=(z+610)*S;box(x+40,z+598,x+560,z+602,b-110,b-50,M(0xC9CDD0))});
   })();
 
-/* RECUP40 */ /* рекуператор лежит на боку у северной стены прихожей: корпус 1000 × 530 × 380 на 2230–2760, короб ГКЛ 7800–9760 × 5760–6310, низ 2180 */
+/* RECUP40 */ /* рекуператор лежит на боку у северной стены прихожей: корпус 1000 × 530 × 380 на 2230–2760, x 7920–8920; короб ГКЛ 7620–9800 × 5760–6330, низ 2180, от западной стены */
 (function(){const G=new THREE.Group(),B=new THREE.Group();root.add(G);root.add(B);
   const mP=M(0xC9A46A,{roughness:.7}),mF=M(0x5A5F64,{roughness:.4}),mO=M(0xD2691E,{roughness:.5}),mK=M(0x2B2D2F,{roughness:.8}),
     mB=M(0x2F78B7,{roughness:.5}),mR=M(0xD0342C,{roughness:.5}),mA=M(0xAEBBC4,{roughness:.35,metalness:.5}),mW=M(0xF2F2EE,{roughness:.6}),mH=M(0x9AA0A6,{roughness:.4,metalness:.4});
   const ch=(x1,x2,y,z,r,m)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,Math.abs(x2-x1)*S,24),m);o.rotation.z=Math.PI/2;o.position.set((x1+x2)/2*S,y*S,z*S);G.add(o)};
   const cz=(x,y,z1,z2,r,m)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,Math.abs(z2-z1)*S,24),m);o.rotation.x=Math.PI/2;o.position.set(x*S,y*S,(z1+z2)/2*S);G.add(o)};
   const cy=(x,z,r,y1,y2,m)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,(y2-y1)*S,24),m);o.position.set(x*S,(y1+y2)/2*S,z*S);G.add(o)};
-  const x0=8000,x1=9000,y0=2230,y1=2760,z0=5790,z1=6170,hi=2635,lo=2355,zf=5980;
+  const x0=7920,x1=8920,y0=2230,y1=2760,z0=5790,z1=6170,hi=2610,lo=2380,zf=5980,xl=7820,xo=9684,xe=9677;
   // корпус: дно, верх, торцы, задняя стенка; крышка к прихожей полупрозрачная; 2 пакета пластин
   box(x0,z0,x1,z1,y0,y0+12,mP,G);box(x0,z0,x1,z1,y1-12,y1,mP,G);box(x0,z0,x0+12,z1,y0,y1,mP,G);box(x1-12,z0,x1,z1,y0,y1,mP,G);box(x0,z0,x1,z0+12,y0,y1,mP,G);
   box(x0,z1-12,x1,z1,y0,y1,M(0xC9A46A,{roughness:.7,transparent:true,opacity:.35,depthWrite:false}),G);
-  [8275,8725].forEach(x=>{const o=new THREE.Mesh(new THREE.BoxGeometry(.3,.3,.294),mA);o.rotation.z=Math.PI/4;o.position.set(x*S,2495*S,zf*S);G.add(o)});
+  [x0+275,x0+725].forEach(x=>{const o=new THREE.Mesh(new THREE.BoxGeometry(.3,.3,.294),mA);o.rotation.z=Math.PI/4;o.position.set(x*S,2495*S,zf*S);G.add(o)});
   // кронштейны 400 на анкерах в северную стену
-  [8300,8750].forEach(x=>{box(x,5760,x+12,z1+20,y0-40,y0,mK,G);box(x,5760,x+12,5780,y0-420,y0,mK,G)});
+  [x0+300,x0+750].forEach(x=>{box(x,5760,x+12,z1+20,y0-40,y0,mK,G);box(x,5760,x+12,5780,y0-420,y0,mK,G)});
   // слева в дом: SUP отвод вверх, ETA к прихожей и вверх
-  ch(7920,x0,hi,zf,80,mO);cy(7920,zf,80,hi,2810,mO);ch(7920,x0,lo,zf,80,mO);cz(7920,lo,zf,6200,80,mO);cy(7920,6200,80,lo,2810,mO);
-  cy(7920,zf,84,2700,2740,mB);cy(7920,6200,84,2700,2740,mR);
-  // справа на улицу: подогрев и вентилятор забора (верх), вентилятор выброса (низ), стояки в пролёте 9330–9830
-  ch(9010,9270,hi,zf,80,mH);ch(9280,9530,hi,zf,125,mF);ch(9530,9580,hi,zf,93,mK);cy(9580,zf,93,hi,2810,mK);
-  ch(9020,9280,lo,zf,125,mF);ch(9280,9580,lo,zf,93,mK);cz(9580,lo,zf,6200,93,mK);cy(9580,6200,93,lo,2810,mK);
-  cy(9580,zf,96,2700,2740,mB);cy(9580,6200,96,2700,2740,mR);
-  // щиток автоматики на стене под коробом, слив конденсата вниз по стене
-  box(8450,5760,8610,5880,1750,2050,mW,G);cy(8960,5785,10,420,2180,M(0xE8E8E8));
-  // короб ГКЛ: низ, лицевая сторона, торцы
-  const mG=M(0xF4F2EE,{roughness:.8,transparent:true,opacity:1}),bx0=7800,bx1=9760,bz0=5760,bz1=6310,by=2180;
-  [box(bx0,bz0,bx1,bz1+12,by-12,by,mG,B),box(bx0,bz1,bx1,bz1+12,by,2810,mG,B),box(bx0-12,bz0,bx0,bz1+12,by-12,2810,mG,B),box(bx1,bz0,bx1+12,bz1+12,by-12,2810,mG,B)];
+  ch(xl,x0,hi,zf,80,mO);cy(xl,zf,80,hi,2810,mO);ch(xl,x0,lo,zf,80,mO);cz(xl,lo,zf,6200,80,mO);cy(xl,6200,80,lo,2810,mO);
+  cy(xl,zf,84,2700,2740,mB);cy(xl,6200,84,2700,2740,mR);
+  // справа на улицу: забор — ТТ ПРО 160 у корпуса, муфта, НК 160, отвод вверх; выброс — труба, муфта, ТТ ПРО 160, 2 отвода. Стояки в пролёте 9330–9830
+  const fan=(a,b,y)=>{ch(a,a+35,y,zf,79,mF);box(a+35,zf-110,b-35,zf+110,y-124,y+124,mF,G);ch(b-35,b,y,zf,79,mF);box((a+b)/2-40,zf+110,(a+b)/2+40,zf+140,y-35,y+35,mK,G)};
+  fan(8973,9262,hi);ch(9262,9568,hi,zf,80,mH);box(9332,zf+86,9498,zf+190,hi-60,hi+60,mW,G);ch(9568,xo,hi,zf,93,mK);cy(xo,zf,93,hi,2810,mK);
+  ch(x1,9262,lo,zf,93,mK);fan(9262,9551,lo);ch(9551,xe,lo,zf,93,mK);cz(xe,lo,zf,6200,93,mK);cy(xe,6200,93,lo,2810,mK);
+  cy(xo,zf,96,2700,2740,mB);cy(xe,6200,96,2700,2740,mR);
+  // щиток автоматики на стене под коробом; слив: 2 штуцера в дне, шланги к тройнику, вниз по стене
+  box(8650,5760,8810,5880,1750,2050,mW,G);const mD=M(0xE8E8E8);ch(x0+170,8450,y0-45,6100,10,mD);ch(8450,x1-60,y0-45,6100,10,mD);cz(8450,y0-45,5785,6100,10,mD);cy(8450,5785,10,420,y0-45,mD);
+  // короб ГКЛ: низ, лицевая сторона, правый торец (слева стена)
+  const mG=M(0xF4F2EE,{roughness:.8,transparent:true,opacity:1}),bx0=7620,bx1=9800,bz0=5760,bz1=6330,by=2180;
+  [box(bx0,bz0,bx1,bz1+12,by-12,by,mG,B),box(bx0,bz1,bx1,bz1+12,by,2810,mG,B),box(bx1,bz0,bx1+12,bz1+12,by-12,2810,mG,B)];
   const cb=document.getElementById("recT");
   const ap=()=>{const on=cb.checked;G.visible=on;mG.opacity=on?.22:1;mG.depthWrite=!on;B.children.forEach(m=>m.castShadow=!on);mG.needsUpdate=true};
   cb.onchange=ap;ap()})();
