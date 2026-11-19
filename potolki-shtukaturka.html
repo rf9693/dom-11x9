@@ -1,6 +1,8 @@
 <title>Потолки и штукатурка — дом 11×9</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
@@ -77,6 +79,18 @@ details.params summary{cursor:pointer;font:500 16px var(--f-disp)}
 .pg fieldset{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .pg legend{font:600 12px var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--ink);padding:0 4px}
 svg text{font-family:var(--f-mono)}
+.vt{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.vt .hint{font-size:12px;color:var(--muted)}
+.rp{font:600 13px var(--f-body);padding:6px 12px;border-radius:6px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}
+.v3{position:relative;height:min(560px,62vh);min-height:340px;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:#E9E7E2;touch-action:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .v3{background:#2A2D30}}
+:root[data-theme="dark"] .v3{background:#2A2D30}
+.v3 canvas{display:block;width:100%;height:100%}
+#lbl{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lb{position:absolute;transform:translate(-50%,calc(-100% - 8px));background:rgba(20,22,24,.86);color:#fff;font:500 12px/1.3 var(--f-body);padding:4px 8px;border-radius:4px;white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis}
+.lb::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-bottom:0;border-top-color:rgba(20,22,24,.86)}
+.cap{position:absolute;left:10px;top:10px;right:10px;font:600 14px/1.3 var(--f-body);color:#fff;background:rgba(199,101,31,.92);padding:6px 10px;border-radius:4px;pointer-events:none;width:max-content;max-width:calc(100% - 20px)}
+@media (max-width:600px){.v3{height:420px}.lb{font-size:11px;max-width:170px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -97,6 +111,8 @@ svg text{font-family:var(--f-mono)}
 <div class="grid">
   <section class="sheet" aria-label="Чертёж">
     <div class="stp" id="steps" role="group" aria-label="Этапы"></div>
+    <div class="vt"><div class="seg" id="views" role="group" aria-label="Вид"><button id="v-3d" data-v="3d" aria-pressed="true">3D по этапам</button><button id="v-2d" data-v="2d" aria-pressed="false">Чертёж</button></div><span class="hint" id="hint">Крутите мышью или пальцем, колесо — приблизить</span><button class="rp" id="replay">▶ Повторить этап</button></div>
+    <div class="v3" id="v3"><div id="lbl"></div><div class="cap" id="cap"></div></div>
     <div class="draw" id="plan"></div>
     <div class="legend" id="legend"></div>
     <h3 id="detT">Узел</h3>
@@ -358,7 +374,7 @@ const WST=[
   mat:()=>[],chk:"Влажность стены не больше 1 % по гигрометру. Ровный светлый цвет без тёмных пятен.",err:"Ошибка: шпаклевать и красить по сырому. Появятся пятна и отслоение."}];
 
 /* ---------- состояние ---------- */
-const S={room:"liv",mode:"ceil",st:0,wall:"S"};
+const S={room:"liv",mode:"ceil",st:0,wall:"S",view:"3d"};
 try{const v=JSON.parse(localStorage.getItem("gkl-st")||"null");if(v&&RR[v.room])Object.assign(S,v)}catch(e){}
 const save=()=>{try{localStorage.setItem("gkl-st",JSON.stringify(S))}catch(e){}};
 
@@ -509,14 +525,14 @@ function render(){const p=P(),k=S.room;
   const ST=S.mode==="ceil"?CST:WST;S.st=Math.min(S.st,ST.length-1);
   $("steps").innerHTML="";ST.forEach((s,i)=>{const b=document.createElement("button");b.id="st-"+i;b.textContent=String(i+1);b.title=s.t;if(i<S.st)b.className="done";if(i===S.st)b.setAttribute("aria-current","step");b.onclick=()=>{S.st=i;render()};$("steps").appendChild(b)});
   const seqOn=S.mode==="ceil"?[3,4,5,6]:[1,2];$("seq").innerHTML=SEQ.map((s,i)=>`<span class="${seqOn.includes(i)?"on":""}">${i+1}. ${s}</span>`).join('<i>→</i>');
-  const card=$("card");let st=ST[S.st],body,mat;
-  if(S.mode==="ceil"){const c=ceil(k,p);
+  const card=$("card");let st=ST[S.st],body,mat,cc;
+  if(S.mode==="ceil"){const c=ceil(k,p);cc=c;
     $("plan").replaceChildren(drawCeil(c,p,S.st));$("detail").replaceChildren(drawCeilDet(c,p,S.st));$("detT").textContent="Узел: край короба и ниша с лентой, разрез";
     $("legend").innerHTML=`<span><b style="background:var(--acc)"></b>текущий этап</span><span><b style="border:2px dashed var(--acc)"></b>контур ниши</span><span><b style="background:var(--ink)"></b>профили, ■ подвесы верха, ● подвесы короба</span><span><b style="background:var(--gkl);border:1px solid var(--muted)"></b>листы ГКЛ</span><span><b style="background:var(--led)"></b>лента и споты</span>`;
     body=st.do(c,p);mat=st.mat(c);
     const kv=`<div class="kv"><div><small>Площадь</small><span>${fmt(c.q.A,1)} м²</span></div><div><small>Центр ${fmt(p.up)}</small><span>${fmt(c.q.Ai,1)} м²</span></div><div><small>Короб ${fmt(p.box)}</small><span>${fmt(c.q.Ab,1)} м²</span></div><div><small>Контур ниши</small><span>${fmt(c.q.Pi,1)} м</span></div></div>`;
     card.innerHTML=head(st)+kv+list(body)+matT(mat)+foot(st)}
-  else{const c=walls(k,p),ks=["N","E","S","W"];if(!c.W[S.wall])S.wall="N";
+  else{const c=walls(k,p),ks=["N","E","S","W"];cc=c;if(!c.W[S.wall])S.wall="N";
     $("walls").innerHTML=ks.map(w=>`<button id="w-${w}" data-w="${w}" aria-pressed="${w===S.wall}">${WN[w]}</button>`).join("");
     $("walls").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.wall=b.dataset.w;render()});
     const wd=c.W[S.wall];$("plan").replaceChildren(drawWall(wd,p,S.st,S.wall));$("detail").replaceChildren(drawWallDet(p,S.st,c.q.wet));$("detT").textContent="Разрез слоя: стена, грунт, маяк, штукатурка";
@@ -525,6 +541,9 @@ function render(){const p=P(),k=S.room;
     const kv=`<div class="kv"><div><small>Стена ${WN[S.wall].split(" ")[0]}</small><span>${fmt(wd.area,1)} м²</span></div><div><small>Комната, с откосами</small><span>${fmt(c.q.area,1)} м²</span></div><div><small>Смесь</small><span>${fmt(c.q.kg)} кг</span></div><div><small>Маяков 3 м</small><span>${c.q.beacons}</span></div></div>`;
     card.innerHTML=head(st)+kv+list(body)+matT(mat)+foot(st)}
   $("prev").disabled=S.st===0;$("next").disabled=S.st===ST.length-1;$("prev").onclick=()=>{S.st--;render()};$("next").onclick=()=>{S.st++;render()};
+  if(!window.V3)S.view="2d";const v3on=S.view==="3d";$("v3").hidden=!v3on;$("replay").hidden=!v3on;$("hint").hidden=!v3on;$("plan").hidden=v3on;$("legend").hidden=v3on;
+  $("views").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.view));if(!window.V3)$("v-3d").disabled=true;
+  if(v3on)V3.update(cc);
   summary(p);save()}
 const head=st=>`<div class="eyebrow">ЭТАП ${S.st+1} ИЗ ${(S.mode==="ceil"?CST:WST).length} · ${ROOMS.find(r=>r[0]===S.room)[1].toUpperCase()}</div><h2>${st.t}</h2>`;
 const list=b=>`<ol>${b.map(x=>`<li>${x}</li>`).join("")}</ol>`;
@@ -549,7 +568,249 @@ function summary(p){const rows=[],tot={};const add=(n,v,u)=>{if(!v)return;tot[n]
 $("rooms").innerHTML=ROOMS.map(([k,n])=>`<button id="r-${k}" data-r="${k}" aria-pressed="false">${n}</button>`).join("");
 $("rooms").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.room=b.dataset.r;render()});
 $("modes").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.mode=b.dataset.m;S.st=0;render()});
+$("views").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.view=b.dataset.v;render()});
+$("replay").onclick=()=>{if(window.V3)V3.replay()};
 document.querySelectorAll(".pg input,.pg select").forEach(i=>i.addEventListener("input",render));
 document.addEventListener("keydown",e=>{if(e.target.closest("input,select"))return;const n=(S.mode==="ceil"?CST:WST).length;if(e.key==="ArrowRight"&&S.st<n-1){S.st++;render()}if(e.key==="ArrowLeft"&&S.st>0){S.st--;render()}});
+/* ---------- 3D: комната и этапы работ ---------- */
+window.V3=typeof THREE==="undefined"||!THREE.OrbitControls?null:(()=>{
+const host=$("v3"),lblBox=$("lbl"),cap=$("cap");
+let R=null,scene,cam,ctl,root,amb,hemi,sun,K="",KC="",ST=-1,WALL="",MODE="",G=[],WO={N:[],E:[],S:[],W:[]},slab=null,anims=[],LBF=[],LBcur=[],camA=null,I={},TX=null,rule=null,tri=null;
+const clk=new THREE.Clock();
+const std=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85,metalness:0},o||{}));
+const cvs=(w,h)=>{const c=document.createElement("canvas");c.width=w;c.height=h;return c};
+const V=(x,y,z)=>new THREE.Vector3((x-I.L/2)/1000,y/1000,(z-I.W/2)/1000);
+function seeded(s){return()=>(s=(s*16807)%2147483647)/2147483647}
+function blockTex(){const c=cvs(512,256),g=c.getContext("2d"),rn=seeded(7);g.fillStyle="#dcd9d2";g.fillRect(0,0,512,256);
+  for(let i=0;i<5000;i++){const v=rn()<.5?90:255;g.fillStyle=`rgba(${v},${v},${v},.07)`;g.fillRect(rn()*512,rn()*256,2+rn()*3,2+rn()*3)}
+  g.strokeStyle="#a9a49a";g.lineWidth=4;
+  for(let r=0;r<2;r++){const y=r*128,o=r?128:0;g.beginPath();g.moveTo(0,y+2);g.lineTo(512,y+2);g.stroke();for(let i=0;i<2;i++){const x=(o+i*256)%512;g.beginPath();g.moveTo(x+2,y);g.lineTo(x+2,y+128);g.stroke()}}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return t}
+function roughTex(){const c=cvs(256,256),g=c.getContext("2d"),rn=seeded(3);g.fillStyle="#fff";g.fillRect(0,0,256,256);
+  for(let i=0;i<2600;i++){const v=150+rn()*100|0;g.fillStyle=`rgba(${v},${v-8},${v-14},.35)`;g.beginPath();g.ellipse(rn()*256,rn()*256,1+rn()*5,1+rn()*3,rn()*3,0,7);g.fill()}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;return t}
+let MAT=null;
+function mats(){MAT={metal:std(0xc3c9ce,{metalness:.6,roughness:.4}),conc:std(0xb3b0aa,{roughness:.95}),floor:std(0x8f8c87,{roughness:1}),tape:std(0x2d5b86),
+  red:new THREE.MeshBasicMaterial({color:0xff2424}),orange:new THREE.MeshBasicMaterial({color:0xff8a1e}),
+  glass:new THREE.MeshStandardMaterial({color:0xa9cbe0,transparent:true,opacity:.3,roughness:.1,depthWrite:false}),
+  pvc:std(0xf1f1ee,{roughness:.5}),tube:std(0x46494d,{roughness:.6}),ply:std(0xc59d66),alu:std(0xd5d9dc,{metalness:.6,roughness:.3}),dab:std(0xb4ada3,{roughness:1}),
+  done:std(0xebe6df,{roughness:.95}),led:new THREE.MeshBasicMaterial({color:0xffc56e}),spot:new THREE.MeshBasicMaterial({color:0xfff3da}),ring:std(0xdcdcdc,{metalness:.5,roughness:.35}),
+  groove:std(0xa99b8f,{roughness:1}),blk:std(0xffffff,{map:blockTex(),roughness:1}),pl:std(0xc9b9ad,{roughness:1}),niche:std(0xe2ddd1,{roughness:.9,side:THREE.DoubleSide}),
+  body:std(0x2f3235,{roughness:.5}),yel:std(0xf0b429,{roughness:.5})};MAT.rough=roughTex()}
+
+function init(){R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(window.devicePixelRatio||1,2));R.outputEncoding=THREE.sRGBEncoding;host.prepend(R.domElement);
+  scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(55,1,.05,80);ctl=new THREE.OrbitControls(cam,R.domElement);ctl.enableDamping=true;ctl.dampingFactor=.12;ctl.minDistance=.4;ctl.maxDistance=22;
+  amb=new THREE.AmbientLight(0xffffff,.35);hemi=new THREE.HemisphereLight(0xffffff,0xb8ae9e,.6);sun=new THREE.DirectionalLight(0xffffff,.45);sun.position.set(4,9,6);
+  const low=new THREE.DirectionalLight(0xffffff,.25);low.position.set(-3,-6,2);scene.add(amb,hemi,sun,low);
+  root=new THREE.Group();root.scale.setScalar(.001);scene.add(root);mats();
+  ctl.addEventListener("start",()=>{camA=null});
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{scene.background=new THREE.Color(getComputedStyle(host).backgroundColor)})}catch(e){}
+  new ResizeObserver(size).observe(host);size();R.setAnimationLoop(tick)}
+function size(){if(!R)return;const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+
+/* ---------- геометрия: всё в мм, x вправо, z вниз по плану, y вверх от пола ---------- */
+function wuv(g,ax,su,sv){const p=g.attributes.position,uv=g.attributes.uv;for(let i=0;i<p.count;i++)uv.setXY(i,(ax==="x"?p.getX(i):p.getZ(i))/su,p.getY(i)/sv);uv.needsUpdate=true}
+function bx(x0,x1,y0,y1,z0,z1,mat,par,uv){const g=new THREE.BoxGeometry(Math.max(.5,x1-x0),Math.max(.5,y1-y0),Math.max(.5,z1-z0)),cx=(x0+x1)/2,cz=(z0+z1)/2;
+  g.translate(cx,(y0+y1)/2,cz);if(uv)wuv(g,uv[0],uv[1],uv[2]);g.translate(-cx,-y0,-cz);const m=new THREE.Mesh(g,mat);m.position.set(cx,y0,cz);par.add(m);return m}
+function wxz(w,a,d){const L=I.L,W=I.W;return w==="N"?[a,d]:w==="E"?[L-d,a]:w==="S"?[L-a,W-d]:[d,W-a]}
+function wb(w,a0,a1,y0,y1,d0,d1,mat,par,uv){const p=wxz(w,a0,d0),q=wxz(w,a1,d1);
+  return bx(Math.min(p[0],q[0]),Math.max(p[0],q[0]),y0,y1,Math.min(p[1],q[1]),Math.max(p[1],q[1]),mat,par,uv?[(w==="N"||w==="S")?"x":"z",uv[0],uv[1]]:null)}
+function bar(x1,z1,x2,z2,y0,h,w,mat,par){const L=Math.hypot(x2-x1,z2-z1);if(L<1)return null;const g=new THREE.BoxGeometry(L,h,w);g.translate(0,h/2,0);
+  const m=new THREE.Mesh(g,mat);m.position.set((x1+x2)/2,y0,(z1+z2)/2);m.rotation.y=-Math.atan2(z2-z1,x2-x1);par.add(m);return m}
+function rod(a,b,r,mat,par){const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),d=B.clone().sub(A),m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),8),mat);
+  m.position.copy(A).add(B).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());par.add(m);return m}
+function tb(pts,r,mat,par,closed){const cv=new THREE.CatmullRomCurve3(pts.map(q=>new THREE.Vector3(q[0],q[1],q[2])),!!closed,"catmullrom",.15);
+  const g=new THREE.TubeGeometry(cv,Math.max(24,pts.length*4),r,6,!!closed);g.computeBoundingBox();const c=g.boundingBox.getCenter(new THREE.Vector3());
+  g.translate(-c.x,-c.y,-c.z);const m=new THREE.Mesh(g,mat);m.position.copy(c);par.add(m);return m}
+function mesh(v,mat,par){const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(v,3));g.computeVertexNormals();const m=new THREE.Mesh(g,mat);par.add(m);return m}
+function strip(P0,y0,y1,mat,par){const v=[],n=P0.length;for(let i=0;i<n;i++){const a=P0[i],b=P0[(i+1)%n];v.push(a[0],y0,a[1],b[0],y0,b[1],b[0],y1,b[1],a[0],y0,a[1],b[0],y1,b[1],a[0],y1,a[1])}return mesh(v,mat,par)}
+function ringM(A,B,y,mat,par){const v=[],n=A.length;for(let i=0;i<n;i++){const a=A[i],b=A[(i+1)%n],c=B[(i+1)%n],d=B[i];v.push(a[0],y,a[1],b[0],y,b[1],c[0],y,c[1],a[0],y,a[1],c[0],y,c[1],d[0],y,d[1])}return mesh(v,mat,par)}
+function shp(P0){const s=new THREE.Shape();P0.forEach((q,i)=>i?s.lineTo(q[0],q[1]):s.moveTo(q[0],q[1]));s.closePath();return s}
+function flat(shape,y,mat,par){const g=new THREE.ShapeGeometry(shape,4);g.rotateX(Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.y=y;par.add(m);return m}
+function off(P0,d){const n=P0.length;return P0.map((q,i)=>{const a=P0[(i-1+n)%n],b=P0[(i+1)%n],tx=b[0]-a[0],tz=b[1]-a[1],l=Math.hypot(tx,tz)||1;let nx=tz/l,nz=-tx/l;
+  if(inside(P0,q[0]+nx*8,q[1]+nz*8)){nx=-nx;nz=-nz}return[q[0]+nx*d,q[1]+nz*d]})}
+function rs(P0,step){const out=[],n=P0.length;let acc=0;for(let i=0;i<n;i++){const a=P0[i],b=P0[(i+1)%n],l=Math.hypot(b[0]-a[0],b[1]-a[1]);while(acc<=l){out.push([a[0]+(b[0]-a[0])*acc/l,a[1]+(b[1]-a[1])*acc/l]);acc+=step}acc-=l}return out}
+function pieces(cuts,ops,top,f){const cs=[...new Set(cuts.map(Math.round))].sort((a,b)=>a-b);
+  for(let i=0;i<cs.length-1;i++){const a0=cs[i],a1=cs[i+1];if(a1-a0<2)continue;const m=(a0+a1)/2,o=ops.find(o=>m>o.a&&m<o.b);
+    if(!o)f(a0,a1,0,top);else{if(o.lo>0)f(a0,a1,0,o.lo);f(a0,a1,o.hi,top)}}}
+function ws(par,w){const g=new THREE.Group();g.userData.ws=1;g.userData.w=w;par.add(g);WO[w].push(g);return g}
+function tripod(par,x,z,h){const g=new THREE.Group();g.position.set(x,0,z);par.add(g);
+  for(let i=0;i<3;i++){const a=i*2.094+.4;rod([Math.cos(a)*420,0,Math.sin(a)*420],[0,h-120,0],12,MAT.body,g)}
+  bx(-60,60,h-120,h-60,-60,60,MAT.body,g);const hd=new THREE.Group();hd.position.y=h-60;g.add(hd);
+  bx(-70,70,0,170,-70,70,MAT.yel,hd);bx(-45,45,170,230,-45,45,MAT.red,hd);bx(-75,75,40,90,-75,75,MAT.body,hd);g.userData.head=hd;return g}
+
+function clear(){root.traverse(o=>{if(o.geometry)o.geometry.dispose()});root.clear();if(TX){TX.tex.dispose();TX.glow.dispose();TX.mUp.dispose();TX.mBox.dispose();TX=null}
+  G=[];WO={N:[],E:[],S:[],W:[]};anims=[];rule=null;slab=null}
+
+function build(c){clear();const k=S.room,p=P(),r=RR[k],L=r[2]-r[0],W=r[3]-r[1],wd=MODE==="wall"?c:walls(k,p);
+  I={L,W,k,p,wd,c};root.position.set(-L/2000,0,-W/2000);scene.background=new THREE.Color(getComputedStyle(host).backgroundColor);
+  const base=new THREE.Group();root.add(base);
+  bx(-200,L+200,-60,0,-200,W+200,MAT.floor,base);slab=bx(-200,L+200,p.slab,p.slab+200,-200,W+200,MAT.conc,base);
+  for(const w of ["N","E","S","W"]){const d=wd.W[w],g=ws(base,w),cuts=[-200,d.len+200];d.ops.forEach(o=>cuts.push(o.a,o.b));
+    pieces(cuts,d.ops,p.slab,(a0,a1,y0,y1)=>wb(w,a0,a1,y0,y1,-200,0,MAT.blk,g,[1250,500]));
+    d.ops.forEach(o=>{if(!o.n.includes("окно"))return;wb(w,o.a,o.b,o.lo,o.hi,-112,-98,MAT.glass,g);
+      [[o.a,o.a+60,o.lo,o.hi],[o.b-60,o.b,o.lo,o.hi],[o.a,o.b,o.lo,o.lo+60],[o.a,o.b,o.hi-60,o.hi]].forEach(f=>wb(w,f[0],f[1],f[2],f[3],-130,-70,MAT.pvc,g))});
+    if(MODE==="ceil"){const c2=[0,d.len];d.ops.forEach(o=>c2.push(o.a,o.b));pieces(c2,d.ops,p.slab,(a0,a1,y0,y1)=>wb(w,a0,a1,y0,y1,0,p.t,MAT.done,g))}}
+  const n=MODE==="ceil"?9:8;for(let i=0;i<n;i++){const g=new THREE.Group();g.userData.mode="rise";root.add(g);G.push(g)}
+  G[0].userData.mode="grow";G[0].userData.until=MODE==="ceil"?4:6;tri=MODE==="ceil"?tripod(G[0],L/2,W/2,1300):tripod(G[0],L-650,650,1300);
+  if(MODE==="ceil")buildCeil(c,p);else buildWall(wd,p)}
+
+/* ---------- потолок ---------- */
+function buildCeil(c,p){const L=I.L,W=I.W,poly=c.R.poly,n=poly.length,gkl=c.q.gkl,t=p.t,FY=gkl?p.up+12.5:p.slab-28,BY=p.box+12.5,SH=BY+27,
+  cl=q=>[Math.max(t+20,Math.min(L-t-20,q[0])),Math.max(t+20,Math.min(W-t-20,q[1]))],po=off(poly,150).map(cl),lb=[];
+  const ring4=(y,h,d0,d1,mat,par)=>{const g=new THREE.Group();par.add(g);bx(d0,L-d0,y,y+h,d0,d1,mat,g);bx(d0,L-d0,y,y+h,W-d1,W-d0,mat,g);bx(d0,d1,y,y+h,d1,W-d1,mat,g);bx(L-d1,L-d0,y,y+h,d1,W-d1,mat,g);return g};
+  const yAt=(x,z)=>gkl&&inside(po,x,z)?p.up:p.box,F=v=>fmt(v);
+  // 1. разметка
+  ring4(p.up,5,t,t+3,MAT.red,G[0]);ring4(p.box,5,t,t+3,MAT.red,G[0]);
+  for(let i=0;i<n;i+=2){const a=poly[i],b=poly[(i+1)%n];bar(a[0],a[1],b[0],b[1],p.slab-6,6,26,MAT.orange,G[0])}
+  c.R.spots.forEach(s=>{const g=new THREE.Group();G[0].add(g);bar(s[0]-90,s[1],s[0]+90,s[1],p.slab-6,6,16,MAT.red,g);bar(s[0],s[1]-90,s[0],s[1]+90,p.slab-6,6,16,MAT.red,g)});
+  lb[0]=[[L/2,1500,W/2,"лазерный нивелир"],[L*.3,p.up,t,"линия "+F(p.up)+" — низ центра"],[L*.72,p.box,t,"линия "+F(p.box)+" — низ короба"],[poly[0][0],p.slab,poly[0][1],"контур ниши на плите"]];
+  // 2. UD верха
+  if(gkl){ring4(FY+2,24,t,t+3,MAT.tape,G[1]);for(const g of [ring4(FY,27,t+3,t+31,MAT.metal,G[1])])g.children.forEach(m=>{})}
+  lb[1]=gkl?[[L*.45,FY+27,t+15,"UD 28×27 на "+F(p.up)],[L-t-15,FY,W*.4,"демпферная лента, дюбель 6×40 через 500"]]:[[L/2,p.slab,W/2,"центр шпаклюется по плите — этап пропускается"]];
+  // 3. CD и подвесы
+  if(gkl){c.cd.forEach(l=>bar(l[0],l[1],l[2],l[3],FY,27,60,MAT.metal,G[2]));
+    c.hu.forEach(h=>{const g=new THREE.Group();G[2].add(g);if(c.vert){bx(h[0]-34,h[0]-31,FY,p.slab,h[1]-15,h[1]+15,MAT.metal,g);bx(h[0]+31,h[0]+34,FY,p.slab,h[1]-15,h[1]+15,MAT.metal,g)}
+      else{bx(h[0]-15,h[0]+15,FY,p.slab,h[1]-34,h[1]-31,MAT.metal,g);bx(h[0]-15,h[0]+15,FY,p.slab,h[1]+31,h[1]+34,MAT.metal,g)}})}
+  if(gkl&&c.cd.length){const m=c.cd[Math.floor(c.cd.length/2)],h=c.hu[Math.min(c.hu.length-1,3)];lb[2]=[[(m[0]+m[2])/2,FY+27,(m[1]+m[3])/2,"CD 60×27 через "+p.s],[h[0],(FY+p.slab)/2,h[1],"прямой подвес, 2 анкер-клина"]]}else lb[2]=[];
+  // 4. короб и ниша
+  ring4(BY,27,t+3,t+31,MAT.metal,G[3]);
+  c.cr.forEach(l=>bar(l[0],l[1],l[2],l[3],BY,27,60,MAT.metal,G[3]));
+  for(let i=0;i<n;i++){const a=poly[i],b=poly[(i+1)%n];bar(a[0],a[1],b[0],b[1],BY,27,28,MAT.metal,G[3])}
+  for(let i=0;i<n;i++){const a=po[i],b=po[(i+1)%n];bar(a[0],a[1],b[0],b[1],SH,27,28,MAT.metal,G[3]);bar(a[0],a[1],b[0],b[1],FY,27,28,MAT.metal,G[3])}
+  rs(poly,400).forEach(q=>bx(q[0]-14,q[0]+14,BY,p.box+70,q[1]-14,q[1]+14,MAT.metal,G[3]));
+  rs(po,400).forEach(q=>bx(q[0]-14,q[0]+14,SH,FY,q[1]-14,q[1]+14,MAT.metal,G[3]));
+  c.hb.forEach(h=>bx(h[0]-12,h[0]+12,SH,p.slab,h[1]-2,h[1]+2,MAT.metal,G[3]));
+  {const m=c.cr[Math.floor(c.cr.length/3)]||[0,0,0,0],a=poly[Math.floor(n*.12)],b=po[Math.floor(n*.62)];
+   lb[3]=[[(m[0]+m[2])/2,BY+27,(m[1]+m[3])/2,"перемычка CD до контура"],[a[0],BY,a[1],"гнутый UD по контуру"],[b[0],(SH+FY)/2,b[1],"стойки ниши через 400"]]}
+  // 5. закладные и кабели
+  c.R.spots.forEach(s=>{const cand=[[s[0],t+40],[s[0],W-t-40],[t+40,s[1]],[L-t-40,s[1]]].sort((a,b)=>Math.hypot(a[0]-s[0],a[1]-s[1])-Math.hypot(b[0]-s[0],b[1]-s[1]))[0],y=p.slab-25;
+    tb([[s[0],yAt(s[0],s[1])+40,s[1]],[s[0],y,s[1]],[(s[0]+cand[0])/2,y,(s[1]+cand[1])/2],[cand[0],y,cand[1]],[cand[0],p.slab-420,cand[1]]],9,MAT.tube,G[4])});
+  c.R.chand.forEach(q=>bx(q[0]-200,q[0]+200,p.slab-18,p.slab,q[1]-200,q[1]+200,MAT.ply,G[4]));
+  c.R.tracks.forEach(tr=>bar(tr[0][0],tr[0][1],tr[1][0],tr[1][1],p.up,70,60,MAT.alu,G[4]));
+  {const s=c.R.spots[0],l=[];if(s)l.push([s[0],p.slab-25,s[1],"кабель в гофре к каждому споту, запас 300"]);
+   c.R.chand.forEach(q=>l.push([q[0],p.slab-18,q[1],"закладная под люстру, фанера 18"]));c.R.tracks.slice(0,1).forEach(tr=>l.push([(tr[0][0]+tr[1][0])/2,p.up+70,(tr[0][1]+tr[1][1])/2,"профиль трека ставят до обшивки"]));lb[4]=l}
+  // 6. обшивка
+  TX=mkTex(c,p,po);G[5].userData.mode="none";
+  const sb=new THREE.Shape([new THREE.Vector2(0,0),new THREE.Vector2(L,0),new THREE.Vector2(L,W),new THREE.Vector2(0,W)]);sb.holes.push(new THREE.Path(poly.map(q=>new THREE.Vector2(q[0],q[1]))));
+  flat(sb,p.box,TX.mBox,G[5]);
+  if(gkl)flat(shp(po),p.up,TX.mUp,G[5]);else flat(shp(po),p.slab-2,TX.mUp,G[7]);
+  TX.late=[ringM(poly,po,SH+12.5,MAT.niche,G[5]),strip(poly,p.box,p.box+70,MAT.niche,G[5]),strip(po,SH+12.5,gkl?p.up:p.slab-2,MAT.niche,G[5])];
+  {const s=c.cr[Math.floor(c.cr.length*.7)]||[L/2,0,L/2,500],a=poly[Math.floor(n*.36)];lb[5]=[[(s[0]+s[2])/2,p.box,(s[1]+s[3])/2,"ГКЛ 12,5 вразбежку, шуруп через "+p.sc],[a[0],p.box+40,a[1],"торец и стенка ниши — арочный ГКЛ"]]}
+  // 7. швы и уголки
+  tb(poly.map(q=>[q[0],p.box,q[1]]),7,MAT.ring,G[6],true);tb(poly.map(q=>[q[0],p.box+70,q[1]]),7,MAT.ring,G[6],true);
+  {const a=poly[Math.floor(n*.15)],x=c.vert?Math.min(L-300,p.sl):300,z=c.vert?300:Math.min(W-300,p.sl);
+   lb[6]=[[a[0],p.box+70,a[1],"перфоуголок на кромках ниши"],[x,yAt(x,z),z,"бумажная лента на всех швах"]]}
+  // 8. шпаклёвка
+  {const cx=po.reduce((s,q)=>s+q[0],0)/n,cz=po.reduce((s,q)=>s+q[1],0)/n;lb[7]=[[cx,gkl?p.up:p.slab,cz,"финишная шпаклёвка в 2 слоя, шлифовка P150–180"]]}
+  // 9. свет и покраска
+  c.R.spots.forEach(s=>{const y=yAt(s[0],s[1]),u=new THREE.Group();G[8].add(u);const r=new THREE.Mesh(new THREE.CylinderGeometry(45,45,8,24),MAT.ring);r.position.set(s[0],y-4,s[1]);u.add(r);
+    const d=new THREE.Mesh(new THREE.CircleGeometry(31,24),MAT.spot);d.rotation.x=Math.PI/2;d.position.set(s[0],y-8.5,s[1]);u.add(d)});
+  const led=off(poly,105).map(cl);tb(led.map(q=>[q[0],SH+12.5+8,q[1]]),8,MAT.led,G[8],true);
+  {const a=led[Math.floor(n*.55)],s=c.R.spots[c.R.spots.length-1];lb[8]=[[a[0],SH+20,a[1],"лента 24 В в профиле на полке ниши"]];if(s)lb[8].push([s[0],yAt(s[0],s[1]),s[1],"спот в коробе"])}
+  LBF=lb.map(a=>()=>a||[])}
+
+function mkTex(c,p,po){const L=I.L,W=I.W,sc=Math.min(2048/L,2048/W),CW=Math.round(L*sc),CH=Math.round(W*sc),cv=cvs(CW,CH),gv=cvs(CW,CH),
+  tex=new THREE.CanvasTexture(cv),glow=new THREE.CanvasTexture(gv);[tex,glow].forEach(t=>{t.encoding=THREE.sRGBEncoding;t.repeat.set(1/L,1/W)});tex.anisotropy=4;
+  const sl=p.sl,offs=Math.max(600,Math.round(sl/2/p.s)*p.s),vert=c.vert,lo=vert?L:W,sh=vert?W:L,sheets=[];
+  for(let r=0;r*1200<sh;r++){const o0=(r%2)?-offs:0;for(let x=o0;x<lo;x+=sl){const a0=Math.max(0,x),a1=Math.min(lo,x+sl),b0=r*1200,b1=Math.min(sh,b0+1200);if(a1-a0<20)continue;sheets.push(vert?[a0,b0,a1,b1]:[b0,a0,b1,a1])}}
+  const scr=[],addL=(x0,z0,x1,z1)=>{const l=Math.hypot(x1-x0,z1-z0);for(let u=p.sc/2;u<l;u+=p.sc)scr.push([x0+(x1-x0)*u/l,z0+(z1-z0)*u/l])};
+  if(c.q.gkl)c.cd.forEach(l=>addL(l[0],l[1],l[2],l[3]));c.cr.forEach(l=>addL(l[0],l[1],l[2],l[3]));
+  const rn=seeded(11),mot=[];for(let i=0;i<260;i++)mot.push([rn()*L,rn()*W,150+rn()*600,80+rn()*300,rn()*3,rn()<.5]);
+  const g=gv.getContext("2d");g.fillStyle="#000";g.fillRect(0,0,CW,CH);g.setTransform(sc,0,0,-sc,0,CH);g.lineJoin="round";
+  try{g.filter=`blur(${Math.max(4,Math.round(70*sc))}px)`}catch(e){}
+  [[900,.2],[480,.32],[200,.6]].forEach(([w,a])=>{g.strokeStyle=`rgba(255,196,120,${a})`;g.lineWidth=w;g.beginPath();po.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.closePath();g.stroke()});
+  const x=cv.getContext("2d");
+  function draw(st,prog){x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,CW,CH);x.setTransform(sc,0,0,-sc,0,CH);
+    if(st===5){const n=Math.ceil(prog*sheets.length);for(let i=0;i<n;i++){const s=sheets[i];x.fillStyle=(i===n-1&&prog<1)?"#d6cdb9":"#e3ddd0";x.fillRect(s[0],s[1],s[2]-s[0],s[3]-s[1]);
+        x.strokeStyle="#a79f8f";x.lineWidth=12;x.strokeRect(s[0]+6,s[1]+6,s[2]-s[0]-12,s[3]-s[1]-12)}
+      x.fillStyle="#5f5c58";scr.forEach(q=>{for(let i=0;i<n;i++){const s=sheets[i];if(q[0]>=s[0]&&q[0]<=s[2]&&q[1]>=s[1]&&q[1]<=s[3]){x.beginPath();x.arc(q[0],q[1],10,0,7);x.fill();break}}})}
+    else if(st===6){x.fillStyle="#e3ddd0";x.fillRect(0,0,L,W);x.strokeStyle="#f6f4ee";x.lineWidth=70;sheets.forEach(s=>x.strokeRect(s[0],s[1],s[2]-s[0],s[3]-s[1]));
+      x.fillStyle="#f6f4ee";scr.forEach(q=>{x.beginPath();x.arc(q[0],q[1],24,0,7);x.fill()})}
+    else if(st===7){x.fillStyle="#e8e7e2";x.fillRect(0,0,L,W);mot.forEach(m=>{x.fillStyle=m[5]?"rgba(255,255,255,.35)":"rgba(196,193,184,.18)";x.beginPath();x.ellipse(m[0],m[1],m[2],m[3],m[4],0,7);x.fill()})}
+    else if(st>=8){x.fillStyle="#f7f6f2";x.fillRect(0,0,L,W)}
+    tex.needsUpdate=true}
+  const mk=()=>new THREE.MeshStandardMaterial({map:tex,transparent:true,alphaTest:.03,side:THREE.DoubleSide,roughness:.9});
+  return{tex,glow,draw,mUp:mk(),mBox:mk(),late:[],prog:1,t0:0}}
+
+/* ---------- стены ---------- */
+function buildWall(wd,p){const t=p.t,bh=p.bh,top=p.slab;
+  for(const w of ["N","E","S","W"]){const d=wd.W[w];
+    const g0=ws(G[0],w);d.seg.forEach(s=>{wb(w,s[0]-3,s[0]+3,40,top-40,0,3,MAT.red,g0);
+      [s[1]+80,(s[1]+s[2])/2,s[2]-80].forEach(y=>{wb(w,s[0]-50,s[0]+50,y-4,y+4,0,4,MAT.orange,g0);wb(w,s[0]-4,s[0]+4,y-50,y+50,0,4,MAT.orange,g0)})});
+    wb(w,0,d.len,1000,1005,0,3,MAT.red,g0);
+    const g2=ws(G[2],w),ax=(w==="N"||w==="S");d.seg.forEach(s=>{const u=new THREE.Group();g2.add(u);wb(w,s[0]-14,s[0]+14,s[1],s[2],t-bh,t,MAT.alu,u);
+      for(let y=s[1]+80;y<=s[2]-60;y+=350){const q=wxz(w,s[0],(t-bh)/2+1),m=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),MAT.dab);m.position.set(q[0],y,q[1]);
+        const dz=Math.max(4,(t-bh)/2+2);m.scale.set(ax?60:dz,95,ax?dz:60);u.add(m)}});
+    const g3=ws(G[3],w);d.ops.forEach(o=>{wb(w,o.a-22,o.a,o.lo,o.hi,t-22,t,MAT.alu,g3);wb(w,o.b,o.b+22,o.lo,o.hi,t-22,t,MAT.alu,g3);
+      wb(w,o.a-22,o.b+22,o.hi,o.hi+22,t-22,t,MAT.alu,g3);if(o.lo>0)wb(w,o.a-22,o.b+22,o.lo-22,o.lo,t-22,t,MAT.alu,g3)});
+    const g4=ws(G[4],w),cuts=[0,d.len];d.ops.forEach(o=>cuts.push(o.a,o.b));d.seg.forEach(s=>cuts.push(s[0]));
+    pieces(cuts,d.ops,top,(a0,a1,y0,y1)=>wb(w,a0,a1,y0,y1,0,t,MAT.pl,g4,[800,800]));
+    const g6=ws(G[6],w);d.seg.forEach(s=>wb(w,s[0]-13,s[0]+13,s[1],s[2],t,t+1.5,MAT.groove,g6));
+    const g7=ws(G[7],w),a=d.len/2;wb(w,a-14,a+14,350,2350,t+2,t+22,MAT.alu,g7);wb(w,Math.max(60,a-1000),Math.min(d.len-60,a+1000),1500,1540,t+2,t+22,MAT.alu,g7)}
+  G[2].userData.until=5;G[4].userData.mode="grow";G[6].userData.mode="none";G[6].userData.until=6;G[3].userData.mode="grow";
+  rule=new THREE.Mesh(new THREE.BoxGeometry(1,110,22),MAT.alu);rule.visible=false;root.add(rule);
+  LBF=[0,1,2,3,4,5,6,7].map(i=>()=>{const d=wd.W[WALL],s=d.seg.slice().sort((a,b)=>a[0]-b[0]),mid=s[Math.floor(s.length/2)]||[d.len/2,100,2700],
+    Q=(a,y,dd,txt)=>{const q=wxz(WALL,a,dd);return[q[0],y,q[1],txt]};
+    switch(i){
+      case 0:return[[I.L-650,1550,650,"лазерный нивелир"],Q(mid[0],2250,0,"линия маяка"),Q(Math.max(300,d.len*.12),1000,0,"контрольная линия 1000")];
+      case 1:return[Q(d.len/2,1600,0,"грунт в 2 слоя, сушка 4–6 ч")];
+      case 2:return[Q(mid[0],2050,t,"маяк "+bh+" мм, выставлен по лазеру"),Q(mid[0],mid[1]+430,0,"лепёшки раствора через 350")];
+      case 3:{const o=d.ops[0];return o?[Q(o.a,(o.lo+o.hi)/2,t,"штукатурный уголок на откосе")]:[Q(d.len/2,1500,t,"на этой стене проёмов нет")]}
+      case 4:{bay();const b=I.bay.b;return[Q((b[0]+b[1])/2,700,t,"раствор между маяками"),Q((b[0]+b[1])/2,2300,t,"правило ведут по маякам снизу вверх")]}
+      case 5:return[Q(d.len/2,1250,t,"подрезка трапецией, затирка тёркой")];
+      case 6:return[Q(mid[0],1700,t,"маяк вынут, борозда заделана")];
+      case 7:return[Q(d.len/2,2380,t,"правило 2 м: зазор не больше 2 мм")]}})}
+function bay(){if(I.bay&&I.bay.w===WALL)return;const d=I.wd.W[WALL],xs=d.seg.filter(s=>s[1]<=250&&s[2]>=I.p.up-400).map(s=>s[0]).sort((a,b)=>a-b);let best=null;
+  for(let i=0;i<xs.length-1;i++){const a=xs[i],b=xs[i+1];if(d.ops.some(o=>o.b>a&&o.a<b))continue;if(!best||b-a>best[1]-best[0])best=[a,b]}
+  I.bay={w:WALL,b:best||[d.len*.3,d.len*.6]}}
+function placeRule(now){bay();const [a,b]=I.bay.b,t=I.p.t,top=I.p.slab,q=wxz(WALL,(a+b)/2,t+12);
+  rule.scale.x=b-a+300;rule.position.set(q[0],160+((now*.28)%1)*(top-420),q[1]);rule.rotation.y=(WALL==="N"||WALL==="S")?0:Math.PI/2}
+
+/* ---------- этапы, анимация, подписи ---------- */
+function finishAll(){anims.forEach(a=>{const b=a.m.userData.b;a.m.position.copy(b.p);a.m.scale.copy(b.s)});anims=[]}
+function applyStage(){const st=ST;G.forEach((g,i)=>{const u=g.userData.until;g.visible=i<=st&&(u===undefined||st<=u)});
+  if(MODE==="ceil"){if(TX){TX.prog=1;TX.draw(st,1);TX.late.forEach(m=>m.visible=true);const e=st>=8;TX.mUp.emissiveMap=e?TX.glow:null;TX.mUp.emissive.set(e?0xffffff:0x000000);TX.mUp.needsUpdate=true}
+    MAT.niche.color.set(st>=8?0xf7f6f2:st>=7?0xeae9e4:st>=6?0xe6e2d8:0xe0dacd)}
+  else{MAT.blk.color.set(st>=1?0xd6c4a2:0xffffff);const wet=I.wd.q.wet;MAT.pl.map=st===4?MAT.rough:null;
+    MAT.pl.color.set(wet?(st>=7?0xbab7b1:st>=5?0xa4a29d:0x9b9893):(st>=7?0xefe9e2:st>=5?0xd7cbc0:0xc7b6a8));MAT.pl.needsUpdate=true}
+  const dim=MODE==="ceil"&&st>=8;amb.intensity=dim?.16:.35;hemi.intensity=dim?.3:.6;sun.intensity=dim?.18:.45;
+  cap.textContent=`Этап ${st+1}. ${(MODE==="ceil"?CST:WST)[st].t}`;labels()}
+function enter(st){const g=G[st];if(!g)return;const now=clk.getElapsedTime();
+  if(MODE==="ceil"&&st===5&&TX){TX.prog=0;TX.t0=now;TX.draw(5,0);TX.late.forEach(m=>m.visible=false)}
+  const mode=g.userData.mode||"rise";if(mode==="none")return;const units=[];
+  g.children.forEach(ch=>{if(ch.userData.ws)ch.children.forEach(m=>units.push([m,ch.userData.w===WALL?0:1]));else units.push([ch,0])});
+  units.sort((a,b)=>a[1]-b[1]);const stg=Math.min(.09,2.6/Math.max(1,units.length));
+  units.forEach(([m],i)=>{if(!m.userData.b)m.userData.b={p:m.position.clone(),s:m.scale.clone()};const b=m.userData.b;m.position.copy(b.p);m.scale.copy(b.s);
+    if(mode==="grow")m.scale.y=.001;else m.position.y=b.p.y-700;anims.push({m,t0:now+i*stg,d:.5,mode})})}
+function labels(){const a=LBF[ST]?LBF[ST]():[];lblBox.innerHTML="";
+  LBcur=a.map(q=>{const e=document.createElement("div");e.className="lb";e.textContent=q[3];lblBox.appendChild(e);return{e,v:V(q[0],q[1],q[2])}})}
+function camPreset(now){const L=I.L,W=I.W,p=I.p;let pos,tg;
+  if(MODE==="ceil"){pos=V(L*.1,1100,W*.92);tg=V(L*.6,p.up*.93,W*.38)}
+  else{const d=I.wd.W[WALL],c0=wxz(WALL,d.len/2,0),c1=wxz(WALL,d.len/2,1000),nx=(c1[0]-c0[0])/1000,nz=(c1[1]-c0[1])/1000,vf=cam.fov*Math.PI/360,hf=Math.atan(Math.tan(vf)*cam.aspect),
+    dist=Math.max((d.len/2+450)/Math.tan(hf),(p.slab/2+350)/Math.tan(vf));tg=V(c0[0],1400,c0[1]);pos=V(c0[0]+nx*dist,1500,c0[1]+nz*dist)}
+  if(now){cam.position.copy(pos);ctl.target.copy(tg);camA=null}else camA={p0:cam.position.clone(),t0:ctl.target.clone(),p1:pos,t1:tg,s:clk.getElapsedTime()}}
+function tick(){if(!host.offsetParent)return;const now=clk.getElapsedTime();
+  anims=anims.filter(a=>{const k=Math.max(0,Math.min(1,(now-a.t0)/a.d)),e=1-Math.pow(1-k,3),m=a.m,b=m.userData.b;
+    if(a.mode==="grow")m.scale.y=Math.max(.001,b.s.y*e);else m.position.y=b.p.y-700*(1-e);return k<1});
+  if(camA){const k=Math.min(1,(now-camA.s)/.9),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam.position.lerpVectors(camA.p0,camA.p1,e);ctl.target.lerpVectors(camA.t0,camA.t1,e);if(k>=1)camA=null}
+  ctl.update();
+  if(tri&&G[0]&&G[0].visible)tri.userData.head.rotation.y=now*2.5;
+  const cp=cam.position,hx=I.L/2000,hz=I.W/2000,hid={N:cp.z<-hz,S:cp.z>hz,W:cp.x<-hx,E:cp.x>hx};
+  for(const w in WO)WO[w].forEach(g=>g.visible=!hid[w]);if(slab)slab.visible=cp.y<I.p.slab/1000;
+  if(TX&&MODE==="ceil"&&ST===5&&TX.prog<1){const pr=Math.min(1,(now-TX.t0)/3.6);if(Math.abs(pr-TX.prog)>.02||pr===1){TX.prog=pr;TX.draw(5,pr);TX.late.forEach(m=>m.visible=pr>.85)}}
+  if(rule){const on=MODE==="wall"&&(ST===4||ST===5)&&!hid[WALL];rule.visible=on;if(on)placeRule(now)}
+  const w=host.clientWidth,h=host.clientHeight;
+  LBcur.forEach(l=>{const v=l.v.clone().project(cam),vis=v.z<1&&v.x>-1.05&&v.x<1.05&&v.y>-1.05&&v.y<1.05;l.e.style.display=vis?"":"none";if(vis){l.e.style.left=((v.x+1)/2*w)+"px";l.e.style.top=((1-v.y)/2*h)+"px"}});
+  R.render(scene,cam)}
+
+function update(c){if(S.view!=="3d")return;
+  if(!R){try{init()}catch(e){S.view="2d";const b=$("v-3d");if(b)b.disabled=true;render();return}}
+  const p=P(),kc=S.room+"|"+S.mode,key=kc+"|"+JSON.stringify(p);
+  if(key!==K){const ch=kc!==KC;K=key;KC=kc;MODE=S.mode;WALL=S.wall;finishAll();build(c);if(ch){camPreset(true);ST=-1}else applyStage()}
+  if(MODE==="wall"&&S.wall!==WALL){WALL=S.wall;camPreset(false);labels()}
+  if(S.st!==ST){const prev=ST;ST=S.st;finishAll();applyStage();if(ST>prev)enter(ST)}
+  requestAnimationFrame(size)}
+return{update,replay(){if(!R)return;finishAll();applyStage();enter(ST)}}})();
 render();
 </script>
