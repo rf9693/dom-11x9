@@ -92,6 +92,7 @@ td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:ta
 .v3d-bar button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer}
 .v3d-bar button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .v3d-msg{position:absolute;inset:auto 12px 12px 12px;font-size:12.5px;color:var(--muted);pointer-events:none}
+.wleg{position:absolute;top:10px;left:10px;max-width:330px;display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:rgba(255,255,255,.88);color:#22302a;border-radius:4px;font-size:12px;line-height:1.35;pointer-events:none}.wleg[hidden]{display:none}.wleg span{display:flex;gap:6px;align-items:flex-start}.wleg .sw{flex:none;width:18px;height:6px;margin-top:5px;border-radius:3px}.wleg .a{background:#2f9bff}.wleg .p{background:repeating-linear-gradient(90deg,#1f6fa8 0 6px,#9fe3ff 6px 10px)}.wleg .r{background:#7d8288}
 .muted{color:var(--muted)}
 .small{font-size:13px}
 ul.plain{margin:0;padding-left:18px}
@@ -154,10 +155,11 @@ ul.plain li{margin:3px 0}
       <button id="b-gate">От калитки</button>
       <button id="b-volley">Площадка</button>
       <button id="b-garden">С террасы в сад</button>
+      <button id="b-water" aria-pressed="false">Вода и дренаж</button>
       <label class="kz" title="Спутниковая модель сглаживает рельеф, на месте перепад больше">Перепад <input type="range" id="kz" min="1" max="4" step="0.5" value="2" aria-label="Усиление перепада рельефа"> <output id="kzo">×2</output></label>
       <span class="muted small">Вращение — левая кнопка мыши, сдвиг — правая, масштаб — колесо или два пальца.</span>
     </div>
-    <div id="v3d"><div class="v3d-msg" id="v3dmsg">Загрузка 3D…</div></div>
+    <div id="v3d"><div class="v3d-msg" id="v3dmsg">Загрузка 3D…</div><div class="wleg" id="wleg" hidden><b>Куда уходит вода</b><span><i class="sw a"></i>сток по поверхности — вниз по склону, к северу и западу</span><span><i class="sw p"></i>дренаж и ливнёвка, бегущие полосы — направление течения (трубы лежат на 0,6–0,9 м под землёй, показаны поверх)</span><span><i class="sw r"></i>водосточные трубы → дождеприёмники → кольцевой дренаж → дождевой сад → поглощающий колодец</span></div></div>
   </section>
 
   <!-- ===== РАСТЕНИЯ ===== -->
@@ -953,7 +955,48 @@ function init(){
    lift(o);});
   G.updateMatrixWorld(true);G.children.slice().forEach(o=>lift(o));}
  const setK=k=>{RL.forEach(r=>{if(r.g){const a=r.g.attributes.position.array;for(let i=0;i<a.length;i++)a[i]=r.base[i]+k*r.del[i];r.g.attributes.position.needsUpdate=true;r.g.computeVertexNormals();r.g.computeBoundingSphere();r.g.computeBoundingBox();}else r.o.position.y=r.y0+k*r.dz;});};
- {const kzI=document.getElementById('kz'),kzO=document.getElementById('kzo');const applyK=()=>{const k=+kzI.value;D.RELIEF.k=k;setK(k);kzO.textContent='×'+String(k).replace('.',',');if(window.drawSection)window.drawSection();};kzI.addEventListener('input',applyK);applyK();}
+
+ /* ---- вода: водостоки, дренаж, ливнёвка и сток по склону ---- */
+ const WG=new THREE.Group();WG.visible=false;scene.add(WG);const WP=new THREE.Group();WG.add(WP);
+ const zK=(x,y)=>D.RELIEF.k*D.zT(x,y);
+ /* водосточные трубы на углах дома и дождеприёмники — видны всегда */
+ {const dpM=new THREE.MeshStandardMaterial({color:'#7d8288',roughness:.5,metalness:.4});
+  [[-0.12,-0.12],[11.21,-0.12],[11.21,9.22],[-0.12,9.22]].forEach(([a,b])=>{gAdd(new THREE.CylinderGeometry(.05,.05,WT-0.1,10),dpM,a,b,(WT-0.1)/2+0.1);gAdd(new THREE.BoxGeometry(.12,.08,.12),dpM,a,b,0.12);
+   gBox(a-0.17,b-0.17,a+0.17,b+0.17,0,0.06,M('#3b3e41'),{noShadow:true});});}
+ const stripe=texC(64,8,(g,w,h)=>{g.fillStyle='#1f6fa8';g.fillRect(0,0,w,h);g.fillStyle='#9fe3ff';g.fillRect(0,0,w*0.38,h);});
+ const pipeMs=[];
+ const pipe=(pts,r,op)=>{const ps=[];for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1],L=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.ceil(L/0.5));
+   for(let j=(i?1:0);j<=n;j++){const s=j/n,x=a[0]+(b[0]-a[0])*s,y=a[1]+(b[1]-a[1])*s;ps.push(V(x,y,zK(x,y)+r+0.04));}}
+  let L=0;for(let i=1;i<ps.length;i++)L+=ps[i].distanceTo(ps[i-1]);const cp=new THREE.CurvePath();for(let i=1;i<ps.length;i++)cp.add(new THREE.LineCurve3(ps[i-1],ps[i]));
+  const tx=stripe.clone();tx.needsUpdate=true;tx.repeat.set(L/0.8,1);const m=new THREE.MeshBasicMaterial({map:tx,transparent:true,opacity:op||0.95,depthWrite:false});pipeMs.push(m);
+  const o=new THREE.Mesh(new THREE.TubeGeometry(cp,Math.max(8,ps.length*2),r,8,false),m);o.renderOrder=3;WP.add(o);};
+ const buildWater=()=>{WP.children.slice().forEach(o=>{o.geometry.dispose();o.material.map.dispose();o.material.dispose();WP.remove(o);});pipeMs.length=0;
+  D.DRAIN.pipes.forEach(p=>pipe(p,0.1));pipe(D.DRAIN.outlet,0.08,0.85);pipe(D.DRAIN.overflow,0.1);
+  /* кольцевой дренаж: от верхнего юго-восточного угла двумя ветками к выпуску на западе */
+  const R=D.DRAIN.ring,W=D.DRAIN.outlet[0];pipe([R[1],R[0],W],0.075,0.8);pipe([R[1],R[2],R[3],W],0.075,0.8);
+  /* лоток на въезде и сток в него */
+  const T=D.DRAIN.trench,tm=new THREE.MeshBasicMaterial({color:'#2a5d84'});{const a=T[0],b=T[1],L=Math.hypot(b[0]-a[0],b[1]-a[1]),o=new THREE.Mesh(new THREE.BoxGeometry(L,0.05,0.2),tm);const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+   o.position.copy(V(mx,my,zK(mx,my)+0.12));o.rotation.y=Math.atan2(b[1]-a[1],b[0]-a[0]);WP.add(o);}
+  /* колодец: кольцо над люком */
+  {const w=D.DRAIN.well,o=new THREE.Mesh(new THREE.TorusGeometry(0.62,0.05,8,28),new THREE.MeshBasicMaterial({color:'#2f9bff'}));o.rotation.x=Math.PI/2;o.position.copy(V(w[0],w[1],zK(w[0],w[1])+0.2));WP.add(o);}};
+ /* сток по поверхности: капли ползут по линии наибольшего уклона */
+ const NA=480,aG=new THREE.ConeGeometry(0.13,0.65,6);aG.rotateX(Math.PI/2);aG.translate(0,0,0.32);
+ const AR=new THREE.InstancedMesh(aG,new THREE.MeshBasicMaterial({color:'#2f9bff',transparent:true,opacity:.9,depthWrite:false}),NA);AR.frustumCulled=false;AR.renderOrder=4;WG.add(AR);
+ const PL=D.PLOT,inPlot=(x,y)=>{let c=false;for(let i=0,j=PL.length-1;i<PL.length;j=i++){const a=PL[j],b=PL[i];if(((a[1]>y)!==(b[1]>y))&&(x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0]))c=!c;}return c;};
+ const bx0=Math.min(...PL.map(p=>p[0]))-6,bx1=Math.max(...PL.map(p=>p[0]))+6,by0=Math.min(...PL.map(p=>p[1]))-6,by1=Math.max(...PL.map(p=>p[1]))+6;
+ const grad=(x,y)=>{const h=0.4;return[(D.zT(x+h,y)-D.zT(x-h,y))/(2*h),(D.zT(x,y+h)-D.zT(x,y-h))/(2*h)];};
+ const drops=[];const spawn=d=>{for(let n=0;n<40;n++){const x=bx0+rnd()*(bx1-bx0),y=by0+rnd()*(by1-by0);if(!inPlot(x,y))continue;const g=grad(x,y);if(Math.hypot(g[0],g[1])<0.004)continue;d.x=x;d.y=y;break;}d.age=0;d.life=4+rnd()*5;return d;};
+ for(let i=0;i<NA;i++){const d=spawn({});d.age=rnd()*d.life;drops.push(d);}
+ const dm=new THREE.Matrix4(),dq=new THREE.Quaternion(),dp=new THREE.Vector3(),ds=new THREE.Vector3(),FW=new THREE.Vector3(0,0,1),dv=new THREE.Vector3();
+ const waterTick=dt=>{dt=Math.min(dt,0.05);const K=D.RELIEF.k;for(const s of pipeMs)s.map.offset.x-=dt*1.6;
+  drops.forEach((d,i)=>{const g=grad(d.x,d.y),gl=Math.hypot(g[0],g[1]);d.age+=dt;
+   if(gl<0.002||d.age>d.life||d.x<bx0-10||d.x>bx1+10||d.y<by0-10||d.y>by1+10)spawn(d);
+   else{const sp=Math.min(2.2,0.7+gl*K*25);d.x-=g[0]/gl*sp*dt;d.y-=g[1]/gl*sp*dt;}
+   const z=zK(d.x,d.y)+0.1;dp.copy(V(d.x,d.y,z));const g2=grad(d.x,d.y),l2=Math.hypot(g2[0],g2[1])||1;dv.set(-g2[0]/l2,-K*l2*0,g2[1]/l2).normalize();dq.setFromUnitVectors(FW,dv);
+   const f=Math.min(1,d.age/0.6,(d.life-d.age)/0.8);ds.setScalar(Math.max(0.01,f));dm.compose(dp,dq,ds);AR.setMatrixAt(i,dm);});
+  AR.instanceMatrix.needsUpdate=true;};
+ document.getElementById('b-water').onclick=e=>{WG.visible=!WG.visible;e.currentTarget.setAttribute('aria-pressed',WG.visible);document.getElementById('wleg').hidden=!WG.visible;msg.style.visibility=WG.visible?'hidden':'';if(WG.visible)flyW(D.Lp(-24,44),20,D.Lp(3,8),0);};
+ {const kzI=document.getElementById('kz'),kzO=document.getElementById('kzo');const applyK=()=>{const k=+kzI.value;D.RELIEF.k=k;setK(k);buildWater();kzO.textContent='×'+String(k).replace('.',',');if(window.drawSection)window.drawSection();};kzI.addEventListener('input',applyK);applyK();}
  function mode(eve){document.getElementById('b-day').setAttribute('aria-pressed',!eve);document.getElementById('b-eve').setAttribute('aria-pressed',eve);
   const c=new THREE.Color(eve?'#1c2738':'#cfe0ea');scene.background=c;scene.fog.color=c;hemi.intensity=eve?0.12:0.9;sun.intensity=eve?0.05:2.2;
   plights.forEach(l=>l.intensity=eve?(l.distance>12?18:l.distance>8?9:5):0);fire.intensity=eve?8:0;pools.forEach(p=>p.visible=eve);
@@ -969,7 +1012,7 @@ function init(){
  function size(){const w=box.clientWidth,h=box.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
  new ResizeObserver(size).observe(box);size();
  msg.textContent='Дом и хозпостройка поставлены по генплану. Дом собран по 3D-проекту: стены, окна и двери, без инженерных систем. Гараж, площадка и сад — по пометкам заказчика. Деревья показаны примерно через 7–10 лет после посадки. Рельеф — по открытой модели Copernicus GLO-30: земля понижается от юго-восточного угла Г к северному А. Модель сглаживает рельеф (по ней около 2,3 м), на месте перепад больше, поэтому по умолчанию он усилен в 2 раза; ползунок «Перепад» меняет усиление от ×1 до ×4; под дом, гараж, хозпостройку, теплицу, волейбол, детскую и патио сделаны горизонтальные площадки с откосами. Отметки условные, до топосъёмки.';
- (function loop(){requestAnimationFrame(loop);ctr.update();renderer.render(scene,cam);})();
+ const clock=new THREE.Clock();(function loop(){requestAnimationFrame(loop);const dt=clock.getDelta();if(WG.visible)waterTick(dt);ctr.update();renderer.render(scene,cam);})();
 }
 </script>
 <!--PNAV--><style id="pnav-css">
