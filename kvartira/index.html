@@ -125,6 +125,12 @@ a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
   .panel.min .more{display:none}
   #toggle{display:block;position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font:600 12px var(--f-body);cursor:pointer}
 }
+.grp{display:grid;gap:8px}
+.grp select{font:500 13px var(--f-body);color:var(--ink);background:var(--btn);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.gl{display:grid;gap:7px}
+.gl label{display:grid;grid-template-columns:1fr 64px 40px;gap:6px;align-items:center;font-size:12px;line-height:1.25}
+.gl input{width:100%;accent-color:var(--accent)}.gl output{white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right;font-size:11.5px;color:var(--muted)}
+.lst{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 12px}.lst b{color:var(--ink);font-variant-numeric:tabular-nums}
 #err[hidden]{display:none}
 #err{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
 </style>
@@ -145,7 +151,14 @@ a.link{color:var(--accent);font-weight:600;text-decoration:none;font-size:13px}
   <div class="row">
     <span class="lbl">Свет</span>
     <div class="views" id="scn"></div>
+    <div class="lst" id="lst"></div>
   </div>
+  <details class="row more grp" id="grp">
+    <summary class="lbl" style="cursor:pointer">Группы света · диммеры</summary>
+    <select id="gRoom" aria-label="Помещение"></select>
+    <div class="gl" id="gl"></div>
+    <p class="sub">Можно нажать на сам светильник в 3D — он включится или выключится.</p>
+  </details>
   <div class="row more">
     <span class="lbl">Высота стен</span>
     <div class="slider"><input id="wh" type="range" min="300" max="2550" step="50" value="2550" aria-label="Высота стен"><output id="who">2550 мм</output></div>
@@ -1579,14 +1592,16 @@ K.F.forEach(f=>(build[f.k]||build.box)(f));
 const em=k=>new THREE.MeshStandardMaterial({color:col("#FFFFFF"),emissive:col(k>=3900?"#FFF1DC":k>=2900?"#FFE2B8":"#FFD29A"),emissiveIntensity:0,roughness:.4});
 const blk=M(C.black,{roughness:.45,metalness:.5,tx:"metal"});
 const own=l=>!l.amb&&l.lm>=300&&l.t!=="tspot"&&l.t!=="rail"&&!(l.sc&&l.sc.eve===0)&&!/^b\d/.test(l.room);
-const LV=K.L.map(l=>{const e=em(l.k);let mats=[e];
+const GK=l=>l.room+"|"+(l.cove?"cove":l.n),GRP=new Map();
+K.L.forEach(l=>{if(l.t==="rail")return;const k=GK(l);if(!GRP.has(k))GRP.set(k,{k,l,ls:[],lv:0});GRP.get(k).ls.push(l)});
+const LV=K.L.map(l=>{const e=em(l.k);e.userData.gk=GK(l);let mats=[e];
   if(l.t==="rail"){B(l.r,H-10,H,blk,G.lights,1);mats=[]}
   else if(l.t==="lin"){const r=l.r,v=r[2]-r[0]<r[3]-r[1];B(v?[r[0]+5,r[1],r[2]-5,r[3]]:[r[0],r[1]+5,r[2],r[3]-5],H-22,H-8,e,G.lights,1)}
   else if(l.t==="tspot"){Cyl(l.x,l.y,32,H-170,H-10,blk,G.lights);Cyl(l.x,l.y,26,H-176,H-170,e,G.lights)}
   else if(l.t==="spot")Cyl(l.x,l.y,45,H-12,H,e,G.lights);
   else if(l.t==="strip"){const r=l.r;B([r[0],r[1],Math.max(r[2],r[0]+15),Math.max(r[3],r[1]+15)],l.h-10,l.h+5,e,G.lights,1)}
   else if(l.t==="pend"){const rad=l.rad||110;Cyl(l.x,l.y,3,l.h+220,H,blk,G.lights);Cyl(l.x,l.y,rad,l.h+10,l.h+220,blk,G.lights);Cyl(l.x,l.y,rad-12,l.h,l.h+10,e,G.lights)}
-  else if(l.t==="floor")mats=lampMats;
+  else if(l.t==="floor"){mats=lampMats;lampMats.forEach(x=>x.userData.gk=GK(l))}
   else{const sp=new THREE.Mesh(new THREE.SphereGeometry(m(60),16,12),e);const[px,pz]=P(l.x,l.y);sp.position.set(px,m(l.h),pz);G.lights.add(sp)}
   return{l,mats}});
 /* свет сцены */
@@ -1600,11 +1615,19 @@ const roomPL=K.ROOMS.filter(q=>!q.balc).map(q=>{const r=q.r;const p=new THREE.Po
 const accPL=K.L.filter(own).map(l=>{const q=K.ROOMS.find(o=>o.id===l.room).r,cx=(q[0]+q[2])/2,cy=(q[1]+q[3])/2;
   let x0=l.x,y0=l.y;if(l.r){x0=(l.r[0]+l.r[2])/2;y0=(l.r[1]+l.r[3])/2;const d=Math.hypot(cx-x0,cy-y0)||1;x0+=(cx-x0)/d*250;y0+=(cy-y0)/d*250}
   const p=new THREE.PointLight(l.k>3500?0xfff1df:0xffc98a,0,2.2,2);const[x,z]=P(x0,y0);p.position.set(x,m(l.h-(l.t==="pend"?60:0)),z);scene.add(p);return{l,p}});
-function setScene(s){const day=s==="day";
+let SC="day";const lv=l=>l.t==="rail"?0:GRP.get(GK(l)).lv;
+function setScene(s){SC=s;if(s!=="own")GRP.forEach(g=>g.lv=K.lev(g.l,s));applyLight()}
+function applyLight(){const s=SC,day=s==="day";
   hemi.intensity=day?.35:s==="night"?.02:.05;sun.intensity=day?.9:0;amb.intensity=day?.15:.04;
-  LV.forEach(o=>{const v=K.lev(o.l,s);o.mats.forEach(x=>x.emissiveIntensity=v*(o.l.t==="strip"?3:o.l.t==="floor"?1.4:2.4))});
-  roomPL.forEach(({q,p})=>{p.intensity=K.L.filter(l=>l.room===q.id&&!own(l)).reduce((a,l)=>a+l.lm*(l.uf||1)*K.lev(l,s),0)/2600*1.25});
-  accPL.forEach(({l,p})=>p.intensity=l.lm/500*K.lev(l,s));
+  LV.forEach(o=>{const v=lv(o.l);o.mats.forEach(x=>x.emissiveIntensity=v*(o.l.t==="strip"?3:o.l.t==="floor"?1.4:2.4))});
+  roomPL.forEach(({q,p})=>{p.intensity=K.L.filter(l=>l.room===q.id&&!own(l)).reduce((a,l)=>a+l.lm*(l.uf||1)*lv(l),0)/2600*1.25});
+  accPL.forEach(({l,p})=>p.intensity=l.lm/500*lv(l));
+  let W=0,on=0;GRP.forEach(g=>{W+=g.ls.reduce((a,l)=>a+l.lm,0)*g.lv/90;if(g.lv>0)on+=g.ls.length});
+  const q=K.ROOMS.find(o=>o.id===$("gRoom").value);let E="";
+  if(q&&!q.balc){let a=K.area(q.r);if(q.id==="cor")a-=K.area(K.SOLID[0].r);if(q.id==="kit")a-=K.area(K.SOLID[1].r);
+    let lm=0;GRP.forEach(g=>{if(g.l.room===q.id&&g.l.amb)lm+=g.ls.reduce((t,l)=>t+l.lm*(l.uf||1),0)*g.lv});E=`<span>${q.n}: <b>${Math.round(lm*K.UF*K.MF/a)} лк</b> общий</span>`}
+  $("lst").innerHTML=`<span>Горит <b>${on}</b> из ${K.L.filter(l=>l.t!=="rail").length}</span><span><b>${W?"≈ "+Math.round(W):0} Вт</b></span>${E}`;
+  document.querySelectorAll("#gl input").forEach(i=>{const v=Math.round(GRP.get(i.dataset.gk).lv*100);i.value=v;i.nextElementSibling.value=v+" %"});
   scene.background=col(day?(getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#DCE2DF"):"#1A1C22");renderer.toneMappingExposure=day?.95:1.1;if(ENV)scene.environment=day?ENV:null;
   document.querySelectorAll("#scn button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s===s))}
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -1621,6 +1644,7 @@ V["Телефон"]={p:[13,18,0],t:[2.2,0,0]};if(innerWidth<640)V["Сверху"
 let anim=null;
 function go(n){const v=V[n];document.querySelectorAll("#views button").forEach(b=>b.setAttribute("aria-pressed",b.textContent===n));
   if(v.w){$("wh").value=2550;setWH(2550)}
+  const rid={"Гостиная":"liv","Спальня":"bed","Кухня":"kit","Прихожая":"hall","Ванная":"bath"}[n];if(rid&&$("gRoom")){$("gRoom").value=rid;fillGl()}
   anim={t0:performance.now(),p0:cam.position.clone(),q0:ctl.target.clone(),p1:new THREE.Vector3(...v.p),q1:new THREE.Vector3(...v.t)};
   ctl.minDistance=v.w?.2:2;cam.fov=v.w?62:45;cam.updateProjectionMatrix()}
 $("views").innerHTML=Object.keys(V).filter(n=>n!=="Телефон").map(n=>`<button type="button">${n}</button>`).join("");
@@ -1628,8 +1652,22 @@ document.querySelectorAll("#views button").forEach(b=>b.onclick=()=>go(b.textCon
 function setWH(v){G.walls.scale.y=v/H;$("who").textContent=v+" мм"}
 $("wh").oninput=e=>setWH(+e.target.value);
 $("cFurn").onchange=e=>{G.furn.visible=e.target.checked};
-$("scn").innerHTML=K.SCN.map(x=>`<button type="button" data-s="${x.id}" title="${x.d}">${x.n}</button>`).join("");
-document.querySelectorAll("#scn button").forEach(b=>b.onclick=()=>setScene(b.dataset.s));
+$("scn").innerHTML=[...K.SCN,{id:"own",n:"Свой",d:"Уровни выставлены вручную"}].map(x=>`<button type="button" data-s="${x.id}" title="${x.d}">${x.n}</button>`).join("");
+document.querySelectorAll("#scn button").forEach(b=>b.onclick=()=>{const s=b.dataset.s;if(s==="own"){if(SC==="day")GRP.forEach(g=>g.lv=K.lev(g.l,"eve"));SC="own";applyLight()}else setScene(s)});
+/* диммеры по помещению */
+const RM=K.ROOMS.filter(q=>[...GRP.values()].some(g=>g.l.room===q.id));
+$("gRoom").innerHTML=RM.map(q=>`<option value="${q.id}">${q.balc?"Балкон "+(q.id==="b1"?"гостиной":"спальни"):q.n}</option>`).join("");
+function fillGl(){const id=$("gRoom").value;$("gl").innerHTML=[...GRP.values()].filter(g=>g.l.room===id).map(g=>`<label><span>${g.l.cove?"Парящий потолок, профиль по периметру":(g.ls.length>1?g.ls.length+" × ":"")+g.l.n.split(", ")[0]}</span><input type="range" min="0" max="100" step="10" data-gk="${g.k}" aria-label="${g.l.n}"><output></output></label>`).join("");applyLight()}
+$("gRoom").onchange=fillGl;
+$("gl").addEventListener("input",e=>{const i=e.target.closest("[data-gk]");if(!i)return;GRP.get(i.dataset.gk).lv=i.value/100;SC="own";applyLight()});
+/* клик по светильнику */
+const ray=new THREE.Raycaster(),pv=new THREE.Vector2();let down=null;const lastOn=new Map();
+renderer.domElement.addEventListener("pointerdown",e=>{down=[e.clientX,e.clientY]});
+renderer.domElement.addEventListener("pointerup",e=>{if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>5||!G.lights.visible)return;
+  const b=renderer.domElement.getBoundingClientRect();pv.set((e.clientX-b.left)/b.width*2-1,-(e.clientY-b.top)/b.height*2+1);ray.setFromCamera(pv,cam);
+  const h=ray.intersectObjects([G.lights,G.furn],true).find(x=>x.object.material&&x.object.material.userData&&x.object.material.userData.gk);if(!h)return;
+  const g=GRP.get(h.object.material.userData.gk);if(g.lv>0){lastOn.set(g.k,g.lv);g.lv=0}else g.lv=lastOn.get(g.k)||1;SC="own";
+  $("gRoom").value=g.l.room;fillGl()});
 $("cTags").onchange=e=>{$("tags").hidden=!e.target.checked};
 $("toggle").onclick=()=>{const p=$("panel");p.classList.toggle("min");$("toggle").textContent=p.classList.contains("min")?"Развернуть":"Свернуть"};
 if(matchMedia("(max-width:640px)").matches){$("panel").classList.add("min");$("toggle").textContent="Развернуть"}
@@ -1641,7 +1679,7 @@ function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cam.asp
   if(!anim&&!resize.done){const v=w<640?V["Телефон"]:V["Сверху"];cam.position.set(...v.p);ctl.target.set(...v.t);resize.done=1}}
 addEventListener("resize",resize);resize();
 document.querySelector("#views button").setAttribute("aria-pressed","true");
-setScene("day");
+fillGl();setScene("day");
 const tmp=new THREE.Vector3();
 (function loop(t){requestAnimationFrame(loop);
   if(anim){const k=Math.min(1,(t-anim.t0)/900),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam.position.lerpVectors(anim.p0,anim.p1,e);ctl.target.lerpVectors(anim.q0,anim.q1,e);if(k>=1)anim=null}
