@@ -1,0 +1,592 @@
+<title>Вентиляция с рекуператором — дом 11×9</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Лист проекта вентиляции: 3D монтажа по этапам + карточка этапа, ниже расходы по комнатам, расчёт «потеют ли окна» и ведомость */
+:root{
+  --bg:#F2F2F0;--paper:#FFFFFF;--ink:#212427;--muted:#6A6E72;--line:#DCDDDA;
+  --acc:#C7651F;--acc-soft:#F6E6D8;--sup:#2F78B7;--sup-soft:#E1EDF7;--ext:#D0682A;--ext-soft:#F8E6DA;--ok:#4D7A4F;--bad:#B3392F;--v3bg:#E9E7E2;
+  --f-disp:"Unbounded",system-ui,sans-serif;--f-body:"Manrope",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161819;--paper:#1F2224;--ink:#ECEDEB;--muted:#9DA1A5;--line:#33373A;
+  --acc:#F08A45;--acc-soft:#3A2A1E;--sup:#6FAEE3;--sup-soft:#1C2C3A;--ext:#F09A62;--ext-soft:#3A271C;--ok:#86B888;--bad:#E57A70;--v3bg:#2A2D30;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161819;--paper:#1F2224;--ink:#ECEDEB;--muted:#9DA1A5;--line:#33373A;
+  --acc:#F08A45;--acc-soft:#3A2A1E;--sup:#6FAEE3;--sup-soft:#1C2C3A;--ext:#F09A62;--ext-soft:#3A271C;--ok:#86B888;--bad:#E57A70;--v3bg:#2A2D30;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;margin:0}
+.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1{font:500 clamp(22px,3.2vw,34px)/1.15 var(--f-disp);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font:500 19px/1.25 var(--f-disp);margin:0;text-wrap:balance}
+h3{font:600 13px/1.3 var(--f-body);margin:0;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+p{margin:0}
+.lead{color:var(--muted);max-width:80ch}
+a{color:var(--sup)}
+header{display:flex;flex-direction:column;gap:10px}
+.links{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.facts span{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:4px 10px;font-size:13px}
+.facts b{font:500 14px var(--f-mono)}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr)}}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.stp{display:flex;gap:4px;flex-wrap:wrap}
+.stp button{font:500 12px var(--f-mono);min-width:34px;height:30px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:4px;cursor:pointer}
+.stp button.done{background:var(--acc-soft);border-color:transparent}
+.stp button[aria-current="step"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.vt{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;flex-wrap:wrap;max-width:100%;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper)}
+.seg button{font:500 13px var(--f-body);color:var(--ink);background:transparent;border:0;padding:6px 11px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.rp{font:600 13px var(--f-body);padding:6px 12px;border-radius:6px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}
+.v3{position:relative;height:min(600px,66vh);min-height:360px;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--v3bg);touch-action:none}
+.v3 canvas{display:block;width:100%;height:100%}
+#lbl{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lb{position:absolute;transform:translate(-50%,calc(-100% - 8px));background:rgba(20,22,24,.86);color:#fff;font:500 12px/1.3 var(--f-body);padding:4px 8px;border-radius:4px;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.lb::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-bottom:0;border-top-color:rgba(20,22,24,.86)}
+.lb.s{background:rgba(31,96,155,.92)}.lb.s::after{border-top-color:rgba(31,96,155,.92)}
+.lb.e{background:rgba(176,82,28,.92)}.lb.e::after{border-top-color:rgba(176,82,28,.92)}
+.cap{position:absolute;left:10px;top:10px;font:600 14px/1.3 var(--f-body);color:#fff;background:rgba(199,101,31,.92);padding:6px 10px;border-radius:4px;pointer-events:none;max-width:calc(100% - 20px)}
+.key{position:absolute;left:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:4px 10px;font:500 12px var(--f-body);color:#fff;background:rgba(20,22,24,.72);padding:5px 9px;border-radius:4px;pointer-events:none;max-width:calc(100% - 20px)}
+.key i{display:inline-block;width:14px;height:8px;border-radius:2px;margin-right:5px;vertical-align:0}
+@media (max-width:600px){.v3{height:440px}.lb{font-size:11px;max-width:170px}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card .eyebrow{font:500 12px var(--f-mono);color:var(--acc);letter-spacing:.04em}
+.card ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.nav button{font:600 14px var(--f-body);padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.nav button.pri{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.nav button:disabled{opacity:.4;cursor:default}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+td.n,th.n{text-align:right;white-space:nowrap;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td.s{color:var(--sup);font-weight:600}td.e{color:var(--ext);font-weight:600}
+tfoot td{font-weight:700;border-top:2px solid var(--ink)}
+.tbl{overflow-x:auto}
+.warn{border-left:3px solid var(--acc);padding:6px 10px;background:var(--acc-soft);border-radius:0 4px 4px 0;font-size:14px}
+.chk{border-left:3px solid var(--ok);padding:6px 10px;font-size:14px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kv div{border:1px solid var(--line);border-radius:4px;padding:8px 10px;min-width:0}
+.kv small{display:block;color:var(--muted);font-size:12px}
+.kv span{font:500 17px var(--f-mono)}
+.wgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px;align-items:start}
+@media (max-width:900px){.wgrid{grid-template-columns:minmax(0,1fr)}}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 18px}
+.pg label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.pg input,.pg select{font:500 14px var(--f-mono);padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
+.verdict{border-radius:6px;padding:12px 14px;font-size:15px;display:flex;flex-direction:column;gap:4px}
+.verdict.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.verdict.bad{background:color-mix(in srgb,var(--bad) 14%,transparent);border-left:4px solid var(--bad)}
+.verdict.dry{background:var(--sup-soft);border-left:4px solid var(--sup)}
+.verdict b{font:500 16px var(--f-disp)}
+.chart svg{display:block;width:100%;height:auto}
+.chart text{font:12px var(--f-mono);fill:var(--muted)}
+.cmp td:first-child{white-space:nowrap}
+.tag{display:inline-block;font:600 12px var(--f-body);padding:1px 8px;border-radius:10px}
+.tag.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.tag.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.tag.dry{background:var(--sup-soft);color:var(--sup)}
+details.params{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 16px}
+details.params summary{cursor:pointer;font:500 16px var(--f-disp)}
+details.params .pg{margin-top:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Приточно-вытяжная вентиляция с рекуператором</h1>
+  <p class="lead">В каждую комнату свежий воздух приходит у окна, отработанный уходит у двери, в кухне и санузле вытяжка сильнее притока. Рекуператор стоит в техзоне прихожей и греет уличный воздух теплом вытяжного. Трубы идут в коробе потолка, поэтому их монтируют вместе с каркасом. Расход по комнатам, трубы, решётки и материалы пересчитываются от параметров внизу страницы.</p>
+  <div class="links"><a href="./">3D-модель дома</a><a href="dom-11x9.html">Проект (2D)</a><a href="potolki-shtukaturka.html">Потолки и штукатурка</a></div>
+  <div class="facts" id="facts"></div>
+</header>
+
+<div class="grid">
+  <section class="sheet" aria-label="3D по этапам">
+    <div class="stp" id="steps" role="group" aria-label="Этапы"></div>
+    <div class="vt"><div class="seg" id="cams" role="group" aria-label="Камера"><button data-c="auto" aria-pressed="true">По этапу</button><button data-c="top" aria-pressed="false">Сверху</button><button data-c="iso" aria-pressed="false">3/4</button><button data-c="in" aria-pressed="false">Изнутри</button></div><button class="rp" id="replay">▶ Повторить этап</button></div>
+    <div class="v3" id="v3"><div id="lbl"></div><div class="cap" id="cap"></div><div class="key" id="key"><span><i style="background:#3B8BD4"></i>приток</span><span><i style="background:#E07B39"></i>вытяжка</span><span><i style="background:#3d4247"></i>улица (в изоляции)</span></div></div>
+    <p class="lead" style="font-size:13px">Крутите мышью или пальцем, колесо или щипок для приближения. Перекрытие скрыто, а потолок при взгляде сверху полупрозрачный, чтобы трубы над коробом было видно.</p>
+  </section>
+  <aside class="card" id="card" aria-live="polite"></aside>
+</div>
+
+<section class="sheet">
+  <h2>Расход воздуха по комнатам</h2>
+  <p class="lead" id="flowL"></p>
+  <div class="tbl" id="flows"></div>
+</section>
+
+<section class="sheet" id="win">
+  <h2>Почему окна не будут потеть</h2>
+  <p class="lead">Стекло потеет, когда его поверхность холоднее точки росы комнатного воздуха. Первым запотевает низ стекла у рамки, это самое холодное место. Вентиляция убирает влагу от людей, готовки и душа и держит точку росы ниже температуры кромки. Перебор тоже вреден: при большом расходе в мороз воздух пересыхает, поэтому зимой расход снижают или ставят энтальпийный теплообменник.</p>
+  <div class="wgrid">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="pg">
+        <label for="w-te">На улице, °C<input id="w-te" type="number" value="-20" step="1"></label>
+        <label for="w-ti">В доме, °C<input id="w-ti" type="number" value="21" step="0.5"></label>
+        <label for="w-g">Влаги от жильцов, г/ч<input id="w-g" type="number" value="400" step="25"></label>
+        <label for="w-mode">Режим зимой<select id="w-mode"><option value="1">100 % расхода</option><option value="0.8">80 %</option><option value="0.7" selected>70 %</option><option value="0.5">50 %</option></select></label>
+        <label for="w-ex">Теплообменник<select id="w-ex"><option value="0.6" selected>энтальпийный (возврат влаги ≈ 60 %)</option><option value="0">пластинчатый (влагу не возвращает)</option></select></label>
+        <label for="w-sp">Окно<select id="w-sp"><option value="0.72" selected>2-камерный, тёплая рамка</option><option value="0.62">2-камерный, алюминиевая рамка</option><option value="0.55">1-камерный, алюминиевая рамка</option></select></label>
+      </div>
+      <div id="verdict"></div>
+      <div class="tbl"><table class="cmp" id="cmp"></table></div>
+    </div>
+    <div class="chart" id="chart"></div>
+  </div>
+</section>
+
+<section class="sheet">
+  <h2>Ведомость материалов</h2>
+  <p class="lead" id="matL"></p>
+  <div class="tbl" id="mats"></div>
+</section>
+
+<details class="params" id="params">
+  <summary>Параметры расчёта</summary>
+  <div class="pg">
+    <label for="p-n">Жильцов в доме<input id="p-n" type="number" value="3" min="1" step="1"></label>
+    <label for="p-nb">Спят в спальне<input id="p-nb" type="number" value="2" min="0" step="1"></label>
+    <label for="p-nk">Спят в детской<input id="p-nk" type="number" value="1" min="0" step="1"></label>
+    <label for="p-pp">Приток на человека, м³/ч<input id="p-pp" type="number" value="30" step="5"></label>
+    <label for="p-ke">Вытяжка из кухни, м³/ч<input id="p-ke" type="number" value="60" step="5"></label>
+    <label for="p-be">Вытяжка из санузла, м³/ч<input id="p-be" type="number" value="50" step="5"></label>
+    <label for="p-bs">Приток в санузел, м³/ч<input id="p-bs" type="number" value="15" step="5"></label>
+    <label for="p-dr">Вытяжка в сухих комнатах, % от притока<input id="p-dr" type="number" value="30" step="5"></label>
+    <label for="p-cap">Расход на одну трубу 75/90, м³/ч<select id="p-cap"><option>25</option><option selected>30</option></select></label>
+  </div>
+</details>
+</div>
+
+<script>
+/* ---------- исходные данные дома (из 3D-модели и проекта потолков) ---------- */
+const RR={kid:[340,360,4780,3460],bath:[4990,360,7320,3460],bed:[7620,360,10750,5560],liv:[340,3660,7320,8760],hall:[7620,5760,10750,8760]};
+const RB={kid:[60,530,60,410],bath:[560,820,60,410],bed:[855,1200,60,620],liv:[60,820,440,985],hall:[855,1210,655,985]};
+const mp=(r,x,y)=>{const a=RB[r],b=RR[r];return[b[0]+(x-a[0])/(a[1]-a[0])*(b[2]-b[0]),b[1]+(y-a[2])/(a[3]-a[2])*(b[3]-b[1])]};
+function sEll(cx,cy,rx,ry,n,k){k=k||72;const p=[];for(let i=0;i<k;i++){const t=i/k*Math.PI*2,c=Math.cos(t),s=Math.sin(t);p.push([cx+rx*Math.sign(c)*Math.pow(Math.abs(c),2/n),cy+ry*Math.sign(s)*Math.pow(Math.abs(s),2/n)])}return p}
+function smooth(P,k){const n=P.length,d=[];const g=i=>P[(i+n)%n];
+  for(let i=0;i<n;i++){const p0=g(i-1),p1=g(i),p2=g(i+1),p3=g(i+2),D=(a,b)=>Math.max(1e-4,Math.pow(Math.hypot(b[0]-a[0],b[1]-a[1]),.5));
+    const t0=0,t1=D(p0,p1),t2=t1+D(p1,p2),t3=t2+D(p2,p3),L=(a,b,ta,tb,t)=>[a[0]*(tb-t)/(tb-ta)+b[0]*(t-ta)/(tb-ta),a[1]*(tb-t)/(tb-ta)+b[1]*(t-ta)/(tb-ta)];
+    for(let j=0;j<16;j++){const t=t1+(t2-t1)*j/16,A1=L(p0,p1,t0,t1,t),A2=L(p1,p2,t1,t2,t),A3=L(p2,p3,t2,t3,t),B1=L(A1,A2,t0,t2,t),B2=L(A2,A3,t1,t3,t);d.push(L(B1,B2,t1,t2,t))}}
+  const c=[0];for(let i=1;i<=d.length;i++)c.push(c[i-1]+Math.hypot(d[i%d.length][0]-d[i-1][0],d[i%d.length][1]-d[i-1][1]));
+  const T=c[c.length-1],o=[];let j=0;for(let i=0;i<k;i++){const s=T*i/k;while(c[j+1]<s)j++;const f=(s-c[j])/(c[j+1]-c[j]||1),a=d[j],b=d[(j+1)%d.length];o.push([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f])}return o}
+const CONT={
+  kid:smooth([[230,102],[290,100],[345,103],[395,120],[405,165],[392,228],[405,300],[395,350],[350,368],[290,370],[230,368],[180,355],[170,300],[185,228],[168,160],[175,125]],90),
+  bath:sEll(692,292,118,83,2),bed:sEll(1027,217,143,103,3.2),hall:sEll(1030,819,135,131,2),liv:sEll(392,689,308,146,5,110)};
+const OPS={
+  kid:[["N",530,2680,900,2500,"окно"],["W",600,2720,900,2500,"окно"],["S",3800,4600,0,2100,"дверь"]],
+  bath:[["N",5600,6200,0,2500,"окно"],["S",5600,6400,0,2100,"дверь"]],
+  bed:[["N",8340,10490,0,2500,"окно"],["W",3900,4700,0,2100,"дверь"]],
+  liv:[["N",3800,4600,0,2100,"дверь в детскую"],["N",5600,6400,0,2100,"дверь в санузел"],["E",3900,4700,0,2100,"дверь в спальню"],["E",7700,8500,0,2100,"дверь в прихожую"],["S",2200,5400,0,2500,"окно"],["W",6700,8400,0,2500,"окно"]],
+  hall:[["S",8200,9100,0,2100,"входная дверь"],["S",9700,10400,900,2500,"окно"],["W",7700,8500,0,2100,"дверь в гостиную"]]};
+const ROOMS=[["liv","Кухня-гостиная"],["bed","Спальня"],["kid","Детская"],["bath","Санузел"],["hall","Прихожая"]];
+const RN=Object.fromEntries(ROOMS);
+const H=2850,BOX=2650,UPL=2800;            // низ плиты, низ короба, верхний уровень ниши
+const YS=2765,YE=2805;                      // высота оси приточных и вытяжных труб
+const $=id=>document.getElementById(id);
+const fmt=(v,d=0)=>(+v).toLocaleString("ru-RU",{minimumFractionDigits:d,maximumFractionDigits:d});
+const r5=v=>Math.round(v/5)*5;
+function inside(poly,x,z){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>z)!==(b[1]>z)&&x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0])c=!c}return c}
+const POLY=Object.fromEntries(Object.keys(RR).map(k=>[k,CONT[k].map(p=>mp(k,p[0],p[1]))]));
+const area=k=>{const r=RR[k];return(r[2]-r[0])*(r[3]-r[1])/1e6};
+
+/* стены: прямоугольники в плане; проёмы берутся из OPS */
+const WR=[[0,11090,0,360],[0,11090,8760,9100],[0,340,360,8760],[10750,11090,360,8760],[4780,4990,360,3460],[7320,7620,360,8760],[340,7320,3460,3660],[7620,10750,5560,5760]].map(r=>({r,ops:[],hz:(r[1]-r[0])>(r[3]-r[2])}));
+const inR=(r,x,z)=>x>=r[0]&&x<=r[1]&&z>=r[2]&&z<=r[3];
+for(const k in OPS)OPS[k].forEach(o=>{const q=RR[k],m=(o[1]+o[2])/2;let x,z;
+  if(o[0]==="N"){x=m;z=q[1]-5}else if(o[0]==="S"){x=m;z=q[3]+5}else if(o[0]==="W"){x=q[0]-5;z=m}else{x=q[2]+5;z=m}
+  const w=WR.find(w=>inR(w.r,x,z));if(w&&!w.ops.some(p=>p.a===o[1]&&p.b===o[2]))w.ops.push({a:o[1],b:o[2],lo:o[3],hi:o[4],win:o[5].includes("окно")})});
+
+/* точки решёток: приток у окон, вытяжка у двери или у источника влаги; все в зоне короба */
+const CAND={
+  s:{liv:[[3000,8330],[4900,8330],[1200,8330]],bed:[[8700,620],[9850,620]],kid:[[850,1500],[850,2600]],bath:[[5350,3300]],hall:[[7790,7150]]},
+  e:{liv:[[1800,4000],[3000,4000]],bed:[[8150,4250]],kid:[[4250,3290]],bath:[[6850,780],[5600,780],[6250,780]],hall:[[8150,5950],[10560,8450]]}};
+/* узлы оборудования */
+const UNIT={x0:10200,x1:10750,y0:1450,y1:2150,z0:6150,z1:6750,sx:10475};
+const MS={x0:9200,x1:9800,z0:5100,z1:5280},ME={x0:8300,x1:8900,z0:4860,z1:5040};
+const TRUNK={
+  oda:{n:"Забор с улицы",ins:1,pts:[[10475,2150,6225],[10475,2400,6225],[10475,2400,5900],[11250,2400,5900]]},
+  eha:{n:"Выброс на улицу",ins:1,pts:[[10475,2150,6675],[10475,2400,6675],[10475,2400,7400],[11250,2400,7400]]},
+  sup:{n:"Приток в дом",pts:[[10475,2150,6375],[10475,2770,6375],[10475,2770,5190],[9800,2770,5190]]},
+  eta:{n:"Вытяжка из дома",pts:[[10475,2150,6525],[10475,2615,6525],[10650,2615,6525],[10650,2770,6525],[10650,2770,4950],[8900,2770,4950]]}};
+
+/* маршрут трубы: от порта коллектора по зоне короба до решётки (план, мм) */
+function route(k,room,T,o){
+  if(k==="s")switch(room){
+    case"bed":return{g:"sb",p:[[0,3000+o],[10600+o,3000+o],[10600+o,T[1]],T]};
+    case"liv":return{g:"sl",p:[[0,4450+o],[6800+o,4450+o],[6800+o,8270+o],[T[0],8270+o],T]};
+    case"kid":case"bath":return{g:"sn",p:[[0,3950+o],[T[0]+o,3950+o],[T[0]+o,T[1]],T]};
+    case"hall":return{g:"sh",p:[[0,5380+o],[7750+o,5380+o],[7750+o,T[1]],T]}}
+  switch(room){
+    case"liv":case"kid":return{g:"en",p:[[0,4240+o],[T[0]+o,4240+o],T]};
+    case"bath":return{g:"eb",p:[[0,4650+o],[7750+o,4650+o],[7750+o,690+o],[T[0],690+o],T]};
+    case"bed":return{g:"ed",p:[[0,T[1]],T]};
+    case"hall":return T[0]>9000?{g:"eh",p:[[0,5450+o],[7860+o,5450+o],[7860+o,8610+o],[T[0]+o,8610+o],T]}:{g:"eh",p:[[0,5450+o],[T[0]+o,5450+o],T]}}}
+
+/* ---------- расчёт ---------- */
+const P=()=>({n:+$("p-n").value,nb:+$("p-nb").value,nk:+$("p-nk").value,pp:+$("p-pp").value,ke:+$("p-ke").value,be:+$("p-be").value,bs:+$("p-bs").value,dr:+$("p-dr").value/100,cap:+$("p-cap").value});
+function calc(p){const R={};ROOMS.forEach(([k])=>{const A=area(k);R[k]={A,V:A*2.7,S:0,E:0}});
+  R.liv.S=r5(Math.max(p.pp*p.n,.5*R.liv.V));R.bed.S=r5(Math.max(p.pp*p.nb,.5*R.bed.V));R.kid.S=r5(Math.max(p.pp*p.nk,.5*R.kid.V));
+  R.bath.S=Math.max(0,r5(p.bs));R.hall.S=r5(Math.max(20,.5*R.hall.V));
+  R.liv.E=r5(p.ke);R.bath.E=r5(p.be);R.hall.E=30;R.bed.E=Math.max(10,r5(R.bed.S*p.dr));R.kid.E=Math.max(10,r5(R.kid.S*p.dr));
+  let sS=0,sE=0;for(const k in R){sS+=R[k].S;sE+=R[k].E}let d=sS-sE;
+  if(d>0){const b=Math.min(d,30);R.bath.E+=b;R.hall.E+=d-b}else if(d<0)R.liv.S-=d;
+  const Q=Object.values(R).reduce((a,r)=>a+r.S,0),V=Object.values(R).reduce((a,r)=>a+r.V,0);
+  // трубы и решётки
+  const tubes=[],terms=[];
+  for(const kk of ["s","e"])for(const [k] of ROOMS){const q=R[k][kk==="s"?"S":"E"];if(q<=0){R[k]["t"+kk]=0;R[k]["g"+kk]=0;continue}
+    const nt=Math.max(1,Math.ceil(q/p.cap-1e-9)),cs=CAND[kk][k],ng=Math.min(cs.length,nt);R[k]["t"+kk]=nt;R[k]["g"+kk]=ng;
+    for(let g=0;g<ng;g++){const nn=Math.floor(nt/ng)+(g<nt%ng?1:0),T=cs[g];terms.push({k:kk,room:k,T,n:nn,q:q*nn/nt});
+      for(let j=0;j<nn;j++)tubes.push({k:kk,room:k,T,q:q/nt,j,nn})}}
+  // полосы (смещения) в общих коридорах и порты коллекторов
+  const groups={};tubes.forEach(t=>{t.r=route(t.k,t.room,t.T,0);(groups[t.r.g]=groups[t.r.g]||[]).push(t)});
+  for(const g in groups){const a=groups[g];a.forEach((t,i)=>{t.o=(i-(a.length-1)/2)*100;t.r=route(t.k,t.room,t.T,t.o)})}
+  for(const kk of ["s","e"]){const M=kk==="s"?MS:ME,a=tubes.filter(t=>t.k===kk);
+    a.forEach((t,i)=>{const px=M.x0+60+(M.x1-M.x0-120)*(a.length>1?i/(a.length-1):.5),first=t.r.p[0][1],pz=first<(M.z0+M.z1)/2?M.z0:M.z1;
+      t.port=[px,pz];const pts=[[px,pz],...t.r.p.map((q,i)=>i===0?[px,q[1]]:q)];
+      // концевой подход к решётке: сдвиг по ряду, если в коробку входят две трубы
+      if(t.nn>1){const L=pts[pts.length-1];pts[pts.length-1]=[L[0]+(t.j-(t.nn-1)/2)*70,L[1]]}
+      t.pts=pts;let L=0;for(let i=1;i<pts.length;i++)L+=Math.abs(pts[i][0]-pts[i-1][0])+Math.abs(pts[i][1]-pts[i-1][1]);t.len=L/1000+.5})}
+  // проходки через перегородки
+  const holes=[];tubes.forEach(t=>{for(let i=1;i<t.pts.length;i++){const a=t.pts[i-1],b=t.pts[i];
+    WR.forEach(w=>{const r=w.r;if(a[1]===b[1]&&a[1]>r[2]&&a[1]<r[3]){const lo=Math.min(a[0],b[0]),hi=Math.max(a[0],b[0]);if(lo<r[0]&&hi>r[1])holes.push({x:(r[0]+r[1])/2,z:a[1],ax:"x",y:t.k==="s"?YS:YE,w:r[1]-r[0]})}
+      else if(a[0]===b[0]&&a[0]>r[0]&&a[0]<r[1]){const lo=Math.min(a[1],b[1]),hi=Math.max(a[1],b[1]);if(lo<r[2]&&hi>r[3])holes.push({x:a[0],z:(r[2]+r[3])/2,ax:"z",y:t.k==="s"?YS:YE,w:r[3]-r[2]})}})}});
+  const tl=k=>tubes.filter(t=>t.k===k).reduce((a,t)=>a+t.len,0);
+  const tlen=pts=>{let L=0;for(let i=1;i<pts.length;i++)L+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1],pts[i][2]-pts[i-1][2]);return L/1000};
+  const insL=tlen(TRUNK.oda.pts)+tlen(TRUNK.eha.pts),galL=tlen(TRUNK.sup.pts)+tlen(TRUNK.eta.pts);
+  const nS=tubes.filter(t=>t.k==="s").length,nE=tubes.length-nS;
+  return{R,Q,V,ach:Q/V,tubes,terms,holes,lenS:tl("s"),lenE:tl("e"),insL,galL,nS,nE,ports:Math.max(nS,nE)<=10?10:15,boost:r5(Q*1.3),
+    vTrunk:Q/3600/(Math.PI*.08*.08),vTube:p.cap/3600/(Math.PI*.038*.038)}}
+
+/* ---------- влажность и точка росы ---------- */
+const ps=T=>T>=0?611.2*Math.exp(17.62*T/(243.12+T)):611.2*Math.exp(22.46*T/(272.62+T));
+const xOf=pv=>622*pv/(101325-pv),pvOf=x=>x*101325/(622+x);
+const dew=pv=>{const g=Math.log(pv/611.2);return 243.12*g/(17.62-g)};
+function moist(F,w,te,kind){const xo=xOf(.85*ps(te)),V=F.V,inf=.1*V;let rem;
+  if(kind==="none")rem=1.2*(.15*V);else rem=1.2*(F.Q*w.mode*(1-(kind==="plate"?0:w.ex))+inf);
+  const xi=xo+w.g/rem,pv=Math.min(pvOf(xi),ps(w.ti)),rh=pv/ps(w.ti),td=dew(pv),
+    edge=te+w.sp*(w.ti-te),center=w.ti-1.0*.13*(w.ti-te);
+  return{rh,td,edge,center,st:td>=edge-.3?"bad":rh<.25?"dry":"ok"}}
+const W=()=>({te:+$("w-te").value,ti:+$("w-ti").value,g:+$("w-g").value,mode:+$("w-mode").value,ex:+$("w-ex").value,sp:+$("w-sp").value});
+
+/* ---------- этапы ---------- */
+const VST=[
+ {t:"Проект и разметка",cam:"top",tools:"Лазерный уровень, рулетка 10 м, маркер, шнур отбивочный.",
+  do:(F,p)=>[`Схема: приток в каждую жилую комнату у окна, вытяжка у двери. В кухне и санузле вытяжка сильнее притока, туда воздух перетекает под дверями. Всего ${fmt(F.Q)} м³/ч, это ${fmt(F.ach,2)} объёма дома в час.`,
+   `Рекуператор: техзона прихожей, наружная стена Б, между углом спальни и котлом. Забор воздуха на фасаде в 1,9 м от дымохода котла, выброс в 1,5 м от забора.`,
+   `Коллекторы ставятся над спальней у стены прихожей. Там короб без ниши, места хватает. К ним нужен люк 400 × 400 в коробе.`,
+   `Трубы 75/90 идут только в зоне короба (низ ${fmt(BOX)} мм). Под нишей центра потолок на ${fmt(UPL)} мм, до плиты всего 50 мм, трубе не пройти.`,
+   `Отметьте на плите точки решёток (${F.terms.filter(t=>t.k==="s").length} приточных, ${F.terms.filter(t=>t.k==="e").length} вытяжных) и трассы. Сверьте с кабелями спотов и закладными из проекта потолков.`],
+  mat:()=>[],chk:"Решётка не ближе 300 мм к споту и 200 мм к стене. Каждая трасса целиком в зоне короба.",
+  err:"Ошибка: ставить приток и вытяжку рядом. Воздух уйдёт коротким путём, а комната не проветрится."},
+ {t:"Отверстия в стенах",cam:"iso",tools:"Перфоратор с алмазными коронками 200 и 110 мм, пылесос, уровень.",
+  do:(F)=>[`Фасад: 2 отверстия Ø200 под гильзы воздуховодов Ø160 с изоляцией. Уклон 1–2° наружу, чтобы конденсат и дождь стекали на улицу.`,
+   `Стена прихожая/спальня: 2 отверстия Ø180 под магистрали притока и вытяжки.`,
+   `Перегородки: ${F.holes.length} отверстий Ø110 под трубы 75/90 на высоте 2720–2850 мм, выше короба. Соседние трубы можно провести через одно продолговатое отверстие.`,
+   `Над дверями проёмы не сверлить: там перемычки. Пыль убрать до укладки труб.`],
+  mat:(F)=>[["Гильза Ø160 для стены",2,"шт"],["Отверстие Ø110 в перегородке",F.holes.length,"шт"],["Отверстие Ø180",2,"шт"]],
+  chk:"Фасадные отверстия смотрят вниз наружу. Отверстия в перегородках выше отметки 2700.",
+  err:"Ошибка: уклон внутрь. Зимой конденсат и талая вода потекут по воздуховоду в дом."},
+ {t:"Рекуператор",cam:"unit",tools:"Уровень, перфоратор, химические анкеры для газосиликата, ключи.",
+  do:(F)=>[`Агрегат класса 350 м³/ч. Рабочий расход ${fmt(F.Q)} м³/ч при 120–150 Па, это около 60 % мощности: тихо и с запасом на усиленный режим ${fmt(F.boost)} м³/ч.`,
+   `Энтальпийный (мембранный) теплообменник возвращает до 60 % влаги, и зимой воздух не пересыхает. Обычный пластинчатый проще, но в мороз сушит воздух до 15–20 %.`,
+   `Кронштейн на химических анкерах для газосиликата, под агрегат виброгасящая прокладка. Ставить строго по уровню, иначе конденсат не уйдёт.`,
+   `Конденсат: сухой сифон и труба Ø32 с уклоном 2 % в канализацию у стиральной машины.`,
+   `Питание: отдельная линия 3 × 1,5 с автоматом 10 А, кабель управления к пульту и датчикам.`],
+  mat:()=>[["Рекуператор 350 м³/ч, энтальпийный",1,"шт"],["Кронштейн с виброопорами",1,"компл."],["Сифон сухой",1,"шт"],["Труба ПП Ø32",3,"м"],["Кабель ВВГнг-LS 3 × 1,5",8,"м"],["Автомат 10 А",1,"шт"]],
+  chk:"Пузырёк уровня по центру. Перед агрегатом 600 мм свободно для замены фильтров.",
+  err:"Ошибка: конденсат без сифона. Агрегат будет тянуть запах канализации, а зимой вода выльется на пол."},
+ {t:"Магистрали Ø160",cam:"unit",tools:"Ножницы по металлу, заклёпочник, алюминиевый скотч, хомуты.",
+  do:(F)=>[`Забор и выброс: воздуховод Ø160 в теплоизоляции 25 мм с пароизоляцией, ${fmt(F.insL,1)} м. Они холодные, без изоляции на них выпадет конденсат.`,
+   `Фасадные решётки: забор с сеткой от насекомых, выброс с козырьком. Подпишите на патрубках ODA, SUP, ETA, EHA, как на наклейке агрегата.`,
+   `Приток и вытяжка в дом: оцинковка Ø160, ${fmt(F.galL,1)} м, шумоглушители 600 мм сразу у агрегата. Скорость в магистрали ${fmt(F.vTrunk,1)} м/с, норма до 3 м/с.`,
+   `Стыки на хомутах и алюминиевом скотче, подвесы через 1 м с резиновыми вкладышами.`],
+  mat:(F)=>[["Воздуховод Ø160 изолированный",Math.ceil(F.insL*1.1),"м"],["Воздуховод Ø160 оцинк.",Math.ceil(F.galL*1.1),"м"],["Шумоглушитель Ø160 L 600",2,"шт"],["Решётка фасадная Ø160",2,"шт"]],
+  chk:"Изоляция на заборе и выбросе без разрывов до самой стены. Патрубки не перепутаны.",
+  err:"Ошибка: перепутать патрубки. В комнаты пойдёт вытяжной воздух."},
+ {t:"Коллекторы и адаптеры",cam:"iso",tools:"Лазерный уровень, перфоратор, шпильки М6 с анкерами.",
+  do:(F)=>[`Приточный и вытяжной коллекторы на ${F.ports} портов крепятся к плите над спальней. Лишние порты закрыть заглушками.`,
+   `Адаптеры (коробки под решётки) ставятся на шпильках к плите: ${F.terms.length} шт. Низ адаптера на отметке ${fmt(BOX)}, его выставляют по лазеру вместе с каркасом короба.`,
+   `К адаптеру подходит 1–2 трубы. Где их две, ставится адаптер на 2 входа.`],
+  mat:(F)=>[["Коллектор "+F.ports+" портов, приток",1,"шт"],["Коллектор "+F.ports+" портов, вытяжка",1,"шт"],["Адаптер под решётку, 1 вход",F.terms.filter(t=>t.n===1).length,"шт"],["Адаптер под решётку, 2 входа",F.terms.filter(t=>t.n>1).length,"шт"],["Заглушка порта",2*F.ports-F.tubes.length,"шт"]],
+  chk:"Низ всех адаптеров в одной плоскости с низом короба ±2 мм.",
+  err:"Ошибка: адаптер выше короба. Решётка утонет в потолке, и в щель будет дуть."},
+ {t:"Трубы 75/90",cam:"top",tools:"Нож для трубы, хомуты, маркер, заглушки.",
+  do:(F,p)=>[`Всего ${F.tubes.length} труб: ${F.nS} приточных (синие) и ${F.nE} вытяжных (оранжевые). Длина ${fmt(F.lenS+F.lenE)} м. Каждая труба цельная от коллектора до адаптера, без муфт.`,
+   `На трубу не больше ${p.cap} м³/ч, скорость ${fmt(F.vTube,1)} м/с. При такой скорости решётки не шумят.`,
+   `Радиус изгиба не меньше 250 мм, не переламывать. Трубы лежат поверх каркаса короба, хомуты к плите через 600–800 мм.`,
+   `Подпишите оба конца каждой трубы (например «П-спальня-1») и закройте концы заглушками до запуска: шлифовка потолка даст много пыли.`,
+   `Укладывать после каркаса короба (этап 4 в проекте потолков) и до обшивки.`],
+  mat:(F)=>[["Труба 75/90 полужёсткая",Math.ceil((F.lenS+F.lenE)*1.1),"м"],["Кольцо уплотнительное",F.tubes.length*2,"шт"],["Фиксатор трубы",F.tubes.length*2,"шт"],["Хомут крепёжный",Math.ceil((F.lenS+F.lenE)/0.7),"шт"]],
+  chk:"Ни одна труба не проходит под нишей. Все концы подписаны и закрыты.",
+  err:"Ошибка: соединять трубы муфтами внутри короба. Каждый стык свистит и пропускает воздух."},
+ {t:"Обшивка и перетоки",cam:"iso",tools:"Коронка Ø125 по ГКЛ, рулетка, рубанок или пила для дверей.",
+  do:(F)=>[`Короб обшивается ГКЛ как в проекте потолков. Под каждый адаптер вырезается отверстие коронкой точно по центру.`,
+   `Перетоки: под каждой межкомнатной дверью зазор 15–20 мм, это 100–150 см² сечения. Через двери спальни и детской воздух уходит в гостиную, оттуда в кухонную вытяжку, санузел и прихожую.`,
+   `В санузел дверь с зазором или переточной решёткой обязательно.`,
+   `Люк 400 × 400 к коллекторам в коробе спальни.`],
+  mat:()=>[["Люк ревизионный 400 × 400",1,"шт"]],
+  chk:"Зазор под каждой дверью не меньше 15 мм. Отверстия совпали с адаптерами.",
+  err:"Ошибка: двери без зазора. Закрытая спальня перестанет проветриваться, а в санузле пропадёт вытяжка."},
+ {t:"Решётки и балансировка",cam:"in",tools:"Анемометр с воронкой, отвёртка, таблица расходов.",
+  do:(F)=>[`Приточные решётки направляют струю вдоль потолка в комнату. Вытяжные клапаны регулируются вращением диска.`,
+   `Включите номинальный режим и измерьте анемометром расход на каждой решётке. Подстройте до значений в подписи над решёткой.`,
+   `Сумма притока должна быть равна сумме вытяжки ±5 %. При перекосе в вытяжку дом сосёт холод через щели, при перекосе в приток влага уходит в стены.`],
+  mat:(F)=>[["Решётка приточная с регулировкой",F.terms.filter(t=>t.k==="s").length,"шт"],["Клапан вытяжной",F.terms.filter(t=>t.k==="e").length,"шт"]],
+  chk:"Отклонение по решётке не больше 10 %, по сумме не больше 5 %.",
+  err:"Ошибка: оставить все клапаны открытыми. Ближние комнаты получат вдвое больше воздуха, дальние почти ничего."},
+ {t:"Запуск и режимы",cam:"iso",tools:"Гигрометр, датчик CO₂.",
+  do:(F)=>{const w=W(),m=moist(F,w,w.te,"ent");return[`Режимы: обычный 100 % (${fmt(F.Q)} м³/ч), зима ${Math.round(w.mode*100)} %, «душ и готовка» 130 % по датчику влажности в санузле, «отпуск» 30 %.`,
+   `При ${w.te} °C на улице влажность в доме ≈ ${Math.round(m.rh*100)} %, точка росы ${fmt(m.td,1)} °C, стекло у рамки ${fmt(m.edge,1)} °C. Окна ${m.st==="bad"?"будут потеть, снизьте влагу или поднимите расход":"сухие"}.`,
+   `Фильтры: на притоке ISO ePM1 (F7), на вытяжке ISO Coarse (G4). Менять раз в 3–6 месяцев.`,
+   `Кухонная вытяжка над варочной к рекуператору не подключается, из-за жира. У неё свой выход наружу с обратным клапаном или режим рециркуляции.`,
+   `Котёл с закрытой камерой (коаксиальный дымоход) работает независимо от вентиляции.`]},
+  mat:()=>[["Комплект фильтров F7 + G4 запасной",2,"компл."],["Датчик влажности (санузел)",1,"шт"],["Датчик CO₂ (спальня)",1,"шт"]],
+  chk:"Зимой влажность 35–50 %, CO₂ в спальне ночью ниже 1000 ppm, на окнах утром сухо.",
+  err:"Ошибка: выключать рекуператор на ночь, чтобы «не дуло». К утру влажность растёт, и окна потеют."}];
+
+/* ---------- состояние ---------- */
+const S={st:0,cam:"auto"};
+try{const v=JSON.parse(localStorage.getItem("vent-st")||"null");if(v&&typeof v.st==="number")Object.assign(S,v)}catch(e){}
+const save=()=>{try{localStorage.setItem("vent-st",JSON.stringify(S))}catch(e){}};
+
+/* ---------- страница ---------- */
+let F=null;
+function render(){const p=P();F=calc(p);S.st=Math.max(0,Math.min(S.st,VST.length-1));const st=VST[S.st];
+  $("facts").innerHTML=`<span>Воздухообмен <b>${fmt(F.Q)} м³/ч</b></span><span>Кратность <b>${fmt(F.ach,2)} 1/ч</b></span><span>Труб 75/90 <b>${F.tubes.length}</b> · <b>${fmt(F.lenS+F.lenE)} м</b></span><span>Решёток <b>${F.terms.length}</b></span><span>Агрегат <b>350 м³/ч</b></span>`;
+  $("steps").innerHTML="";VST.forEach((s,i)=>{const b=document.createElement("button");b.id="st-"+i;b.textContent=String(i+1);b.title=s.t;if(i<S.st)b.className="done";if(i===S.st)b.setAttribute("aria-current","step");b.onclick=()=>{S.st=i;render()};$("steps").appendChild(b)});
+  $("cams").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===S.cam));
+  const mat=st.mat(F,p);
+  $("card").innerHTML=`<div class="eyebrow">ЭТАП ${S.st+1} ИЗ ${VST.length}</div><h2>${st.t}</h2>
+   <div class="kv"><div><small>Приток = вытяжка</small><span>${fmt(F.Q)} м³/ч</span></div><div><small>Труб приток / вытяжка</small><span>${F.nS} / ${F.nE}</span></div><div><small>Длина труб</small><span>${fmt(F.lenS+F.lenE)} м</span></div></div>
+   <ol>${st.do(F,p).map(x=>`<li>${x}</li>`).join("")}</ol>
+   ${mat.length?`<div><h3>Материалы на этап</h3><div class="tbl"><table><tbody>${mat.map(r=>`<tr><td>${r[0]}</td><td class="n">${fmt(r[1])} ${r[2]}</td></tr>`).join("")}</tbody></table></div></div>`:""}
+   <div><h3>Инструмент</h3><p>${st.tools}</p></div><div class="chk"><b>Контроль.</b> ${st.chk}</div><div class="warn">${st.err}</div>
+   <div class="nav"><button id="prev">← Назад</button><button id="next" class="pri">Следующий этап →</button></div>`;
+  $("prev").disabled=S.st===0;$("next").disabled=S.st===VST.length-1;$("prev").onclick=()=>{S.st--;render()};$("next").onclick=()=>{S.st++;render()};
+  flowsT();winT();matsT(p);save();if(window.V3)V3.update(F)}
+
+function flowsT(){const R=F.R;let sA=0,sV=0,sS=0,sE=0,tS=0,tE=0,gS=0,gE=0;
+  const rows=ROOMS.map(([k,n])=>{const r=R[k];sA+=r.A;sV+=r.V;sS+=r.S;sE+=r.E;tS+=r.ts;tE+=r.te;gS+=r.gs;gE+=r.ge;
+    return`<tr><td>${n}</td><td class="n">${fmt(r.A,1)}</td><td class="n">${fmt(r.V)}</td><td class="n s">${fmt(r.S)}</td><td class="n e">${fmt(r.E)}</td><td class="n">${r.ts} / ${r.te}</td><td class="n">${r.gs} / ${r.ge}</td><td class="n">${fmt(r.S/r.V,2)}</td></tr>`});
+  $("flowL").textContent=`Приток считается по людям (${P().pp} м³/ч на человека) и не меньше половины объёма комнаты в час. Вытяжка кухни и санузла по норме, в сухих комнатах небольшая вытяжка у двери. Разницу забирают санузел и прихожая, поэтому сумма притока равна сумме вытяжки. На одну трубу не больше ${P().cap} м³/ч.`;
+  $("flows").innerHTML=`<table><thead><tr><th>Комната</th><th class="n">Площадь, м²</th><th class="n">Объём, м³</th><th class="n">Приток, м³/ч</th><th class="n">Вытяжка, м³/ч</th><th class="n">Труб П / В</th><th class="n">Решёток П / В</th><th class="n">Кратность притока</th></tr></thead><tbody>${rows.join("")}</tbody>
+  <tfoot><tr><td>Дом</td><td class="n">${fmt(sA,1)}</td><td class="n">${fmt(sV)}</td><td class="n s">${fmt(sS)}</td><td class="n e">${fmt(sE)}</td><td class="n">${tS} / ${tE}</td><td class="n">${gS} / ${gE}</td><td class="n">${fmt(sS/sV,2)}</td></tr></tfoot></table>`}
+
+function winT(){const w=W(),cur=moist(F,w,w.te,"ent"),tag=s=>s==="bad"?'<span class="tag bad">потеет</span>':s==="dry"?'<span class="tag dry">сухо</span>':'<span class="tag ok">норма</span>';
+  const ex=w.ex>0?"энтальпийный":"пластинчатый";
+  const msg=cur.st==="bad"?`<b>Окна потеют</b><span>Точка росы ${fmt(cur.td,1)} °C выше температуры стекла у рамки ${fmt(cur.edge,1)} °C. Поднимите режим или проверьте источник влаги: сушка белья, открытая кастрюля.</span>`
+   :cur.st==="dry"?`<b>Окна сухие, но воздух пересушен</b><span>Влажность ${Math.round(cur.rh*100)} %. Снизьте зимний режим или выберите энтальпийный теплообменник.</span>`
+   :`<b>Окна сухие, влажность ${Math.round(cur.rh*100)} %</b><span>Точка росы ${fmt(cur.td,1)} °C, стекло у рамки ${fmt(cur.edge,1)} °C, запас ${fmt(cur.edge-cur.td,1)} °C. Центр стекла ${fmt(cur.center,1)} °C.</span>`;
+  $("verdict").innerHTML=`<div class="verdict ${cur.st}">${msg}</div>`;
+  const rows=[["Без вентиляции, окна закрыты","none"],["Рекуператор пластинчатый","plate"],["Рекуператор энтальпийный","ent0"]].map(([n,k])=>{const m=k==="ent0"?moist(F,{...w,ex:.6},w.te,"ent"):moist(F,w,w.te,k);
+    return`<tr><td>${n}</td><td class="n">${Math.round(m.rh*100)} %</td><td class="n">${fmt(m.td,1)} °C</td><td>${tag(m.st)}</td></tr>`});
+  $("cmp").innerHTML=`<thead><tr><th>При ${w.te} °C, режим ${Math.round(w.mode*100)} %</th><th class="n">Влажность</th><th class="n">Точка росы</th><th>Окно</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+  // график: температура стекла у рамки и точка росы от уличной температуры
+  const X0=-30,X1=10,Wd=560,Hd=300,ml=40,mb=30,mt=14,mr=12,Y0=-10,Y1=22,sx=t=>ml+(t-X0)/(X1-X0)*(Wd-ml-mr),sy=v=>mt+(Y1-v)/(Y1-Y0)*(Hd-mt-mb);
+  const ser=f=>{let d="";for(let t=X0;t<=X1;t+=1){d+=(d?"L":"M")+sx(t).toFixed(1)+","+sy(Math.max(Y0,Math.min(Y1,f(t)))).toFixed(1)}return d};
+  const css=getComputedStyle(document.documentElement),c=n=>css.getPropertyValue(n).trim();
+  let g="";for(let v=Y0;v<=Y1;v+=4)g+=`<line x1="${ml}" x2="${Wd-mr}" y1="${sy(v)}" y2="${sy(v)}" stroke="${c("--line")}"/><text x="${ml-6}" y="${sy(v)+4}" text-anchor="end">${v}</text>`;
+  for(let t=X0;t<=X1;t+=10)g+=`<text x="${sx(t)}" y="${Hd-10}" text-anchor="middle">${t}</text>`;
+  const L=[[t=>t+w.sp*(w.ti-t),c("--ink"),"стекло у рамки","4 0"],[t=>moist(F,w,t,"none").td,c("--bad"),"точка росы без вентиляции","6 4"],[t=>moist(F,{...w,ex:0},t,"plate").td,c("--muted"),"точка росы, пластинчатый","2 3"],[t=>moist(F,{...w,ex:.6},t,"ent").td,c("--sup"),"точка росы, энтальпийный","0"]];
+  L.forEach(l=>g+=`<path d="${ser(l[0])}" fill="none" stroke="${l[1]}" stroke-width="2.5" stroke-dasharray="${l[3]}"/>`);
+  g+=`<line x1="${sx(w.te)}" x2="${sx(w.te)}" y1="${mt}" y2="${Hd-mb}" stroke="${c("--acc")}" stroke-width="1.5"/>`;
+  const lg=L.map((l,i)=>`<g transform="translate(${ml+8},${mt+10+i*17})"><line x1="0" x2="22" y1="-4" y2="-4" stroke="${l[1]}" stroke-width="2.5" stroke-dasharray="${l[3]}"/><text x="28" y="0" style="fill:${c("--ink")}">${l[2]}</text></g>`).join("");
+  $("chart").innerHTML=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Температура стекла и точка росы от уличной температуры">${g}${lg}<text x="${Wd-mr}" y="${Hd-mb-6}" text-anchor="end">улица, °C</text><text x="${ml+2}" y="${mt-3}">°C</text></svg><p class="lead" style="font-size:13px">Окно сухое, пока линия точки росы ниже чёрной линии стекла у рамки. Вертикаль показывает выбранную температуру на улице.</p>`}
+
+function matsT(p){const all={},add=(n,v,u)=>{if(!v)return;all[n]=all[n]||{v:0,u};all[n].v+=v};VST.forEach(s=>s.mat(F,p).forEach(r=>add(r[0],r[1],r[2])));
+  $("matL").textContent=`Запас на подрезку уже учтён: трубы +10 %, магистрали +10 %. Решётки подбирайте в цвет потолка, на приток с регулировкой направления струи.`;
+  $("mats").innerHTML=`<table><tbody>${Object.entries(all).map(([n,o])=>`<tr><td>${n}</td><td class="n">${fmt(o.v)} ${o.u}</td></tr>`).join("")}</tbody></table>`}
+
+document.querySelectorAll("#params input,#params select,#win input,#win select").forEach(i=>i.addEventListener("input",render));
+$("cams").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.cam=b.dataset.c;render();if(window.V3)V3.cam()});
+$("replay").onclick=()=>{if(window.V3)V3.replay()};
+document.addEventListener("keydown",e=>{if(e.target.closest("input,select"))return;if(e.key==="ArrowRight"&&S.st<VST.length-1){S.st++;render()}if(e.key==="ArrowLeft"&&S.st>0){S.st--;render()}});
+
+/* ---------- 3D: всё в мм, x вправо по плану, z вниз по плану, y вверх от пола ---------- */
+window.V3=(()=>{const host=$("v3"),lblBox=$("lbl"),capE=$("cap");
+let R=null,scene,cam,ctl,root,clk=new THREE.Clock(),G=[],ST=-1,K="",anims=[],camA=null,LBcur=[],EXT=[[],[],[],[]],TB=[],tubeT0=-1,PT=null,MAT=null,LAB=[];
+const V=(x,y,z)=>new THREE.Vector3(x/1000-5.545,y/1000,z/1000-4.55);
+const std=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.7},o||{}));
+function mats(){MAT={wall:std(0xdcd6cc,{roughness:.95}),floor:std(0xa69d90,{roughness:1}),glass:new THREE.MeshStandardMaterial({color:0xa9cbe0,transparent:true,opacity:.35,depthWrite:false}),
+  unit:std(0xf3f3f1,{roughness:.45}),panel:std(0x3a3e42,{roughness:.5}),galv:std(0xc6ccd1,{metalness:.65,roughness:.35}),ins:std(0x3d4247,{roughness:.9}),sil:std(0xaeb5ba,{metalness:.5,roughness:.45}),
+  sup:std(0x3b8bd4,{roughness:.5}),ext:std(0xe07b39,{roughness:.5}),supM:std(0x9fc3e6,{metalness:.4,roughness:.4}),extM:std(0xe9b48f,{metalness:.4,roughness:.4}),
+  oda:std(0x23527d),eha:std(0x8a8f93),hole:new THREE.MeshBasicMaterial({color:0x2a2a2a}),mark:new THREE.MeshBasicMaterial({color:0xff3b30}),
+  gkl:std(0xf4f2ec,{roughness:.95,side:THREE.DoubleSide,transparent:true}),gklS:std(0xece9e1,{roughness:.95,side:THREE.DoubleSide,transparent:true}),grille:std(0xffffff,{roughness:.4}),dark:std(0x2f3235,{roughness:.5}),
+  acc:new THREE.MeshBasicMaterial({color:0xff8a1e}),boiler:std(0xe9e9e6,{roughness:.5}),pipe:std(0xdddddd)}}
+function init(){R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(window.devicePixelRatio||1,2));R.outputEncoding=THREE.sRGBEncoding;host.prepend(R.domElement);
+  scene=new THREE.Scene();scene.background=new THREE.Color(getComputedStyle(host).backgroundColor);
+  cam=new THREE.PerspectiveCamera(50,1,.05,90);ctl=new THREE.OrbitControls(cam,R.domElement);ctl.enableDamping=true;ctl.dampingFactor=.12;ctl.minDistance=.5;ctl.maxDistance=30;
+  scene.add(new THREE.AmbientLight(0xffffff,.4),new THREE.HemisphereLight(0xffffff,0xb8ae9e,.55));const sun=new THREE.DirectionalLight(0xffffff,.5);sun.position.set(4,10,6);
+  const low=new THREE.DirectionalLight(0xffffff,.3);low.position.set(-3,-6,2);scene.add(sun,low);
+  root=new THREE.Group();root.scale.setScalar(.001);root.position.set(-5.545,0,-4.55);scene.add(root);mats();
+  ctl.addEventListener("start",()=>{camA=null});
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>setTimeout(()=>{scene.background=new THREE.Color(getComputedStyle(host).backgroundColor)},50))}catch(e){}
+  new ResizeObserver(size).observe(host);size();R.setAnimationLoop(tick)}
+function size(){if(!R)return;const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+
+/* примитивы */
+function bx(x0,x1,y0,y1,z0,z1,mat,par){const g=new THREE.BoxGeometry(Math.max(.5,x1-x0),Math.max(.5,y1-y0),Math.max(.5,z1-z0));g.translate(0,(y1-y0)/2,0);
+  const m=new THREE.Mesh(g,mat);m.position.set((x0+x1)/2,y0,(z0+z1)/2);par.add(m);return m}
+function rod(a,b,r,mat,par,seg){const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),d=B.clone().sub(A),m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,Math.max(.5,d.length()),seg||14),mat);
+  m.position.copy(A).add(B).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());par.add(m);return m}
+function ball(p,r,mat,par){const m=new THREE.Mesh(new THREE.SphereGeometry(r,14,10),mat);m.position.set(...p);par.add(m);return m}
+function duct(pts,r,mat,par){const g=new THREE.Group();par.add(g);for(let i=1;i<pts.length;i++)rod(pts[i-1],pts[i],r,mat,g);for(let i=1;i<pts.length-1;i++)ball(pts[i],r,mat,g);return g}
+function shp(P0){const s=new THREE.Shape();P0.forEach((q,i)=>i?s.lineTo(q[0],q[1]):s.moveTo(q[0],q[1]));s.closePath();return s}
+function flat(shape,y,mat,par){const g=new THREE.ShapeGeometry(shape,4);g.rotateX(Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.y=y;par.add(m);return m}  // смотрит вниз
+function strip(P0,y0,y1,mat,par){const v=[],n=P0.length;for(let i=0;i<n;i++){const a=P0[i],b=P0[(i+1)%n];v.push(a[0],y0,a[1],b[0],y0,b[1],b[0],y1,b[1],a[0],y0,a[1],b[0],y1,b[1],a[0],y1,a[1])}
+  const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(v,3));g.computeVertexNormals();const m=new THREE.Mesh(g,mat);par.add(m);return m}
+function grp(i,mode,until){const g=new THREE.Group();g.userData.mode=mode;if(until!==undefined)g.userData.until=until;root.add(g);G[i]=g;return g}
+/* труба по ломаной со скруглением углов */
+function path3(pts,rad){const P=pts.map(p=>new THREE.Vector3(p[0],p[1],p[2])).filter((p,i,a)=>!i||p.distanceTo(a[i-1])>1),cp=new THREE.CurvePath();let cur=P[0];
+  for(let i=1;i<P.length;i++){const p=P[i];if(i<P.length-1){const n=P[i+1],d1=p.clone().sub(P[i-1]),d2=n.clone().sub(p),r=Math.min(rad,d1.length()/2,d2.length()/2);
+      const A=p.clone().sub(d1.normalize().multiplyScalar(r)),B=p.clone().add(d2.normalize().multiplyScalar(r));if(A.distanceTo(cur)>1)cp.add(new THREE.LineCurve3(cur,A));cp.add(new THREE.QuadraticBezierCurve3(A,p.clone(),B));cur=B}
+    else if(p.distanceTo(cur)>1)cp.add(new THREE.LineCurve3(cur,p))}return cp}
+
+/* стены с проёмами */
+function walls(par){WR.forEach((w,i)=>{const g=new THREE.Group();par.add(g);if(i<4)EXT[i].push(g);const r=w.r,a0=w.hz?r[0]:r[2],a1=w.hz?r[1]:r[3];
+  const cuts=[a0,a1];w.ops.forEach(o=>cuts.push(Math.max(a0,Math.min(a1,o.a)),Math.max(a0,Math.min(a1,o.b))));const cs=[...new Set(cuts.map(Math.round))].sort((a,b)=>a-b);
+  const B=(s0,s1,y0,y1,m)=>w.hz?bx(s0,s1,y0,y1,r[2],r[3],m,g):bx(r[0],r[1],y0,y1,s0,s1,m,g);
+  for(let k=0;k<cs.length-1;k++){const s0=cs[k],s1=cs[k+1];if(s1-s0<2)continue;const m=(s0+s1)/2,o=w.ops.find(o=>m>o.a&&m<o.b);
+    if(!o)B(s0,s1,0,H,MAT.wall);else{if(o.lo>0)B(s0,s1,0,o.lo,MAT.wall);B(s0,s1,o.hi,H,MAT.wall);
+      if(o.win){const c=w.hz?(r[2]+r[3])/2:(r[0]+r[1])/2;w.hz?bx(s0,s1,o.lo,o.hi,c-12,c+12,MAT.glass,g):bx(c-12,c+12,o.lo,o.hi,s0,s1,MAT.glass,g)}}}})}
+const doors=()=>{const out=[];WR.forEach((w,i)=>{if(i<4)return;w.ops.forEach(o=>{if(o.win)return;const r=w.r;out.push(w.hz?{x0:o.a,x1:o.b,z0:r[2],z1:r[3],x:(o.a+o.b)/2,z:(r[2]+r[3])/2}:{x0:r[0],x1:r[1],z0:o.a,z1:o.b,x:(r[0]+r[1])/2,z:(o.a+o.b)/2})})});return out};
+
+function build(F){G.forEach(g=>root.remove(g));while(root.children.length)root.remove(root.children[0]);G=[];EXT=[[],[],[],[]];TB=[];PT=null;LAB=[];
+  /* основа: пол, стены, котельная зона */
+  const base=new THREE.Group();root.add(base);
+  for(const k in RR){const r=RR[k];bx(r[0],r[2],-30,0,r[1],r[3],MAT.floor,base)}
+  bx(0,11090,-60,-30,0,9100,MAT.dark,base);walls(base);
+  const hb=new THREE.Group();base.add(hb);
+  const wh=new THREE.Mesh(new THREE.CylinderGeometry(280,280,1180,24),MAT.boiler);wh.position.set(10430,710,7215);hb.add(wh);
+  bx(10450,10750,1380,2100,7635,8035,MAT.boiler,hb);rod([10600,2250,7835],[11200,2250,7835],50,MAT.pipe,hb);
+  bx(7640,8240,0,1700,5780,6380,MAT.boiler,hb);
+  /* 0 — разметка */
+  const g0=grp(0,"none",4);
+  F.tubes.forEach(t=>{const y=H-8,pts=t.pts.map(p=>new THREE.Vector3(p[0],y,p[1]));const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineDashedMaterial({color:t.k==="s"?0x2f78b7:0xd0682a,dashSize:120,gapSize:80}));ln.computeLineDistances();g0.add(ln)});
+  F.terms.forEach(t=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(90,90,8,20),t.k==="s"?MAT.sup:MAT.ext);m.position.set(t.T[0],H-12,t.T[1]);g0.add(m)});
+  bx(UNIT.x0,UNIT.x1,UNIT.y0,UNIT.y1,UNIT.z0,UNIT.z1,new THREE.MeshBasicMaterial({color:0xff8a1e,wireframe:true}),g0).userData.until=1;
+  /* 1 — отверстия */
+  const g1=grp(1,"pop");
+  [[5900],[7400]].forEach(([z])=>rod([10700,2400,z],[11140,2380,z],100,MAT.hole,g1,20));
+  [10475,10650].forEach(x=>rod([x,2770,5530],[x,2770,5790],90,MAT.hole,g1,20));
+  F.holes.forEach(h=>h.ax==="x"?rod([h.x-h.w/2-15,h.y,h.z],[h.x+h.w/2+15,h.y,h.z],55,MAT.hole,g1):rod([h.x,h.y,h.z-h.w/2-15],[h.x,h.y,h.z+h.w/2+15],55,MAT.hole,g1));
+  /* 2 — рекуператор */
+  const g2=grp(2,"rise");const u=UNIT;
+  bx(u.x0,u.x1,u.y0,u.y1,u.z0,u.z1,MAT.unit,g2);bx(u.x0-6,u.x0,u.y0+90,u.y1-90,u.z0+60,u.z1-60,MAT.panel,g2);bx(u.x0-8,u.x0-2,u.y1-260,u.y1-200,u.z0+250,u.z1-250,MAT.acc,g2);
+  [[6225,MAT.oda],[6375,MAT.sup],[6525,MAT.ext],[6675,MAT.eha]].forEach(([z,m])=>rod([u.sx,u.y1,z],[u.sx,u.y1+80,z],72,m,g2,20));
+  duct([[10300,u.y0,6450],[10300,350,6450],[10300,300,6250],[10300,300,6050]],18,MAT.pipe,g2);bx(10260,10340,250,400,6420,6480,MAT.dark,g2);
+  rod([10720,u.y1,6720],[10720,H,6720],8,MAT.dark,g2,6);
+  /* 3 — магистрали */
+  const g3=grp(3,"rise");
+  duct(TRUNK.oda.pts,105,MAT.ins,g3);duct(TRUNK.eha.pts,105,MAT.ins,g3);duct(TRUNK.sup.pts,80,MAT.galv,g3);duct(TRUNK.eta.pts,80,MAT.galv,g3);
+  rod([10475,2735,6150],[10475,2735,5650],110,MAT.sil,g3,20);rod([10650,2735,6250],[10650,2735,5900],110,MAT.sil,g3,20);
+  rod([10475,2735,5600],[10475,2735,5560],2,MAT.sil,g3);
+  [[5900,MAT.dark],[7400,MAT.eha]].forEach(([z,m])=>{bx(11090,11140,2230,2570,z-170,z+170,MAT.unit,g3);bx(11140,11150,2260,2540,z-140,z+140,m,g3)});
+  /* 4 — коллекторы и адаптеры */
+  const g4=grp(4,"rise");
+  bx(MS.x0,MS.x1,2665,2845,MS.z0,MS.z1,MAT.supM,g4);bx(ME.x0,ME.x1,2665,2845,ME.z0,ME.z1,MAT.extM,g4);
+  F.terms.forEach(t=>{const w=t.n>1?320:190;bx(t.T[0]-w/2,t.T[0]+w/2,BOX+5,2800,t.T[1]-95,t.T[1]+95,t.k==="s"?MAT.supM:MAT.extM,g4)});
+  /* 5 — трубы 75/90 */
+  const g5=grp(5,"tubes");
+  F.tubes.forEach((t,i)=>{const y=t.k==="s"?YS:YE,cp=path3(t.pts.map(p=>[p[0],y,p[1]]),160),segs=Math.max(8,Math.ceil(cp.getLength()/70));
+    const geo=new THREE.TubeGeometry(cp,segs,45,6,false),m=new THREE.Mesh(geo,t.k==="s"?MAT.sup:MAT.ext);g5.add(m);TB.push({m,segs,i})});
+  /* 6 — обшивка, перетоки, люк */
+  const g6=grp(6,"none");
+  for(const k in RR){const r=RR[k],s=shp([[r[0],r[1]],[r[2],r[1]],[r[2],r[3]],[r[0],r[3]]]);s.holes.push(new THREE.Path(POLY[k].map(p=>new THREE.Vector2(p[0],p[1]))));
+    flat(s,BOX,MAT.gkl,g6);flat(shp(POLY[k]),UPL,MAT.gkl,g6);strip(POLY[k],BOX,UPL,MAT.gklS,g6)}
+  bx(8850,9250,BOX-12,BOX,4900,5300,MAT.dark,g6);
+  doors().forEach(d=>bx(d.x0,d.x1,0,18,d.z0,d.z1,MAT.acc,g6));
+  /* 7 — решётки, анемометр */
+  const g7=grp(7,"pop");
+  F.terms.forEach(t=>{const w=t.n>1?300:180,m=bx(t.T[0]-w/2,t.T[0]+w/2,BOX-14,BOX,t.T[1]-90,t.T[1]+90,MAT.grille,g7);
+    bx(t.T[0]-w/2+20,t.T[0]+w/2-20,BOX-18,BOX-14,t.T[1]-70,t.T[1]+70,t.k==="s"?MAT.sup:MAT.ext,g7)});
+  const an=new THREE.Group();g7.add(an);const ta=F.terms.find(t=>t.room==="liv"&&t.k==="s")||F.terms[0];
+  rod([ta.T[0],BOX-30,ta.T[1]],[ta.T[0],BOX-260,ta.T[1]],120,MAT.dark,an,20);rod([ta.T[0],BOX-260,ta.T[1]],[ta.T[0],1100,ta.T[1]],15,MAT.pipe,an,8);an.userData.until=7;
+  /* 8 — движение воздуха */
+  const g8=grp(8,"none");PT=particles(F,g8);
+  LAB=stageLabels(F)}
+
+/* частицы воздуха: по трубам, магистралям и по комнатам к вытяжке */
+function particles(F,par){const paths=[],P3=(a,y)=>a.map(p=>[p[0],y,p[1]]);
+  const add=(pts,c0,c1,n,sp)=>{const L=[0];for(let i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1],pts[i][2]-pts[i-1][2]));paths.push({pts,L,T:L[L.length-1],c0:new THREE.Color(c0),c1:new THREE.Color(c1),n,sp})};
+  const SB=0x3b8bd4,EO=0xe07b39;
+  F.tubes.forEach(t=>{const p=P3(t.pts,t.k==="s"?YS:YE);if(t.k==="s")add(p,SB,SB,8,1600);else add(p.reverse(),EO,EO,8,1600)});
+  add(TRUNK.oda.pts.slice().reverse(),0x9fd0ff,0x9fd0ff,14,2000);add(TRUNK.sup.pts,SB,SB,14,2000);add(TRUNK.eta.pts.slice().reverse(),EO,EO,14,2000);add(TRUNK.eha.pts,0x8a8f93,0x8a8f93,14,2000);
+  const ex=k=>F.terms.filter(t=>t.k==="e"&&t.room===k).map(t=>t.T),D={bed:[7470,4300],kid:[4200,3560],bath:[6000,3560],hall:[7470,8100]};
+  const room=(T,via,E,n)=>{const p=[[T[0],BOX-20,T[1]],[T[0],2100,T[1]+(T[1]<4500?500:-500)]];via.forEach(v=>p.push([v[0],v[2]||450,v[1]]));p.push([E[0],1500,E[1]],[E[0],BOX-20,E[1]]);add(p,SB,EO,n,750)};
+  F.terms.filter(t=>t.k==="s").forEach(t=>{const T=t.T,k=t.room,own=ex(k)[0],kit=ex("liv")[0]||own;
+    if(k==="bed"){if(own)room(T,[[8600,3000,1200]],own,10);room(T,[[8200,3600,900],[D.bed[0],D.bed[1],40],[6200,4800,900]],kit,10)}
+    else if(k==="kid"){if(own)room(T,[[2500,2200,1200]],own,8);room(T,[[2600,2900,900],[D.kid[0],D.kid[1],40],[3200,4500,900]],kit,10)}
+    else if(k==="liv"){room(T,[[T[0],6300,1300]],kit,10);room(T,[[5500,6000,900],[D.bath[0],D.bath[1],40],[6000,2600,900]],ex("bath")[0],6);room(T,[[6200,7600,900],[D.hall[0],D.hall[1],40],[8400,7600,900]],ex("hall")[0],6)}
+    else if(own)room(T,[[T[0]+(k==="hall"?600:0),T[1]+(k==="bath"?-1200:0),1100]],own,8)});
+  const N=paths.reduce((a,p)=>a+p.n,0),pos=new Float32Array(N*3),col=new Float32Array(N*3),meta=[];
+  paths.forEach((p,pi)=>{for(let j=0;j<p.n;j++)meta.push({pi,o:j/p.n*p.T+Math.random()*p.T/p.n})});
+  const geo=new THREE.BufferGeometry();geo.setAttribute("position",new THREE.BufferAttribute(pos,3));geo.setAttribute("color",new THREE.BufferAttribute(col,3));
+  const pts=new THREE.Points(geo,new THREE.PointsMaterial({size:.17,vertexColors:true,transparent:true,opacity:.95,depthWrite:false}));pts.frustumCulled=false;par.add(pts);
+  const tmp=new THREE.Color();
+  return{step(now){meta.forEach((m,i)=>{const p=paths[m.pi],s=(m.o+now*p.sp)%p.T;let k=1;while(k<p.L.length-1&&p.L[k]<s)k++;const a=p.pts[k-1],b=p.pts[k],f=(s-p.L[k-1])/((p.L[k]-p.L[k-1])||1);
+    pos[i*3]=a[0]+(b[0]-a[0])*f;pos[i*3+1]=a[1]+(b[1]-a[1])*f;pos[i*3+2]=a[2]+(b[2]-a[2])*f;tmp.copy(p.c0).lerp(p.c1,s/p.T);col[i*3]=tmp.r;col[i*3+1]=tmp.g;col[i*3+2]=tmp.b});
+    geo.attributes.position.needsUpdate=true;geo.attributes.color.needsUpdate=true}}}
+
+/* подписи по этапам: [x,y,z,текст,класс] */
+function stageLabels(F){const c=k=>{const r=RR[k];return[(r[0]+r[2])/2,(r[1]+r[3])/2]},Rf=F.R,out=[];
+  const tl=(k,kk)=>F.terms.filter(t=>t.k===kk&&t.room===k);
+  out[0]=[...ROOMS.map(([k,n])=>{const p=c(k);return[p[0],2300,p[1],`${n}: П ${fmt(Rf[k].S)} / В ${fmt(Rf[k].E)} м³/ч`,""]}),[10475,2200,6450,"Место рекуператора",""]];
+  out[1]=[[11100,2500,5900,"Ø200 с уклоном наружу",""],[10560,2900,5660,"Ø180 под магистрали",""],...(F.holes[0]?[[F.holes[0].x,2850,F.holes[0].z,`Ø110 · всего ${F.holes.length}`,""]]:[])];
+  out[2]=[[10475,2250,6450,"Рекуператор 350 м³/ч",""],[10300,450,6250,"Сифон конденсата",""],[10600,2150,7835,"Котёл, закрытая камера",""]];
+  out[3]=[[11150,2500,5900,"Забор с улицы (ODA)","s"],[11150,2500,7400,"Выброс (EHA)","e"],[10475,2850,5900,"Шумоглушители",""],[9900,2850,5190,"Приток в дом (SUP)","s"],[9000,2850,4950,"Вытяжка из дома (ETA)","e"]];
+  out[4]=[[9500,2850,5190,`Коллектор притока · ${F.ports} портов`,"s"],[8600,2850,4950,`Коллектор вытяжки · ${F.ports} портов`,"e"],...(F.terms[0]?[[F.terms[0].T[0],2850,F.terms[0].T[1],"Адаптер под решётку",""]]:[])];
+  out[5]=ROOMS.flatMap(([k,n])=>{const a=[],s=tl(k,"s")[0],e=tl(k,"e")[0];if(s)a.push([s.T[0],2850,s.T[1],`${n}: ${Rf[k].ts} тр. приток`,"s"]);if(e&&k!=="liv"||e&&k==="liv")a.push([e.T[0],2850,e.T[1],`${Rf[k].te} тр. вытяжка`,"e"]);return a});
+  out[6]=[[9050,BOX,5100,"Люк 400 × 400 к коллекторам",""],...doors().slice(0,4).map(d=>[d.x,30,d.z,"Зазор 15–20 мм",""])];
+  out[7]=F.terms.map(t=>[t.T[0],BOX-20,t.T[1],`${t.k==="s"?"П":"В"} ${fmt(t.q)} м³/ч`,t.k]);
+  out[8]=[[11150,2500,5900,"Свежий воздух с улицы","s"],[11150,2500,7400,"Выброс","e"],...doors().slice(0,4).map(d=>[d.x,200,d.z,"Переток под дверью",""])];
+  return out}
+function labels(){const a=LAB[ST]||[];lblBox.innerHTML="";LBcur=a.map(q=>{const e=document.createElement("div");e.className="lb"+(q[4]?" "+q[4]:"");e.textContent=q[3];lblBox.appendChild(e);return{e,v:V(q[0],q[1],q[2])}})}
+
+/* этапы и анимация */
+function finishAll(){anims.forEach(a=>{const b=a.m.userData.b;a.m.position.copy(b.p);a.m.scale.copy(b.s)});anims=[];tubeT0=-1;TB.forEach(t=>t.m.geometry.setDrawRange(0,Infinity))}
+function applyStage(){G.forEach((g,i)=>{const u=g.userData.until;g.visible=i<=ST&&(u===undefined||ST<=u);g.traverse(o=>{if(o.userData.until!==undefined&&o!==g)o.visible=ST<=o.userData.until})});
+  capE.textContent=`Этап ${ST+1}. ${VST[ST].t}`;labels()}
+function enter(st){const g=G[st];if(!g)return;const now=clk.getElapsedTime(),mode=g.userData.mode;
+  if(mode==="tubes"){tubeT0=now;TB.forEach(t=>t.m.geometry.setDrawRange(0,0));return}
+  if(mode==="none")return;const units=g.children.slice(),stg=Math.min(.12,2.4/Math.max(1,units.length));
+  units.forEach((m,i)=>{if(!m.userData.b)m.userData.b={p:m.position.clone(),s:m.scale.clone()};const b=m.userData.b;m.position.copy(b.p);m.scale.copy(b.s);
+    if(mode==="pop")m.scale.setScalar(.001);else m.position.y=b.p.y-700;anims.push({m,t0:now+i*stg,d:.5,mode})})}
+function camPreset(now){const c=S.cam==="auto"?VST[Math.max(0,ST)].cam:S.cam;let pos,tg;
+  if(c==="top"){const vf=cam.fov*Math.PI/360,hf=Math.atan(Math.tan(vf)*cam.aspect),d=Math.max(6600/Math.tan(hf),5600/Math.tan(vf))+1500;pos=V(5545,d,4600);tg=V(5545,0,4550)}
+  else if(c==="iso"){const k=cam.aspect<1?1.9:1.12;pos=V(5545-7300*k,9500*k,4550+9800*k);tg=V(5545,1200,4550)}
+  else if(c==="unit"){pos=V(8300,1700,8350);tg=V(10450,2150,6300)}
+  else{pos=V(6700,1450,8300);tg=V(2900,2750,4500)}
+  if(now){cam.position.copy(pos);ctl.target.copy(tg);camA=null}else camA={p0:cam.position.clone(),t0:ctl.target.clone(),p1:pos,t1:tg,s:clk.getElapsedTime()}}
+function tick(){if(!host.offsetParent)return;const now=clk.getElapsedTime();
+  anims=anims.filter(a=>{const k=Math.max(0,Math.min(1,(now-a.t0)/a.d)),e=1-Math.pow(1-k,3),m=a.m,b=m.userData.b;
+    if(a.mode==="pop")m.scale.copy(b.s).multiplyScalar(Math.max(.001,e));else m.position.y=b.p.y-700*(1-e);return k<1});
+  if(tubeT0>=0){let all=true;TB.forEach(t=>{const k=Math.max(0,Math.min(1,(now-tubeT0-t.i*.12)/2.2));if(k<1)all=false;t.m.geometry.setDrawRange(0,Math.floor(k*t.segs)*36)});if(all){tubeT0=-1;TB.forEach(t=>t.m.geometry.setDrawRange(0,Infinity))}}
+  if(camA){const k=Math.min(1,(now-camA.s)/.9),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam.position.lerpVectors(camA.p0,camA.p1,e);ctl.target.lerpVectors(camA.t0,camA.t1,e);if(k>=1)camA=null}
+  ctl.update();
+  const cp=cam.position,hide=[cp.z<-4.55,cp.z>4.55,cp.x<-5.545,cp.x>5.545];EXT.forEach((a,i)=>a.forEach(g=>g.visible=!hide[i]));
+  {const up=cp.y>2.9;[MAT.gkl,MAT.gklS].forEach(m=>{m.opacity=up?.5:1;m.depthWrite=!up})}
+  if(PT&&G[8]&&G[8].visible)PT.step(now);
+  const w=host.clientWidth,h=host.clientHeight;
+  LBcur.forEach(l=>{const v=l.v.clone().project(cam),vis=v.z<1&&v.x>-1.05&&v.x<1.05&&v.y>-1.05&&v.y<1.05;l.e.style.display=vis?"":"none";if(vis){l.e.style.left=((v.x+1)/2*w)+"px";l.e.style.top=((1-v.y)/2*h)+"px"}});
+  R.render(scene,cam)}
+function update(F){if(!R){try{init()}catch(e){host.innerHTML='<p style="padding:16px">3D не запустилось в этом браузере: нет WebGL. Расчёт и инструкция ниже работают.</p>';window.V3=null;return}}
+  const key=JSON.stringify(P());let first=false;
+  if(key!==K){first=!K;K=key;finishAll();build(F);if(ST<0)ST=S.st;applyStage()}
+  if(first){ST=S.st;applyStage();camPreset(true);enter(ST)}
+  else if(S.st!==ST){const prev=ST;ST=S.st;finishAll();applyStage();if(ST>prev)enter(ST);if(S.cam==="auto")camPreset(false)}
+  requestAnimationFrame(size)}
+return{update,cam(){if(R)camPreset(false)},replay(){if(!R)return;finishAll();applyStage();enter(ST)}}})();
+
+render();
+</script>
