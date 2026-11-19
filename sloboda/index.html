@@ -1,0 +1,823 @@
+<title>Сад на Авиации, 22</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: штамп-шапка → вкладки; генплан = чертёж слева + панель слоёв/рельефа справа, на телефоне в одну колонку */
+:root{
+  --bg:#eaeee8; --panel:#f8faf6; --ink:#1c2620; --muted:#5a6a5f; --line:#c8d1c7; --accent:#2e6a48; --accent-ink:#ffffff;
+  --warn:#b4531a; --ok:#2e7d4f; --bad:#b3261e;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  /* цвета чертежа */
+  --pl-paper:#f4f6f1; --pl-out:#e3e6df; --pl-road:#cfc9bd; --pl-lawn:#cfe2b5; --pl-lawn2:#bcd69e; --pl-path:#ddd3c2; --pl-pave:#b8b2a7;
+  --pl-house:#7d848c; --pl-roof:#5f666e; --pl-wood:#c4935f; --pl-bed:#a9794c; --pl-soil:#8a5f3a; --pl-water:#6ea7cc; --pl-glass:#bfe0e6;
+  --pl-tree:#6fa35a; --pl-tree-s:#3f6b33; --pl-con:#3e7a5c; --pl-fruit:#9bbf55; --pl-shrub:#88b86a; --pl-berry:#b05a7a; --pl-flower:#d7a6c9;
+  --pl-light:#e0a31b; --pl-drain:#2f7fb8; --pl-fence:#3a3f44; --pl-set1:#c0392b; --pl-set2:#d68910; --pl-set3:#2e8b57; --pl-text:#24302a; --pl-mulch:#d9b98c; --pl-wall:#7a6d5d;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111713; --panel:#18201b; --ink:#e2eae3; --muted:#98a99d; --line:#2b382f; --accent:#78c497; --accent-ink:#0d1a12;
+  --warn:#f0a060; --ok:#7fd0a0; --bad:#ff8a80;
+  --pl-paper:#1b221d; --pl-out:#151b17; --pl-road:#3a3833; --pl-lawn:#2f4a2a; --pl-lawn2:#3a5833; --pl-path:#5b5447; --pl-pave:#4d4a45;
+  --pl-house:#8a9199; --pl-roof:#6b737b; --pl-wood:#a87a4b; --pl-bed:#7d5a3a; --pl-soil:#6a4a2e; --pl-water:#4f8cb3; --pl-glass:#4d7f88;
+  --pl-tree:#5d9a4c; --pl-tree-s:#a8d494; --pl-con:#4c9a73; --pl-fruit:#8db34a; --pl-shrub:#6fa356; --pl-berry:#d07a9a; --pl-flower:#b583a6;
+  --pl-light:#ffc94a; --pl-drain:#5fb0ea; --pl-fence:#c9d0d6; --pl-set1:#ff7b6b; --pl-set2:#ffb84d; --pl-set3:#6fd39a; --pl-text:#e2eae3; --pl-mulch:#8f7653; --pl-wall:#a89880;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111713; --panel:#18201b; --ink:#e2eae3; --muted:#98a99d; --line:#2b382f; --accent:#78c497; --accent-ink:#0d1a12;
+  --warn:#f0a060; --ok:#7fd0a0; --bad:#ff8a80;
+  --pl-paper:#1b221d; --pl-out:#151b17; --pl-road:#3a3833; --pl-lawn:#2f4a2a; --pl-lawn2:#3a5833; --pl-path:#5b5447; --pl-pave:#4d4a45;
+  --pl-house:#8a9199; --pl-roof:#6b737b; --pl-wood:#a87a4b; --pl-bed:#7d5a3a; --pl-soil:#6a4a2e; --pl-water:#4f8cb3; --pl-glass:#4d7f88;
+  --pl-tree:#5d9a4c; --pl-tree-s:#a8d494; --pl-con:#4c9a73; --pl-fruit:#8db34a; --pl-shrub:#6fa356; --pl-berry:#d07a9a; --pl-flower:#b583a6;
+  --pl-light:#ffc94a; --pl-drain:#5fb0ea; --pl-fence:#c9d0d6; --pl-set1:#ff7b6b; --pl-set2:#ffb84d; --pl-set3:#6fd39a; --pl-text:#e2eae3; --pl-mulch:#8f7653; --pl-wall:#a89880;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;margin:0}
+.wrap{max-width:1360px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:clamp(22px,3.2vw,32px);font-weight:800;letter-spacing:-.01em;margin:0;text-wrap:balance}
+h2{font-size:19px;font-weight:700;margin:0 0 10px;text-wrap:balance}
+h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px}
+p{margin:0 0 10px;max-width:72ch}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.head{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:14px}
+.head .sub{color:var(--muted);margin-top:4px}
+.stamp{display:grid;grid-template-columns:auto auto;gap:2px 14px;font-size:12px;border:1px solid var(--ink);padding:8px 12px;background:var(--panel)}
+.stamp b{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.warnbox{margin-top:14px;padding:10px 14px;border-left:4px solid var(--warn);background:var(--panel);font-size:14px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin:18px 0 14px}
+.tabs button{font:inherit;font-weight:600;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:6px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.plan-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+@media (max-width:980px){.plan-grid{grid-template-columns:minmax(0,1fr)}}
+.sheet{background:var(--pl-paper);border:1px solid var(--line);border-radius:4px;overflow:hidden;position:relative}
+.sheet svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px}
+.layers{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.layers label{display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;padding:3px 4px;border-radius:4px}
+.layers input{accent-color:var(--accent)}
+.sw{width:12px;height:12px;border-radius:2px;flex:none;border:1px solid rgba(0,0,0,.15)}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input{flex:1;accent-color:var(--accent)}
+.relief-out{font-size:13px;color:var(--muted);margin-top:8px}
+.relief-out strong{color:var(--ink)}
+.tip{position:absolute;pointer-events:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.18);padding:8px 10px;border-radius:6px;font-size:12.5px;max-width:280px;z-index:5}
+.tip b{display:block;font-size:13px;margin-bottom:2px}
+.sel{font-size:13px;min-height:60px}
+.sel b{display:block;font-size:14px}
+.legend-list{display:grid;gap:5px;font-size:12.5px}
+.legend-list div{display:flex;gap:8px;align-items:center}
+.section-svg{width:100%;height:auto;display:block}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.code{display:inline-block;min-width:30px;font-family:var(--f-mono);font-weight:600;font-size:12px;padding:1px 5px;border-radius:3px;background:var(--bg);border:1px solid var(--line);text-align:center}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:99px;white-space:nowrap}
+.pill.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.pill.chk{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.cols2>*{min-width:0}
+.q{counter-reset:q;display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.q li{counter-increment:q;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px 12px 48px;position:relative}
+.q li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:13px;display:grid;place-items:center}
+.q li b{display:block}
+#v3d{position:relative;height:min(72vh,680px);min-height:380px;background:var(--pl-out);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+#v3d canvas{display:block;width:100%;height:100%}
+.v3d-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.v3d-bar button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer}
+.v3d-bar button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.v3d-msg{position:absolute;inset:auto 12px 12px 12px;font-size:12.5px;color:var(--muted);pointer-events:none}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+ul.plain{margin:0;padding-left:18px}
+ul.plain li{margin:3px 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <div>
+      <h1>Участок на ул. Авиации, 22 — ландшафтный генплан</h1>
+      <div class="sub">аг. Слобода, Пекалинский с/с, Смолевичский р-н, Минская обл. · концепция на основе утверждённого генплана</div>
+    </div>
+    <div class="stamp mono">
+      <b>Кад. №</b><span>624883604601000374</span>
+      <b>Площадь</b><span>0,1671 га (1671 м²)</span>
+      <b>Назначение</b><span>одноквартирный жилой дом</span>
+      <b>Основа</b><span>генплан М1:500, лист 7</span>
+      <b>Точка</b><span>53.978178, 28.114342</span>
+    </div>
+  </header>
+
+  <div class="warnbox"><b>Контур участка, дом №1 и хозпостройка №2 взяты с утверждённого генплана</b> (проект ИП Шиковец А.В., лист 7, М1:500). Привязки по листу: дом в 8,0 м от южной границы, хозпостройка в 3,0 м от западной границы, между ними 3,3 м. Длины сторон — по подписям на листе. Площадь по этим сторонам 1688 м², по кадастру 1671 м²: генплан схематичный, расхождение около 1 %. <b>Улица одна — Авиации, с севера, вдоль стороны А–Б 16,74 м.</b> Там, где генплан подписывает «улица» (юг и восток), по кадастровой карте идут пожарные проезды шириной около 4 м. Поэтому ворота, калитка, въезд к гаражу и септик — с ул. Авиации, а вдоль проездов ограда глухая. Дом в 3D взят из проекта дома 11×9: стены, окна и двери по проекту, без инженерных систем. Вход в дом — с севера, со стороны улицы, терраса — на восток. Гараж на 2 машины, волейбольная площадка и плодовый сад — по пометкам заказчика. Всё остальное — ландшафтное предложение. Нормативные отступы ориентировочные, по СН 3.01.03-2020.</div>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="plan" id="t-plan">Генплан 2D</button>
+    <button role="tab" aria-selected="false" data-tab="v3" id="t-v3">3D</button>
+    <button role="tab" aria-selected="false" data-tab="plants" id="t-plants">Растения</button>
+    <button role="tab" aria-selected="false" data-tab="norms" id="t-norms">Нормы и баланс</button>
+    <button role="tab" aria-selected="false" data-tab="eng" id="t-eng">Свет, вода, ограда</button>
+    <button role="tab" aria-selected="false" data-tab="ask" id="t-ask">Что уточнить</button>
+  </nav>
+
+  <!-- ===== ГЕНПЛАН ===== -->
+  <section data-panel="plan">
+    <div class="plan-grid">
+      <div class="sheet" id="sheet"><svg id="plan" role="img" aria-label="Генплан участка"></svg><div class="tip" id="tip" hidden></div></div>
+      <aside class="side">
+        <div class="card">
+          <h3>Слои</h3>
+          <div class="layers" id="layers"></div>
+        </div>
+        <div class="card">
+          <h3>Разрез через дом, юг → север</h3>
+          <svg class="section-svg" id="section" viewBox="0 0 300 130" aria-label="Разрез юг—север через дом"></svg>
+          <div class="relief-out"><strong>Участок ровный</strong>, по фото перепад не больше 0,3–0,5 м, поэтому подпорные стенки не нужны. Дом стоит на песчаной подушке. Чтобы вода не собиралась в ней как в ванне, вокруг дома положены кольцевой дренаж и отмостка шириной 1 м. Газон спланирован с уклоном 2 % от дома к дождевому саду.</div>
+        </div>
+        <div class="card sel" id="sel"><span class="muted">Наведите курсор на объект плана или нажмите на него, здесь появится описание.</span></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== 3D ===== -->
+  <section data-panel="v3" hidden>
+    <div class="v3d-bar">
+      <button id="b-day" aria-pressed="true">День</button>
+      <button id="b-eve" aria-pressed="false">Вечер, подсветка</button>
+      <button id="b-top">Вид сверху</button>
+      <button id="b-persp">С ул. Авиации</button>
+      <button id="b-gate">От калитки</button>
+      <button id="b-volley">Площадка</button>
+      <button id="b-garden">С террасы в сад</button>
+      <span class="muted small">Вращение — левая кнопка мыши, сдвиг — правая, масштаб — колесо или два пальца.</span>
+    </div>
+    <div id="v3d"><div class="v3d-msg" id="v3dmsg">Загрузка 3D…</div></div>
+  </section>
+
+  <!-- ===== РАСТЕНИЯ ===== -->
+  <section data-panel="plants" hidden>
+    <p>Все растения выдерживают зиму зоны USDA 5а (до −29 °C) и продаются в питомниках Беларуси. Плодовые — в основном белорусской селекции. На участке будут дети и собаки, поэтому ядовитые растения в план не включены: нет тиса, бересклета, волчеягодника, ландыша, наперстянки, аконита, клематиса, можжевельника казацкого и туи. Вдоль проездов растут колючие и плотные кусты, через которые собака не пролезет. Коды совпадают с подписями на генплане, количество посчитано по чертежу. Сорта плодовых перед покупкой сверьте с наличием в питомнике.</p>
+    <div class="tbl"><table id="plantTable"></table></div>
+    <h2 style="margin-top:22px">Цветники</h2>
+    <div class="tbl"><table id="bedTable"></table></div>
+    <h2 style="margin-top:22px">Газон</h2>
+    <p id="lawnTxt"></p>
+  </section>
+
+  <!-- ===== НОРМЫ ===== -->
+  <section data-panel="norms" hidden>
+    <div class="cols2">
+      <div>
+        <h2>Отступы и разрывы: проверка по чертежу</h2>
+        <p class="small muted">Расстояния считаются от углов построек и от стволов деревьев до ближайшей стороны участка. Нормы ориентировочные: СН 3.01.03-2020 «Планировка и застройка населённых пунктов», санитарные нормы и сложившаяся практика. Окончательно их задают градпаспорт и Смолевичский райисполком. Положение дома и хозпостройки уже согласовано генпланом.</p>
+        <div class="tbl"><table id="normTable"></table></div>
+      </div>
+      <div>
+        <h2>Баланс территории</h2>
+        <div class="tbl"><table id="balTable"></table></div>
+        <h2 style="margin-top:22px">Стороны участка</h2>
+        <div class="tbl"><table id="edgeTable"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ИНЖЕНЕРИЯ ===== -->
+  <section data-panel="eng" hidden>
+    <div class="cols2">
+      <div class="card">
+        <h2>Освещение</h2>
+        <div class="tbl" style="border:0"><table id="lightTable"></table></div>
+        <ul class="plain small" style="margin-top:10px">
+          <li>Цветовая температура 2700–3000 K, защита IP65, у грунтовых светильников IP67.</li>
+          <li>Кабель ВВГнг 3×2,5 в гофре ПНД Ø32 на глубине 0,7 м, сверху сигнальная лента. Трасса идёт вдоль дорожек, чтобы кабель не повредили при перекопке.</li>
+          <li>На уличные группы — отдельный автомат с УЗО 30 мА. Четыре группы: «въезд и вход», «сад и патио», «волейбол», «хоздвор». Управление от сумеречного реле и таймера, прожекторы площадки — отдельным выключателем.</li>
+          <li>Прожекторы площадки — LED 100 Вт, 4000 K, IP66, на мачтах 4 м со стороны проезда. Светят вниз и вдоль площадки, в окна дома и соседей не бьют.</li>
+          <li>К хозпостройке и гаражу — отдельные линии ВВГнг 3×4.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Ливнёвка, дренаж, септик</h2>
+        <ul class="plain small">
+          <li><b>Песчаная подушка под домом.</b> Песок хорошо пропускает воду, а глина вокруг держит её. Вода с крыши уходит в подушку и стоит под домом, как в ванне. Защита из трёх слоёв: утеплённая отмостка шириной 1 м с уклоном 2 % от стен; кольцевой дренаж из трубы Ø110 в геотекстиле на 0,3 м ниже подушки и в 0,7 м от стен; водостоки, которые нигде не сливают воду к фундаменту.</li>
+          <li>Водостоки дома (4 стояка) — в пескоуловители и дальше трубой ПВХ Ø110 с уклоном не меньше 1 % в <b>дождевой сад</b> около 12 м² на юго-востоке. Перелив из него и выпуск дренажа — в поглощающий колодец Ø1 м.</li>
+          <li>С крыши хозпостройки вода стекает в две бочки по 200 л. Из них поливают плодовый сад.</li>
+          <li>Линейный лоток перед воротами гаража: вода с въезда не затекает в гараж. Под песком волейбольной площадки дренажный щебень 20 см, выпуск в поглощающий колодец.</li>
+          <li><b>Септик</b> или станция биоочистки — у ул. Авиации, в мощении въезда: люки класса B125, по ним можно ездить. Ассенизатор встаёт у ворот, на пожарный проезд заезжать не нужно. До дома от него больше 5 м, до скважины больше 20 м.</li>
+          <li><b>Скважина</b> (водоснабжение местное) — у северного входа в дом, рядом с мини-котельной. Её место условное, его нужно уточнить.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Ограждение</h2>
+        <div class="tbl" style="border:0"><table id="fenceTable"></table></div>
+        <p class="small muted" style="margin-top:10px">Собаки: снизу у ограды нигде нет щелей. Под панелями идёт бетонная лента или доска, по соседским границам сетка дополнительно заглублена на 30 см, чтобы её не подкопали. Калитка и ворота закрываются автоматически, у калитки стоит доводчик.</p>
+      </div>
+      <div class="card">
+        <h2>ЛЭП 0,4 кВ над участком</h2>
+        <ul class="plain small">
+          <li>По фото над участком идёт ВЛ 0,4 кВ, на участке стоят опоры, одна из них двойная. На утверждённом генплане линии нет, поэтому на чертеже она пока <b>не показана</b>. Её положение — первый вопрос на вкладке «Что уточнить».</li>
+          <li>Охранная зона ВЛ до 1 кВ — 2 м по обе стороны от крайних проводов. В ней не ставят постройки и не сажают деревья. Можно оставить газон, грядки и низкие кусты до 1,5 м. Земляные работы глубже 0,3 м согласуют с РЭС.</li>
+          <li>Когда линия будет нанесена, деревья, попавшие в зону, переедут, а дорожка пройдёт под проводами. Можно спросить в РЭС, есть ли возможность вынести опоры на границу или завести ввод кабелем под землёй.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ВОПРОСЫ ===== -->
+  <section data-panel="ask" hidden>
+    <p>Дом и хозпостройка стоят по утверждённому генплану. Остальное — предложение. Ответы на эти вопросы превратят его в рабочий проект.</p>
+    <ol class="q">
+      <li><b>Где проходит ЛЭП и стоят опоры</b>Отметьте линию и опоры от руки на скриншоте генплана или пришлите фото с привязкой («опора в 4 м от южного забора, напротив крыльца»). После этого деревья уйдут из охранной зоны.</li>
+      <li><b>Пожарный проезд</b>По кадастровой карте юг и восток участка выходят на пожарные проезды, а въезд сделан с ул. Авиации на севере. Какой ширины проезды и есть ли у них покрытие? Нужна ли калитка в проезд, например в сад? Пока ограда там глухая.</li>
+      <li><b>Хозпостройка №2 и «КЖ»</b>Машины теперь стоят в отдельном гараже. Что будет в хозпостройке: мастерская, летняя кухня, баня? Что означает отсек «КЖ» на листе? От этого зависят дорожки и место для дров.</li>
+      <li><b>Гараж</b>Сейчас он 6,5×6,5 м, на 2 машины, двое ворот на север, без ямы и второго этажа. Нужны ли яма, верстак, кладовая для колёс, мансарда? Гараж — новая постройка, его место нужно согласовать изменением генплана.</li>
+      <li><b>Волейбол</b>Пляжный на песке 8×16 м или классический 9×18 м на газоне? Пляжный влезает с зонами по краям, классический — только впритык. Какая высота сетки: мужская 2,43 м, женская 2,24 м, детская ниже?</li>
+      <li><b>Сети</b>Где ввод газа и электричества? Скважина или колодец и есть ли уже что-то? Септик или станция биоочистки? Сейчас септик стоит у ул. Авиации между въездом и дорожкой, скважина — у главного входа.</li>
+      <li><b>Дети и собаки</b>Сколько лет детям и какого размера собаки? От этого зависят высота ограды (1,5 или 1,8 м), состав детской площадки и то, нужен ли собакам отдельный вольер.</li>
+      <li><b>Бюджет и очерёдность</b>Порядок суммы и что делать в первый год. Обычно начинают с ограды, дренажа и отмостки, въезда и газона, а посадки и малые формы переносят на второй-третий год.</li>
+    </ol>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- геометрия участка (м; x — восток, y — север) по генплану М1:500 ---------- */
+/* А, Б, В, Д сняты с листа; Г пересчитана по подписанным длинам 32,64 и 56,79 м */
+const PLOT=[[9.88,55.55],[26.18,51.69],[42.30,30.34],[55.20,0.36],[0,13.69]];
+const VN=['А','Б','В','Г','Д'];
+const EDGES=[
+ {n:'Северная',nb:'ул. Авиации',street:true},
+ {n:'Северо-восточная',nb:'пожарный проезд',lane:true},
+ {n:'Восточная',nb:'пожарный проезд',lane:true},
+ {n:'Южная',nb:'пожарный проезд',lane:true},
+ {n:'Западная',nb:'участок №20 (дом Ж, постройка Н)'}];
+const N=PLOT.length;
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]], add=(a,b)=>[a[0]+b[0],a[1]+b[1]], mul=(a,k)=>[a[0]*k,a[1]*k], len=a=>Math.hypot(a[0],a[1]);
+function sArea(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1];}return s/2;}
+const SA=sArea(PLOT), AREA=Math.abs(SA);
+function nIn(i){const a=PLOT[i],b=PLOT[(i+1)%N],d=sub(b,a),L=len(d);return SA<0?[d[1]/L,-d[0]/L]:[-d[1]/L,d[0]/L];}
+function edgePt(i,t,off){const a=PLOT[i],b=PLOT[(i+1)%N];return add(add(a,mul(sub(b,a),t)),mul(nIn(i),off||0));}
+function isect(p1,d1,p2,d2){const c=d1[0]*d2[1]-d1[1]*d2[0];const w=sub(p2,p1);const s=(w[0]*d2[1]-w[1]*d2[0])/c;return add(p1,mul(d1,s));}
+function inset(ds){const L=PLOT.map((a,i)=>{const b=PLOT[(i+1)%N];return{p:add(a,mul(nIn(i),ds[i])),d:sub(b,a)};});return L.map((l,i)=>{const pr=L[(i-1+N)%N];return isect(pr.p,pr.d,l.p,l.d);});}
+function dSeg(p,a,b){const ab=sub(b,a);let t=((p[0]-a[0])*ab[0]+(p[1]-a[1])*ab[1])/(ab[0]**2+ab[1]**2);t=Math.max(0,Math.min(1,t));return len(sub(p,add(a,mul(ab,t))));}
+function foot(p,i){const a=PLOT[i],b=PLOT[(i+1)%N],ab=sub(b,a);let t=((p[0]-a[0])*ab[0]+(p[1]-a[1])*ab[1])/(ab[0]**2+ab[1]**2);return add(a,mul(ab,t));}
+function polyDist(P,Q){let d=1e9;P.forEach(p=>Q.forEach((q,i)=>d=Math.min(d,dSeg(p,q,Q[(i+1)%Q.length]))));Q.forEach(q=>P.forEach((p,i)=>d=Math.min(d,dSeg(q,p,P[(i+1)%P.length]))));return d;}
+function circlePoly(cx,cy,rx,ry,n){ry=ry||rx;n=n||28;const o=[];for(let k=0;k<n;k++){const a=k/n*Math.PI*2;o.push([cx+rx*Math.cos(a),cy+ry*Math.sin(a)]);}return o;}
+
+/* локальная сетка дома: a — вдоль южной улицы (на восток), b — к северу; начало — юго-западный угол дома */
+const TH=Math.atan2(PLOT[3][1]-PLOT[4][1],PLOT[3][0]-PLOT[4][0]);
+const U=[Math.cos(TH),Math.sin(TH)],VV=[-Math.sin(TH),Math.cos(TH)],H0=[16.92,17.89];
+const Lp=(a,b)=>[H0[0]+a*U[0]+b*VV[0],H0[1]+a*U[1]+b*VV[1]];
+const Rl=(a1,b1,a2,b2)=>[Lp(a1,b1),Lp(a2,b1),Lp(a2,b2),Lp(a1,b2)];
+const Ll=pts=>pts.map(p=>Lp(p[0],p[1]));
+const Cl=(a,b,rx,ry,n)=>circlePoly(0,0,rx,ry,n).map(p=>Lp(a+p[0],b+p[1]));
+const BS=-8.05, BN=34.97; /* южная и северная границы в локальной сетке */
+
+/* ---------- объекты ---------- */
+const HOUSE={poly:Rl(0,0,11.09,9.1),name:'Жилой дом №1 (по генплану)',tip:'Проект ИП Шиковец А.В. Основной объём 11,09×9,1 м, с террасой 14,09 м. Общая площадь 86,39 м², жилая 49,7 м², площадь застройки 134,9 м². Карниз +2,865, конёк +6,600, кровля — металлочерепица RAL 8019, стены оштукатурены. Вход с севера, со стороны ул. Авиации. На восток выходит терраса, на юг — окно спальни в пол со ступенями. Пол на 0,4 м выше земли. Отопление газовое, водоснабжение местное.'};
+const BUILD=[
+ {id:'house',...HOUSE,kind:'house'},
+ {id:'hoz',poly:Rl(-12.5,0,-3.3,4.7),name:'Хозпостройка №2, 9,2×4,7 м (по генплану)',kind:'hoz',tip:'Раньше на этом месте был согласован жилой дом. В 3,0 м от западной границы, в 3,3 м от дома. Восточный отсек 3 м на листе обозначен «КЖ»: что это, нужно уточнить.'},
+ {id:'wood',poly:Rl(-14.5,0.6,-12.7,4.2),name:'Дровник-навес 1,8×3,6 м',kind:'wood',tip:'Пристроен к западной стене хозпостройки, в 1 м от границы. Открыт на юг, чтобы дрова продувало.'},
+ {id:'green',poly:Rl(11.0,13.2,16.0,16.2),name:'Теплица 3×5 м',kind:'glass',tip:'Сотовый поликарбонат 6–8 мм, конёк с запада на восток, вход с запада от дорожки вдоль гаража. Внутри две гряды по 1 м и проход 0,8 м. Гараж стоит западнее и затеняет её только под вечер.'},
+ {id:'compost',poly:Rl(-14.3,-7.0,-12.3,-5.2),name:'Компостер на 2 секции',kind:'shed',tip:'Деревянный, 2×1,8 м, в углу хоздвора. До дома №1 около 13 м, до соседних домов больше 25 м. Закрыт лимонником на шпалере.'},
+ {id:'garage',poly:Rl(3.5,15.0,10.0,21.5),name:'Гараж на 2 машины, 6,5×6,5 м',kind:'hoz',tip:'Северо-восточная часть участка, на месте прежней площадки. Двое ворот 2,5×2,2 м на север, к площадке перед гаражом. Стены — газосиликат под штукатурку в цвет дома, двускатная кровля RAL 8019, как у дома. С востока дверь в огород. Пол бетонный, перед воротами лоток. До дома 5,9 м, до пожарного проезда больше 4 м. Новая постройка: место нужно согласовать.'},
+];
+const TERRACE={poly:Rl(11.09,4.6,14.09,9.1),name:'Терраса 3×4,5 м (по проекту дома)',tip:'С восточной стороны дома, выход из гостиной через остеклённую дверь. Настил на уровне пола, 0,4 м над землёй. Ступени к патио и к дорожке вдоль северного фасада. Над настилом пергола, на её стойках вьётся актинидия.'};
+const PORCH={poly:Rl(0.4,-1.0,2.95,0),name:'Выход из спальни в палисадник (по проекту)',tip:'По проекту дома окно спальни на юг сделано в пол, снаружи площадка, ступени и козырёк. Две ступени по 13–14 см: пол дома на 0,4 м выше земли. Клинкер или бетон с противоскользящей обработкой.'};
+const STEPS={poly:Rl(0.4,-1.6,2.95,-1.0)};
+const STOOP={poly:Rl(1.5,9.1,3.4,10.6),name:'Главный вход (по проекту дома)',tip:'Входная дверь на северном фасаде, к ул. Авиации. Площадка 1,9×0,9 м и две ступени, над дверью козырёк и бра. От калитки ведёт прямая дорожка шириной 1,5 м, около 25 м, вдоль неё столбики.'};
+const PARK={poly:Ll([[-4.5,BN],[-0.5,BN],[-0.5,27.0],[8.5,27.0],[10.0,25.7],[10.0,21.5],[-4.5,21.5]]),name:'Въезд к гаражу и гостевые места',tip:'От ворот на ул. Авиации прямо на юг 8 м, затем площадка перед гаражом 14,5×5,5 м: на ней разворот и место для машины гостей, вторая встаёт на въезде. Брусчатка 80 мм на щебёночном основании 30 см. Уклон 1–2 % к улице, перед воротами гаража лоток. Дорожка от калитки пересекает площадку — по краю выделена клинкером другого цвета.'};
+const PATIO={c:Lp(18.3,7.5),r:2.3,name:'Патио с местом для костра',tip:'Круг Ø4,6 м из гранитной брусчатки, в центре чаша для огня, вокруг лавки. От террасы 2 м по ступеням и плитам, от стены дома больше 5 м. Со стороны пожарного проезда его закрывает еловая изгородь.'};
+const KIDS={poly:Rl(-11.2,7.2,-5.0,13.2),name:'Детская площадка 6×6 м',tip:'Покрытие — мульча из коры слоем 25 см, под качелями резиновые маты. Песочница с крышкой, чтобы туда не забирались собаки и кошки. Ещё качели и домик-горка. В полдень площадку затеняет хозпостройка, после обеда — рябина. Видна из окон западной части дома.'};
+const BEDS=[].concat(...[11.0,12.8,14.6].map(a=>[[17.0,19.8]].map(([b1,b2])=>({poly:Rl(a,b1,a+1.2,b2),name:'Высокая грядка 1,2×'+String(+(b2-b1).toFixed(1)).replace('.',',')+' м',tip:'Короб из лиственницы или оцинковки высотой 40 см: собаки и дети его не топчут. Снизу сетка от кротов. Конёк грядок с севера на юг.'}))));
+const RAIN={c:Lp(24.5,3.5),rx:2.4,ry:1.6,name:'Дождевой сад ~12 м²',tip:'Неглубокая чаша 25–30 см с щебёночной подушкой, в неё собирается вода с крыши дома. Перелив — в поглощающий колодец.'};
+const SEPTIC={c:Lp(-2.3,31.4),r:1.0,name:'Септик или станция биоочистки',tip:'Под въездом у ворот, люки класса B125 в мощении, по ним можно ездить. Ассенизатор встаёт на ул. Авиации у ворот, хватает шланга 10 м. С пожарного проезда обслуживать нельзя. До дома больше 5 м, до скважины больше 20 м.'};
+const WELL={c:Lp(9,13.8),name:'Скважина (условно)',tip:'Водоснабжение местное. Скважина — у северного фасада, ближе к котельной. Оголовок в кессоне, сверху лючок на газоне.'};
+/* волейбольная площадка 8×16 вдоль стороны Б–В: s — вдоль стороны от Б, d — внутрь участка */
+const qB=[1.14,35.0],qV=[21.8,18.0];
+const eLc=(()=>{const d=sub(qV,qB),L=len(d);return[d[0]/L,d[1]/L];})(),nLc=[eLc[1],-eLc[0]];
+const cpl=(s,d)=>[qB[0]+eLc[0]*s+nLc[0]*d,qB[1]+eLc[1]*s+nLc[1]*d];
+const cpc=(s,d)=>Lp(...cpl(s,d));
+const COURT={poly:Ll([[-6.2,15.5],[-6.2,31.5],[-14.2,31.5],[-14.2,15.5]]),net:[Lp(-15.0,23.5),Lp(-5.4,23.5)],att:[[Lp(-14.2,20.5),Lp(-6.2,20.5)],[Lp(-14.2,26.5),Lp(-6.2,26.5)]],
+ traps:[[Lp(-15.0,14.5),Lp(-15.0,33.5)],[Lp(-5.2,22.0),Lp(-5.2,33.5)]],masts:[Lp(-15.0,18.0),Lp(-15.0,29.0)],lab:Lp(-11.6,18.8),
+ name:'Волейбольная площадка 8×16 м (пляжный волейбол)',tip:'Западная часть участка, на месте прежнего гаража и огорода. Ось с севера на юг — так солнце утром и вечером светит сбоку и не слепит ни одну сторону. Кварцевый песок 0,1–1 мм слоем 40 см на дренажном щебне 20 см и геотекстиле, по краю бордюр в уровень с газоном. Сетка на 2,43 м (мужская) или 2,24 м (женская, детская), стойки в стаканах — на зиму снимаются. Вокруг газонная зона 1,4–3,5 м. Две ловушки из сетки высотой 4 м: вдоль ограды с участком №20 и вдоль въезда, чтобы мяч не летел к соседям и на машины. Прожекторы на мачтах у западной ограды светят на восток, в окна соседей не бьют.'};
+const PATHS=[
+ {name:'От калитки к главному входу',w:1.5,mat:'клинкерная брусчатка',pts:Ll([[0.3,BN],[0.3,12.0]])},
+ {name:'Вдоль северного фасада к террасе',w:1.2,mat:'брусчатка',pts:Ll([[0.3,12.0],[11.6,12.0],[11.6,9.1]])},
+ {name:'К входной двери',w:1.5,mat:'клинкерная брусчатка',pts:Ll([[2.45,12.0],[2.45,10.6]])},
+ {name:'С запада вокруг дома к южному выходу',w:1.2,mat:'брусчатка',pts:Ll([[0.3,12.0],[-1.65,12.0],[-1.65,-2.3],[2.95,-2.3]])},
+ {name:'Дорожка к волейбольной площадке',w:1.0,mat:'гравий 5–20 в стальном бордюре',pts:Ll([[0.3,18.0],[-6.0,18.0]])},
+ {name:'Дорожка в огород и к теплице вдоль гаража',w:0.9,mat:'гравий',pts:Ll([[10.5,12.0],[10.5,20.4],[16.0,20.4]])},
+ {name:'С террасы к патио',w:1.0,mat:'плиты по газону',pts:Ll([[14.6,7.0],[16.0,7.3]])},
+ {name:'Садовая тропа в плодовый сад',w:0.8,mat:'шаговые плиты',pts:Ll([[12.6,4.6],[13.2,2.5],[16.5,-2.75],[35.5,-2.75]])},
+ {name:'Дорожка в хоздвор к дровнику и компосту',w:0.9,mat:'гравий',pts:Ll([[-1.65,-2.3],[-11.4,-2.3],[-12.4,-5.0]])},
+];
+const BEDS_FL=[
+ {code:'М1',poly:Rl(3.5,10.15,11.0,11.35),name:'Теневой цветник у северного фасада',sp:'астильба Арендса, бадан толстолистный, гейхера, медуница, страусник обыкновенный, тиарелла'},
+ {code:'М2',poly:Rl(14.5,1.4,15.8,5.8),name:'Миксбордер у террасы',sp:'шалфей дубравный «Caradonna», котовник Фассена, эхинацея пурпурная, тысячелистник, вейник «Karl Foerster»'},
+ {code:'М3',poly:Cl(24.5,3.5,2.4,1.6),name:'Дождевой сад',sp:'лабазник вязолистный, дербенник иволистный, осока, вейник, мискантус китайский'},
+ {code:'М4',poly:Rl(4.4,-3.4,10.6,-1.2),name:'Цветник перед южным фасадом',sp:'пион молочноцветковый, флокс метельчатый, овсяница сизая, тимьян ползучий, кошачья мята'},
+];
+/* растения */
+const PL={
+ 'Д1':{n:'Клён остролистный «Globosum»',l:'Acer platanoides',h:'4–6 м, шар Ø4 м',t:'tree',r:2.0,note:'Акцент перед южным фасадом, крону не нужно формировать'},
+ 'Д3':{n:'Рябина обыкновенная',l:'Sorbus aucuparia',h:'6–8 м',t:'tree',r:2.0,note:'После обеда даёт тень детской площадке, ягоды для птиц'},
+ 'П1':{n:'Яблоня «Антоновка обыкновенная»',l:'Malus domestica',h:'4–5 м (подвой 54-118)',t:'fruit',r:2.1,note:'Зимний сорт, очень зимостойкая'},
+ 'П2':{n:'Яблоня «Имант»',l:'Malus domestica',h:'3,5–4 м (подвой 54-118)',t:'fruit',r:2.0,note:'Белорусская селекция, иммунна к парше'},
+ 'П3':{n:'Яблоня «Белорусское сладкое»',l:'Malus domestica',h:'3,5–4 м (подвой 54-118)',t:'fruit',r:2.0,note:'Белорусская селекция'},
+ 'П4':{n:'Яблоня «Память Коваленко»',l:'Malus domestica',h:'3,5–4 м (подвой 54-118)',t:'fruit',r:2.0,note:'Белорусская селекция. Четыре сорта яблонь опыляют друг друга'},
+ 'П5':{n:'Груша «Чижовская»',l:'Pyrus communis',h:'3–4 м',t:'fruit',r:1.9,note:'Позднелетняя, частично самоплодная'},
+ 'П6':{n:'Груша «Просто Мария»',l:'Pyrus communis',h:'3–4 м',t:'fruit',r:1.9,note:'Белорусская селекция, опылитель — «Чижовская»'},
+ 'П7':{n:'Слива «Венгерка белорусская»',l:'Prunus domestica',h:'3–3,5 м',t:'fruit',r:1.8,note:'Белорусская селекция'},
+ 'П8':{n:'Слива «Кромань»',l:'Prunus domestica',h:'3–3,5 м',t:'fruit',r:1.8,note:'Белорусская селекция, вторая слива для опыления'},
+ 'П9':{n:'Вишня «Вянок»',l:'Prunus cerasus',h:'2,5–3 м',t:'fruit',r:1.6,note:'Самоплодная, белорусская селекция'},
+ 'П10':{n:'Вишня «Ласуха»',l:'Prunus cerasus',h:'2,5–3 м',t:'fruit',r:1.6,note:'Белорусская селекция, вторая вишня для лучшей завязи'},
+ 'Х1':{n:'Ель обыкновенная, стриженая изгородь',l:'Picea abies',h:'держать стрижкой 1,8–2 м',t:'hedge',r:0.5,note:'Закрывает патио и террасу от пожарного проезда, шаг 0,7 м. Колючая и не ядовитая'},
+ 'Х2':{n:'Сосна горная «Mops»',l:'Pinus mugo',h:'0,8–1,2 м',t:'con',r:0.8,note:'У калитки'},
+ 'Х3':{n:'Можжевельник обыкновенный «Repanda»',l:'Juniperus communis',h:'0,3–0,5 м, Ø2 м',t:'con',r:0.9,note:'Почвопокровный, у калитки. Казацкий можжевельник ядовит, его не берём'},
+ 'К1':{n:'Спирея Вангутта',l:'Spiraea × vanhouttei',h:'1,5–2 м',t:'shrub',r:0.8,note:'Отделяет детскую площадку от хоздвора'},
+ 'К2':{n:'Спирея японская «Goldflame»',l:'Spiraea japonica',h:'0,6–0,8 м',t:'shrub',r:0.45,note:'Низкий бордюр вдоль южной ограды у сада'},
+ 'К3':{n:'Дёрен белый «Elegantissima»',l:'Cornus alba',h:'2–2,5 м',t:'shrub',r:0.9,note:'Пёстрая листва, зимой красные побеги'},
+ 'К4':{n:'Пузыреплодник калинолистный «Diabolo»',l:'Physocarpus opulifolius',h:'2–2,5 м',t:'shrub',r:0.9,note:'Тёмно-пурпурная листва'},
+ 'К5':{n:'Сирень обыкновенная',l:'Syringa vulgaris',h:'2,5–3 м',t:'shrub',r:1.1,note:'Подойдёт сорт белорусской селекции'},
+ 'К6':{n:'Чубушник венечный',l:'Philadelphus coronarius',h:'2–2,5 м',t:'shrub',r:1.0,note:'Цветёт в июне, сильный аромат'},
+ 'Я1':{n:'Смородина чёрная «Белорусская сладкая»',l:'Ribes nigrum',h:'1,2–1,5 м',t:'berry',r:0.6,note:'Шаг 1,5 м'},
+ 'Я2':{n:'Крыжовник «Белорусский сахарный»',l:'Ribes uva-crispa',h:'1–1,2 м',t:'berry',r:0.6,note:'Чередуется со смородиной'},
+ 'Я3':{n:'Малина ремонтантная',l:'Rubus idaeus',h:'1,5 м',t:'berry',r:0.3,note:'Ряд на шпалере у теплицы, с ограничителем корней'},
+ 'Я4':{n:'Жимолость съедобная (2 сорта)',l:'Lonicera caerulea',h:'1,5 м',t:'berry',r:0.7,note:'Для опыления нужны два сорта'},
+ 'Я5':{n:'Голубика высокорослая «Bluecrop»',l:'Vaccinium corymbosum',h:'1,5 м',t:'berry',r:0.6,note:'Только в яме с кислым верховым торфом, pH 4–5'},
+ 'Л1':{n:'Актинидия коломикта',l:'Actinidia kolomikta',h:'лиана до 5 м',t:'vine',r:0.35,note:'На стойках террасы. Нужны мужское и женское растения'},
+ 'Л2':{n:'Лимонник китайский',l:'Schisandra chinensis',h:'лиана 5–8 м',t:'vine',r:0.35,note:'На шпалере, закрывает компостер'},
+};
+const PLANTS=[];
+const put=(c,x,y)=>PLANTS.push({c,x,y});
+const pl=(c,a,b)=>{const p=Lp(a,b);put(c,p[0],p[1]);};
+const row=(c,i,t1,t2,off,step)=>{const a=PLOT[i],b=PLOT[(i+1)%N];const L=len(sub(b,a))*(t2-t1);const k=Math.max(1,Math.round(L/step));for(let j=0;j<=k;j++){const p=edgePt(i,t1+(t2-t1)*j/k,off);put(c,p[0],p[1]);}};
+const rowSeq=(seq,i,t1,t2,off,step)=>{const a=PLOT[i],b=PLOT[(i+1)%N];const L=len(sub(b,a))*(t2-t1);const k=Math.max(1,Math.round(L/step));for(let j=0;j<=k;j++){const p=edgePt(i,t1+(t2-t1)*j/k,off);put(seq[j%seq.length],p[0],p[1]);}};
+pl('Д1',13.6,-4.6); pl('Д3',-3.9,13.6);
+/* плодовый сад: два ряда со смещением, шаг 4,3 м, между рядами 4,5 м и тропа */
+[['П1',18,-5],['П2',22.3,-5],['П3',26.6,-5],['П4',30.9,-5],['П5',35.0,-5],['П6',20.0,-0.5],['П7',24.2,-0.5],['П8',28.4,-0.5],['П9',32.0,-0.5],['П10',28.6,4.6]].forEach(([c,a,b])=>pl(c,a,b));
+row('Х1',2,0.06,0.9,1.0,0.7);
+pl('Х2',2.1,32.4); pl('Х2',3.1,30.8);
+pl('Х3',2.3,28.8);
+pl('К1',-11,6.0); pl('К1',-8.5,6.0); pl('К1',-6,6.0);
+rowSeq(['К3','К4','К6','К3'],3,0.53,0.67,1.3,2.2);
+pl('К5',4.6,29.6); pl('К5',22.6,13.2); pl('К4',24.0,10.6);
+rowSeq(['Я1','Я2'],4,0.31,0.53,1.0,1.5);
+for(let b=13.4;b<=17.05;b+=0.6)pl('Я3',17.2,b);
+pl('Я4',18.8,14.0); pl('Я4',18.8,15.6);
+pl('Я5',20.3,13.4); pl('Я5',20.3,14.8);
+pl('Л1',14.0,4.75); pl('Л1',14.0,8.95);
+pl('Л2',-13.8,-4.9); pl('Л2',-12.8,-4.9);
+PLANTS.forEach(p=>PL[p.c].q=(PL[p.c].q||0)+1);
+
+/* свет */
+const LIGHTS=[];
+const L_T={G:'Светильник на столбе ворот и калитки',F:'Фасадное бра',C:'Садовый столбик h 0,6 м',U:'Грунтовый прожектор (подсветка дерева)',S:'Гирлянда над патио',B:'Бра на хозпостройке и гараже',P:'Встроенный светильник в мощение',V:'Прожектор на мачте 4 м (волейбол)'};
+const lp=(t,a,b)=>{const p=Lp(a,b);LIGHTS.push({t,x:p[0],y:p[1]});};
+lp('G',-4.7,BN-0.35); lp('G',-0.35,BN-0.35); lp('G',0.95,BN-0.35);
+lp('F',1.7,-0.1); lp('F',3.15,9.2); lp('F',11.2,7.8); lp('F',11.2,4.06);
+lp('B',-5.0,-0.1); lp('B',-10.5,-0.1); lp('B',-7.0,4.8); lp('B',6.75,21.6); lp('B',10.1,18.8);
+lp('P',-4.1,30.0); lp('P',-0.9,30.0); lp('P',-4.1,22.0); lp('P',3.0,26.6);
+lp('U',13.6,-5.9); lp('U',-3.9,12.2); lp('U',22.3,-3.4); lp('U',28.4,1.0);
+COURT.masts.forEach(p=>LIGHTS.push({t:'V',x:p[0],y:p[1]}));
+(function(){[0,1,3,7].forEach(k=>{const pa=PATHS[k];let acc=2.5;for(let i=0;i<pa.pts.length-1;i++){const a=pa.pts[i],b=pa.pts[i+1],d=sub(b,a),L=len(d),u=mul(d,1/L),nr=[u[1],-u[0]];while(acc<L){const p=add(add(a,mul(u,acc)),mul(nr,pa.w/2+0.35));LIGHTS.push({t:'C',x:p[0],y:p[1]});acc+=5.5;}acc-=L;}});})();
+
+/* ливнёвка и дренаж */
+const DRAIN={
+ spouts:Ll([[0,0],[11.09,0],[11.09,9.1],[0,9.1]]),
+ ring:Ll([[-0.7,-0.7],[14.9,-0.7],[14.9,10.1],[-0.7,10.1],[-0.7,-0.7]]),
+ pipes:[Ll([[0,0],[-0.4,-0.4],[-0.4,-1.0],[15.3,-1.0],[22.2,2.7]]),Ll([[0,9.1],[-0.4,9.5],[-0.4,-0.4]]),Ll([[11.09,9.1],[11.5,10.5],[15.3,10.5],[15.3,-1.0]]),Ll([[11.09,0],[11.09,-1.0]])],
+ outlet:Ll([[14.9,2.0],[16.5,2.0],[22.3,1.4],[27.9,1.4]]),
+ trench:Ll([[3.5,21.9],[10.0,21.9]]),
+ well:Lp(28.5,1.4),
+ overflow:Ll([[26.8,2.6],[28.1,1.6]]),
+ barrels:Ll([[-11.8,5.2],[-4.0,5.2]]),
+};
+/* ограда */
+const FENCE=[
+ {i:0,name:'Уличная ограда, ул. Авиации',type:'двусторонний штакетник 1,8 м без щелей снизу, на ленточном цоколе 0,2 м; ворота и калитка',street:true},
+ {i:1,name:'Ограда вдоль пожарного проезда',type:'штакетник 1,8 м на цоколе, без проёмов; изнутри сирень и чубушник',street:true},
+ {i:2,name:'Ограда вдоль пожарного проезда',type:'штакетник 1,8 м на цоколе, без проёмов; изнутри еловая изгородь',street:true},
+ {i:3,name:'Ограда вдоль пожарного проезда',type:'штакетник 1,8 м на цоколе, без проёмов',street:true},
+ {i:4,name:'Сетка 3D-панель, граница с №20',type:'3D-панель 1,8 м на бетонной ленте, сетка заглублена на 30 см'},
+];
+const GATE={a1:-4.5,a2:-0.5,name:'Откатные ворота 4 м, ул. Авиации',tip:'Откатываются на запад, вдоль ограды свободно 11 м. От ворот 8 м до площадки перед гаражом. Привод с пультом, фотоэлементы. Снизу щётка, чтобы под воротами не пролезла собака.'};
+const WICKET={a1:-0.2,a2:0.8,name:'Калитка 1,1 м, ул. Авиации',tip:'В начале прямой дорожки к главному входу. Домофон, почтовый ящик, доводчик. Ночью подсвечена.'};
+const ZONES=[
+ {n:'Хоздвор',c:'#e3c68f',poly:Rl(-17,-9,-3.3,6),lab:Lp(-15,-1.0)},
+ {n:'Въезд и гараж',c:'#e3c68f',poly:Ll([[-5,12.6],[10.5,12.6],[10.5,40],[-5,40]]),lab:Lp(0,0),t:[]},
+ {n:'Палисадник',c:'#f0c9a0',poly:Rl(-3.3,-9,17,0),lab:Lp(5.2,-5.0)},
+ {n:'Плодовый сад',c:'#a8c45a',poly:Rl(17,-9,46,6.5),lab:Lp(18.2,-7.1),t:['ПЛОДОВЫЙ САД']},
+ {n:'Терраса и патио',c:'#9cc97a',poly:Ll([[14.1,0],[17,0],[17,6.5],[46,6.5],[46,11.5],[14.1,11.5]]),lab:Lp(0,0),t:[]},
+ {n:'Детская',c:'#e8a0a0',poly:Rl(-17,6,-4,14.5),lab:Lp(-11.1,14.0)},
+ {n:'Волейбол',c:'#b9d98f',poly:Rl(-17,14.5,-5,40),lab:Lp(0,0),t:[]},
+ {n:'Огород и ягодник',c:'#d6b06a',poly:Ll([[10.5,12.6],[14.1,12.6],[14.1,11.5],[46,11.5],[46,40],[10.5,40]]),lab:Lp(13.6,22.4),t:['ОГОРОД']},
+];
+/* соседи и улицы по генплану */
+const NB=[
+ {poly:[[-13.35,44.07],[-11.34,52.64],[-0.63,50.14],[-2.65,41.57]],k:'Ж',name:'Ж — жилой дом на соседнем участке'},
+ {poly:[[-2.96,25.02],[-0.9,33.78],[-6.75,35.16],[-8.8,26.4]],k:'Н',name:'Н — нежилая постройка на соседнем участке'}];
+
+window.SITE={COURT,BN,PLOT,BUILD,TERRACE,PORCH,STEPS,STOOP,PARK,PATIO,KIDS,BEDS,RAIN,SEPTIC,WELL,PATHS,BEDS_FL,PL,PLANTS,LIGHTS,FENCE,GATE,WICKET,DRAIN,NB,edgePt,nIn,Lp,TH,H0,BS};
+
+/* ---------- SVG ---------- */
+const S=11,X0=-16,X1=68,Y1=70,Y0=-12,W=(X1-X0)*S,H=(Y1-Y0)*S;
+const P=(x,y)=>[+((x-X0)*S).toFixed(1),+((Y1-y)*S).toFixed(1)];
+const ps=poly=>poly.map(p=>P(p[0],p[1]).join(',')).join(' ');
+const pd=pts=>'M'+pts.map(p=>P(...p).join(' ')).join(' L');
+const svg=document.getElementById('plan');
+svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+const NS='http://www.w3.org/2000/svg';
+function el(tag,at,parent,text){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(text!=null)e.textContent=text;(parent||svg).appendChild(e);return e;}
+const defs=el('defs',{});
+const cp=el('clipPath',{id:'clipPlot'},defs);el('polygon',{points:ps(PLOT)},cp);
+const pat=el('pattern',{id:'hatch',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},defs);el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'var(--pl-wood)','stroke-width':2.2},pat);
+const pat2=el('pattern',{id:'glass',width:5,height:5,patternUnits:'userSpaceOnUse'},defs);el('rect',{width:5,height:5,fill:'var(--pl-glass)'},pat2);el('line',{x1:0,y1:0,x2:5,y2:0,stroke:'var(--pl-paper)','stroke-width':1},pat2);
+const pat3=el('pattern',{id:'pave',width:8,height:8,patternUnits:'userSpaceOnUse'},defs);el('rect',{width:8,height:8,fill:'var(--pl-pave)'},pat3);el('path',{d:'M0 4H8M4 0V4M0 8',stroke:'var(--pl-paper)','stroke-width':0.6,fill:'none',opacity:.55},pat3);
+const pat4=el('pattern',{id:'mulch',width:4,height:4,patternUnits:'userSpaceOnUse'},defs);el('rect',{width:4,height:4,fill:'var(--pl-mulch)'},pat4);el('circle',{cx:1,cy:1,r:.6,fill:'var(--pl-soil)'},pat4);
+
+const LAYERS=[
+ ['ctx','Окружение','var(--pl-road)',true],['zones','Зонирование','#e3c68f',true],['pave','Покрытия, дорожки','var(--pl-path)',true],
+ ['build','Постройки','var(--pl-house)',true],['plants','Посадки','var(--pl-tree)',true],['fence','Ограждение','var(--pl-fence)',true],
+ ['light','Освещение','var(--pl-light)',false],['drain','Ливнёвка, дренаж','var(--pl-drain)',false],
+ ['set','Отступы по нормам','var(--pl-set1)',false],['dims','Размеры','var(--pl-text)',true],['labels','Подписи','var(--pl-text)',true]];
+const G={};
+LAYERS.forEach(([k])=>{G[k]=el('g',{id:'L-'+k});});
+const layersBox=document.getElementById('layers');
+let saved={};try{saved=JSON.parse(localStorage.getItem('sad22-layers-v2')||'{}');}catch(e){}
+LAYERS.forEach(([k,n,c,on])=>{const v=k in saved?saved[k]:on;const lab=document.createElement('label');lab.innerHTML=`<input type="checkbox" id="ly-${k}" ${v?'checked':''}><span class="sw" style="background:${c}"></span>${n}`;layersBox.appendChild(lab);G[k].style.display=v?'':'none';lab.querySelector('input').addEventListener('change',e=>{G[k].style.display=e.target.checked?'':'none';saved[k]=e.target.checked;try{localStorage.setItem('sad22-layers-v2',JSON.stringify(saved));}catch(_){}});});
+
+function tipAttr(e,name,desc){e.setAttribute('data-tip',name);if(desc)e.setAttribute('data-desc',desc);e.style.cursor='pointer';return e;}
+/* окружение */
+el('rect',{x:0,y:0,width:W,height:H,fill:'var(--pl-out)'},G.ctx);
+function road(i,o1,o2,ext,label,desc,txt,lane,e0){const a=PLOT[i],b=PLOT[(i+1)%N],n=mul(nIn(i),-1),d=mul(sub(b,a),1/len(sub(b,a)));
+ const p1=add(add(a,mul(d,-(e0!=null?e0:ext))),mul(n,o1)),p2=add(add(b,mul(d,ext)),mul(n,o1)),p3=add(p2,mul(n,o2-o1)),p4=add(p1,mul(n,o2-o1));
+ tipAttr(el('polygon',{points:ps([p1,p2,p3,p4]),fill:'var(--pl-road)',opacity:lane?.55:1},G.ctx),label,desc);
+ const m=add(add(a,mul(sub(b,a),lane?0.18:0.5)),mul(n,(o1+o2)/2));const pm=P(...m);let ang=Math.atan2(-(b[1]-a[1]),b[0]-a[0])*180/Math.PI;if(ang>90)ang-=180;if(ang<-90)ang+=180;
+ el('text',{x:pm[0],y:pm[1]+5,transform:`rotate(${ang} ${pm[0]} ${pm[1]})`,'font-size':lane?10.5:14,'font-weight':700,fill:'var(--pl-text)',opacity:.75,'text-anchor':'middle'},G.ctx,txt);}
+road(0,4.0,9.5,30,'ул. Авиации','Проезжая часть ул. Авиации по кадастровой карте. С неё въезд: ворота, калитка, место для ассенизатора и мусоровоза.','ул. Авиации',false);
+road(3,0.3,4.3,40,'Пожарный проезд','Проезд между участками, по кадастровой карте шириной около 4 м. На генплане он подписан «улица», но это пожарный проезд: с него не заезжают и на нём не паркуются, поэтому ограда здесь без проёмов.','пожарный проезд',true,4);
+road(2,0.3,4.3,3,'Пожарный проезд','Проезд между участками, по кадастровой карте шириной около 4 м. На генплане он подписан «улица», но это пожарный проезд: с него не заезжают и на нём не паркуются, поэтому ограда здесь без проёмов.','пожарный проезд',true);
+road(1,0.3,4.3,3,'Пожарный проезд','Проезд между участками, по кадастровой карте шириной около 4 м. На генплане он подписан «улица», но это пожарный проезд: с него не заезжают и на нём не паркуются, поэтому ограда здесь без проёмов.','пож. проезд',true);
+NB.forEach(b=>{tipAttr(el('polygon',{points:ps(b.poly),fill:'var(--pl-paper)',stroke:'var(--pl-fence)','stroke-width':1.2,opacity:.85},G.ctx),b.name,'Положение — по утверждённому генплану.');const c=b.poly.reduce((s,p)=>[s[0]+p[0]/4,s[1]+p[1]/4],[0,0]);const q=P(...c);el('text',{x:q[0],y:q[1]+5,'font-size':14,'font-weight':800,fill:'var(--pl-text)','text-anchor':'middle',opacity:.7},G.ctx,b.k);});
+[[['№9, №11','через улицу'],[22,67]],[['№7'],[52,26]],[['№9, №11','ул. Первомайская'],[24,-2]],[['участок №20'],[-10,20]]].forEach(([t,[x,y]])=>{const p=P(x,y);t.forEach((s,k)=>el('text',{x:p[0],y:p[1]+k*14,'font-size':12,'font-weight':600,fill:'var(--pl-text)',opacity:.5,'text-anchor':'middle'},G.ctx,s));});
+el('polygon',{points:ps(PLOT),fill:'var(--pl-lawn)'},G.ctx);
+(function(){const g=el('g',{'clip-path':'url(#clipPlot)',opacity:.35},G.ctx);let sd=7;const rnd=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};for(let x=-2;x<58;x+=2.2)for(let y=-1;y<57;y+=2.2){if(rnd()<.5){const p=P(x+rnd(),y+rnd());el('path',{d:`M${p[0]} ${p[1]}l1.5 -3l1.5 3`,stroke:'var(--pl-lawn2)','stroke-width':1,fill:'none'},g);}}})();
+/* зоны */
+(function(){const g=el('g',{'clip-path':'url(#clipPlot)'},G.zones);ZONES.forEach(z=>{tipAttr(el('polygon',{points:ps(z.poly),fill:z.c,opacity:.28,stroke:z.c,'stroke-width':2},g),z.n,'Функциональная зона');});
+ const ang=-TH*180/Math.PI;ZONES.forEach(z=>{const p=P(...z.lab);const t=el('text',{x:p[0],y:p[1],transform:`rotate(${ang} ${p[0]} ${p[1]})`,'font-size':12,'font-weight':800,fill:'var(--pl-text)','letter-spacing':'.06em','text-anchor':'start',opacity:.75,'paint-order':'stroke',stroke:'var(--pl-paper)','stroke-width':3},G.zones);(z.t||[z.n.toUpperCase()]).forEach((s,k)=>el('tspan',{x:p[0],dy:k?13:0},t,s));});})();
+/* покрытия */
+const pg=G.pave;
+tipAttr(el('polygon',{points:ps(PARK.poly),fill:'url(#pave)',stroke:'var(--pl-fence)','stroke-width':1},pg),PARK.name,PARK.tip);
+[[-4.2,21.8,-1.7,26.8],[-3.8,28.2,-1.3,33.2]].forEach(([a,b1,b,b2])=>el('polygon',{points:ps(Rl(a,b1,b,b2)),fill:'none',stroke:'var(--pl-paper)','stroke-width':1.6,'stroke-dasharray':'5 3'},pg));
+/* отмостка */
+el('polygon',{points:ps(Rl(-1,-1,12.1,10.1)),fill:'var(--pl-pave)',opacity:.55},pg);
+el('polygon',{points:ps(Rl(-13.2,-0.7,-2.6,5.4)),fill:'var(--pl-pave)',opacity:.45},pg);
+PATHS.forEach(pa=>{const d=pd(pa.pts);tipAttr(el('path',{d,fill:'none',stroke:'var(--pl-path)','stroke-width':pa.w*S,'stroke-linecap':'round','stroke-linejoin':'round'},pg),pa.name,`Ширина ${String(pa.w).replace('.',',')} м, ${pa.mat}.`);
+ el('path',{d,fill:'none',stroke:'var(--pl-pave)','stroke-width':1,'stroke-dasharray':pa.mat.includes('плит')?'6 5':'none',opacity:.6},pg);});
+tipAttr(el('circle',{cx:P(...PATIO.c)[0],cy:P(...PATIO.c)[1],r:PATIO.r*S,fill:'url(#pave)',stroke:'var(--pl-fence)','stroke-width':1},pg),PATIO.name,PATIO.tip);
+el('circle',{cx:P(...PATIO.c)[0],cy:P(...PATIO.c)[1],r:0.5*S,fill:'var(--warn)',stroke:'var(--pl-fence)'},pg);
+for(let k=0;k<3;k++){const a=(-30+k*120)*Math.PI/180;const c=add(PATIO.c,[Math.cos(a)*1.65,Math.sin(a)*1.65]);const p=P(...c);el('rect',{x:p[0]-7,y:p[1]-3,width:14,height:6,fill:'var(--pl-wood)',transform:`rotate(${-a*180/Math.PI+90} ${p[0]} ${p[1]})`},pg);}
+tipAttr(el('polygon',{points:ps(KIDS.poly),fill:'url(#mulch)',stroke:'var(--pl-fence)','stroke-width':1},pg),KIDS.name,KIDS.tip);
+el('polygon',{points:ps(Rl(-10.6,7.8,-8.6,9.8)),fill:'#f2deb0',stroke:'var(--pl-wood)','stroke-width':1.5},pg);
+el('polygon',{points:ps(Rl(-10.6,11.0,-9.0,12.6)),fill:'var(--pl-wood)'},pg);
+(function(){const a=P(...Lp(-7.6,12.2)),b=P(...Lp(-5.4,12.2));el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--pl-fence)','stroke-width':3},pg);[-7.0,-6.0].forEach(x=>el('polygon',{points:ps(Rl(x-0.35,11.4,x+0.35,11.75)),fill:'var(--pl-fence)'},pg));})();
+(function(){const C=COURT;tipAttr(el('polygon',{points:ps(C.poly),fill:'#ead9a6',stroke:'var(--pl-paper)','stroke-width':2},pg),C.name,C.tip);
+ const ln=(p,q,c,w,da)=>{const a=P(...p),b=P(...q);return el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:c,'stroke-width':w,'stroke-dasharray':da||'none'},pg);};
+ C.att.forEach(([p,q])=>ln(p,q,'var(--pl-paper)',1.2,'4 3'));tipAttr(ln(C.net[0],C.net[1],'var(--pl-fence)',2.6),'Сетка на стойках','Высота 2,43 м или 2,24 м, стойки в стаканах в 1 м от площадки, на зиму снимаются.');
+ C.net.forEach(p=>{const q=P(...p);el('circle',{cx:q[0],cy:q[1],r:3.2,fill:'var(--pl-fence)'},pg);});
+ const a=P(...C.poly[0]),b=P(...C.poly[1]),ang=Math.atan2(b[1]-a[1],b[0]-a[0])*180/Math.PI,q=P(...C.lab);
+ el('text',{x:q[0],y:q[1],transform:`rotate(${ang} ${q[0]} ${q[1]})`,'font-size':11,'font-weight':800,'letter-spacing':'.06em',fill:'var(--pl-text)',opacity:.75,'text-anchor':'middle'},pg,'ВОЛЕЙБОЛ 8×16');})();
+BEDS.forEach(b=>tipAttr(el('polygon',{points:ps(b.poly),fill:'var(--pl-soil)',stroke:'var(--pl-wood)','stroke-width':1.5},pg),b.name,b.tip));
+BEDS_FL.forEach(b=>{tipAttr(el('polygon',{points:ps(b.poly),fill:b.code==='М3'?'var(--pl-water)':'var(--pl-flower)',opacity:b.code==='М3'?.55:.8,stroke:'var(--pl-tree-s)','stroke-width':.8},pg),`${b.code} · ${b.name}`,b.sp);});
+tipAttr(el('polygon',{points:ps(TERRACE.poly),fill:'url(#hatch)',stroke:'var(--pl-wood)','stroke-width':1.5},pg),TERRACE.name,TERRACE.tip);
+tipAttr(el('polygon',{points:ps(PORCH.poly),fill:'var(--pl-pave)',stroke:'var(--pl-fence)'},pg),PORCH.name,PORCH.tip);
+el('polygon',{points:ps(STEPS.poly),fill:'var(--pl-path)',stroke:'var(--pl-fence)','stroke-width':.8},pg);
+for(let k=1;k<2;k++){const b=-1.6+0.6*k/2;const a1=P(...Lp(0.4,b)),a2=P(...Lp(2.95,b));el('line',{x1:a1[0],y1:a1[1],x2:a2[0],y2:a2[1],stroke:'var(--pl-fence)','stroke-width':.6},pg);}
+tipAttr(el('polygon',{points:ps(STOOP.poly),fill:'var(--pl-pave)',stroke:'var(--pl-fence)'},pg),STOOP.name,STOOP.tip);
+/* постройки */
+const bg=G.build;
+BUILD.forEach(b=>{const fill=b.kind==='house'?'var(--pl-house)':b.kind==='hoz'?'var(--pl-roof)':b.kind==='glass'?'url(#glass)':b.kind==='wood'?'url(#hatch)':'var(--pl-wood)';
+ tipAttr(el('polygon',{points:ps(b.poly),fill,stroke:'var(--pl-fence)','stroke-width':b.kind==='house'||b.kind==='hoz'?2.5:1.4},bg),b.name,b.tip);});
+(function(){const l=(p1,p2,c,w)=>{const a=P(...p1),b=P(...p2);el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:c,'stroke-width':w},bg);};
+ l(Lp(0,4.55),Lp(11.09,4.55),'var(--pl-paper)',1.6);l(Lp(-12.5,2.35),Lp(-3.3,2.35),'var(--pl-paper)',1.4);l(Lp(-6.3,0),Lp(-6.3,4.7),'var(--pl-paper)',1.2);l(Lp(3.5,18.25),Lp(10.0,18.25),'var(--pl-paper)',1.4);})();
+(function(){const p=P(...SEPTIC.c);tipAttr(el('circle',{cx:p[0],cy:p[1],r:SEPTIC.r*S,fill:'none',stroke:'var(--pl-drain)','stroke-width':1.5,'stroke-dasharray':'4 3'},bg),SEPTIC.name,SEPTIC.tip);el('circle',{cx:p[0],cy:p[1],r:4,fill:'var(--pl-drain)'},bg);
+ const w=P(...WELL.c);tipAttr(el('circle',{cx:w[0],cy:w[1],r:6,fill:'var(--pl-paper)',stroke:'var(--pl-drain)','stroke-width':2.5},bg),WELL.name,WELL.tip);el('circle',{cx:w[0],cy:w[1],r:2,fill:'var(--pl-drain)'},bg);})();
+/* разрез */
+(function(){const s=document.getElementById('section');const e=(t,a,tx)=>{const n=document.createElementNS(NS,t);for(const k in a)n.setAttribute(k,a[k]);if(tx!=null)n.textContent=tx;s.appendChild(n);return n;};
+ const b0=-13,b1=45,k=290/(b1-b0),sx=b=>5+(b-b0)*k,g=92,z=h=>g-h*k;
+ e('rect',{x:sx(-12.3),y:g,width:4.0*k,height:3,fill:'var(--pl-road)',opacity:.6});e('rect',{x:sx(39),y:g,width:5.5*k,height:3,fill:'var(--pl-road)'});
+ e('rect',{x:sx(b0),y:g,width:(b1-b0)*k,height:30,fill:'var(--pl-out)'});e('rect',{x:sx(BS),y:g,width:(35-BS)*k,height:30,fill:'var(--pl-lawn)'});
+ e('rect',{x:sx(-0.6),y:g,width:10.3*k,height:0.9*k,fill:'#e9d9a7'});e('text',{x:sx(4.55),y:g+0.9*k+9,'font-size':8,fill:'var(--muted)','text-anchor':'middle'},'песчаная подушка');
+ [-0.7,9.8].forEach(b=>e('circle',{cx:sx(b),cy:g+1.1*k,r:2.6,fill:'var(--pl-drain)'}));
+ e('text',{x:sx(-0.7)-3,y:g+1.1*k+3,'font-size':8,fill:'var(--pl-drain)','text-anchor':'end'},'дренаж');
+ e('rect',{x:sx(0),y:z(0.4),width:9.1*k,height:0.4*k,fill:'var(--pl-roof)'});
+ e('rect',{x:sx(0),y:z(3.265),width:9.1*k,height:(3.265-0.4)*k,fill:'var(--pl-house)'});
+ e('path',{d:`M${sx(-0.5)} ${z(3.265)}L${sx(4.55)} ${z(7.0)}L${sx(9.6)} ${z(3.265)}z`,fill:'var(--pl-roof)'});
+ e('rect',{x:sx(-1.6),y:z(0.4),width:1.6*k,height:0.4*k,fill:'var(--pl-pave)'});
+ [BS,35].forEach(b=>e('rect',{x:sx(b)-1,y:z(1.8),width:2,height:1.8*k,fill:'var(--pl-fence)'}));
+ e('text',{x:sx(9.6)+3,y:z(7.0)+3,'font-size':8.5,fill:'var(--ink)','font-family':'JetBrains Mono, monospace'},'+6,600');
+ e('text',{x:sx(9.6)+3,y:z(3.265)+3,'font-size':8.5,fill:'var(--ink)','font-family':'JetBrains Mono, monospace'},'+2,865');
+ e('circle',{cx:sx(-5),cy:z(2.6),r:2.4*k,fill:'var(--pl-tree)',opacity:.6});
+ e('rect',{x:sx(19.1),y:g-2,width:7.2*k,height:2,fill:'#d9c27f'});e('text',{x:sx(22.7),y:g-5,'font-size':8,fill:'var(--muted)','text-anchor':'middle'},'волейбол');
+ e('text',{x:4,y:12,'font-size':9.5,fill:'var(--muted)','text-anchor':'start'},'Ю · проезд');e('text',{x:296,y:12,'font-size':9.5,fill:'var(--muted)','text-anchor':'end'},'С · ул. Авиации');
+ e('text',{x:sx(-4),y:g-3-0.0*k,'font-size':8,fill:'var(--muted)','text-anchor':'middle'},'8,0 м');
+ e('text',{x:150,y:127,'font-size':9,fill:'var(--muted)','text-anchor':'middle'},'масштаб по горизонтали и вертикали одинаковый');})();
+/* посадки */
+const plg=G.plants;
+const tCol={tree:'var(--pl-tree)',con:'var(--pl-con)',fruit:'var(--pl-fruit)',shrub:'var(--pl-shrub)',hedge:'var(--pl-con)',berry:'var(--pl-berry)',vine:'var(--pl-flower)'};
+PLANTS.forEach(p=>{const d=PL[p.c],q=P(p.x,p.y),r=d.r*S;const g=tipAttr(el('g',{},plg),`${p.c} · ${d.n}`,`${d.l}. ${d.h}. ${d.note}.`);
+ if(d.t==='con'||d.t==='hedge'){let path='';const n=d.t==='hedge'?8:12;for(let k=0;k<n*2;k++){const a=k/(n*2)*Math.PI*2,rr=k%2?r*0.72:r;path+=(k?'L':'M')+(q[0]+rr*Math.cos(a)).toFixed(1)+' '+(q[1]+rr*Math.sin(a)).toFixed(1);}el('path',{d:path+'z',fill:tCol[d.t],stroke:'var(--pl-tree-s)','stroke-width':.8,opacity:.92},g);}
+ else if(d.t==='tree'||d.t==='fruit'){el('circle',{cx:q[0],cy:q[1],r,fill:tCol[d.t],opacity:.55,stroke:'var(--pl-tree-s)','stroke-width':1.2,'stroke-dasharray':d.t==='fruit'?'3 2':'none'},g);el('circle',{cx:q[0],cy:q[1],r:2.5,fill:'var(--pl-tree-s)'},g);}
+ else if(d.t==='vine'){el('path',{d:`M${q[0]-r} ${q[1]}q${r/2} ${-r} ${r} 0t${r} 0`,stroke:tCol.vine,'stroke-width':2.2,fill:'none'},g);el('circle',{cx:q[0],cy:q[1],r:2,fill:'var(--pl-berry)'},g);}
+ else{el('circle',{cx:q[0],cy:q[1],r,fill:tCol[d.t],opacity:.85,stroke:'var(--pl-tree-s)','stroke-width':.7},g);}
+});
+/* метки кодов (по одной на группу) */
+(function(){const seen={};const lg=G.labels;PLANTS.forEach(p=>{const d=PL[p.c];if(d.t==='hedge')return;seen[p.c]=(seen[p.c]||0)+1;if(d.t!=='tree'&&d.t!=='fruit'&&d.t!=='con'&&seen[p.c]>1&&!['К3','К4','К5','К6'].includes(p.c))return;if(['К3','К4','К5','К6'].includes(p.c)&&seen[p.c]>2)return;const q=P(p.x,p.y);el('text',{x:q[0]+d.r*S*0.55+2,y:q[1]-d.r*S*0.55,'font-size':10,'font-weight':700,fill:'var(--pl-text)','font-family':'JetBrains Mono, monospace','paint-order':'stroke',stroke:'var(--pl-paper)','stroke-width':2.5},lg,p.c);});
+ const h=edgePt(2,0.45,2.4),hq=P(...h);el('text',{x:hq[0],y:hq[1],'font-size':10,'font-weight':700,fill:'var(--pl-text)','font-family':'JetBrains Mono, monospace','paint-order':'stroke',stroke:'var(--pl-paper)','stroke-width':2.5},lg,'Х1');
+ BEDS_FL.forEach(b=>{const c=b.poly.reduce((a,p)=>[a[0]+p[0]/b.poly.length,a[1]+p[1]/b.poly.length],[0,0]);const q=P(...c);el('text',{x:q[0],y:q[1]+3.5,'font-size':10,'font-weight':700,fill:'var(--pl-text)','text-anchor':'middle','font-family':'JetBrains Mono, monospace'},lg,b.code);});})();
+/* ограда */
+const fg=G.fence;
+const fl=(p1,p2,f,w,dash)=>{const a=P(...p1),b=P(...p2);return tipAttr(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--pl-fence)','stroke-width':w,'stroke-dasharray':dash||'none'},fg),f.name,f.type);};
+const gp=a=>Lp(a,BN);
+FENCE.forEach(f=>{const a=PLOT[f.i],b=PLOT[(f.i+1)%N];
+ if(f.i===0){[[a,gp(GATE.a1)],[gp(GATE.a2),gp(WICKET.a1)],[gp(WICKET.a2),b]].forEach(([p,q])=>fl(p,q,f,3.2));}
+ else if(f.street)fl(a,b,f,3.2);else fl(a,b,f,1.6,'9 2 1 2');});
+(function(){const g1=P(...gp(GATE.a1)),g2=P(...gp(GATE.a2));tipAttr(el('line',{x1:g1[0],y1:g1[1],x2:g2[0],y2:g2[1],stroke:'var(--warn)','stroke-width':4},fg),GATE.name,GATE.tip);
+ const r1=P(...Lp(GATE.a1,BN-0.4)),r2=P(...Lp(GATE.a1-5.5,BN-0.4));el('line',{x1:r1[0],y1:r1[1],x2:r2[0],y2:r2[1],stroke:'var(--warn)','stroke-width':1.2,'stroke-dasharray':'3 3'},fg);
+ const w1=P(...gp(WICKET.a1)),w2=P(...gp(WICKET.a2));tipAttr(el('line',{x1:w1[0],y1:w1[1],x2:w2[0],y2:w2[1],stroke:'var(--warn)','stroke-width':4},fg),WICKET.name,WICKET.tip);
+ PLOT.forEach(p=>{const q=P(...p);el('rect',{x:q[0]-3,y:q[1]-3,width:6,height:6,fill:'var(--pl-fence)'},fg);});
+ COURT.traps.forEach(([p,q])=>{const t1=P(...p),t2=P(...q);tipAttr(el('line',{x1:t1[0],y1:t1[1],x2:t2[0],y2:t2[1],stroke:'var(--pl-fence)','stroke-width':1.6,'stroke-dasharray':'2 2'},fg),'Ловушка для мяча','Сетка из полиэтилена высотой 4 м на стойках через 3 м.');});})();
+/* свет */
+const lg2=G.light;
+(function(){const p=P(...PATIO.c);el('circle',{cx:p[0],cy:p[1],r:(PATIO.r+0.3)*S,fill:'none',stroke:'var(--pl-light)','stroke-width':1.5,'stroke-dasharray':'1 4','stroke-linecap':'round'},lg2);})();
+el('path',{d:pd(Ll([[1.1,10.6],[1.1,34.4]])),fill:'none',stroke:'var(--pl-light)','stroke-width':1,'stroke-dasharray':'8 3 2 3',opacity:.8},lg2);
+el('path',{d:pd(Ll([[11.09,7.4],[14.4,7.9],[16.0,7.9]])),fill:'none',stroke:'var(--pl-light)','stroke-width':1,'stroke-dasharray':'8 3 2 3',opacity:.8},lg2);
+el('path',{d:pd([Lp(1.1,18.6),Lp(-15.0,18.6),COURT.masts[0],COURT.masts[1]]),fill:'none',stroke:'var(--pl-light)','stroke-width':1,'stroke-dasharray':'8 3 2 3',opacity:.8},lg2);
+el('path',{d:pd(Ll([[1.1,22.2],[10.4,22.2],[10.4,18.8]])),fill:'none',stroke:'var(--pl-light)','stroke-width':1,'stroke-dasharray':'8 3 2 3',opacity:.8},lg2);
+LIGHTS.forEach(l=>{const q=P(l.x,l.y);const g=tipAttr(el('g',{},lg2),L_T[l.t],l.t==='U'?'Подсветка кроны снизу, 3000 K, 5–7 Вт.':l.t==='V'?'LED 100 Вт, 4000 K, на мачте 4 м, светит вниз на площадку.':l.t==='C'?'Высота 0,6 м, свет направлен вниз, 3000 K, 5 Вт.':'');
+ el('circle',{cx:q[0],cy:q[1],r:l.t==='U'?5:4,fill:'var(--pl-light)',stroke:'var(--pl-fence)','stroke-width':1},g);
+ if(l.t==='U'){el('circle',{cx:q[0],cy:q[1],r:9,fill:'none',stroke:'var(--pl-light)','stroke-width':1,opacity:.7},g);}
+ if(l.t==='V'){el('path',{d:`M${q[0]-5} ${q[1]-5}l10 10M${q[0]+5} ${q[1]-5}l-10 10`,stroke:'var(--pl-fence)','stroke-width':1.2},g);}
+ if(l.t==='G'||l.t==='F'||l.t==='B'){el('path',{d:`M${q[0]-6} ${q[1]}h12M${q[0]} ${q[1]-6}v12`,stroke:'var(--pl-fence)','stroke-width':1},g);}});
+/* ливнёвка */
+const dg=G.drain;
+tipAttr(el('path',{d:pd(DRAIN.ring),fill:'none',stroke:'var(--pl-drain)','stroke-width':1.4,'stroke-dasharray':'2 3'},dg),'Кольцевой дренаж вокруг дома','Труба Ø110 в геотекстиле и щебне 20–40, на 0,3 м ниже песчаной подушки, в 0,7 м от стен. Уклон 0,5 %, выпуск в поглощающий колодец. Смотровые колодцы на углах.');
+DRAIN.pipes.forEach(pp=>el('path',{d:pd(pp),fill:'none',stroke:'var(--pl-drain)','stroke-width':1.8,'stroke-dasharray':'7 3'},dg));
+el('path',{d:pd(DRAIN.outlet),fill:'none',stroke:'var(--pl-drain)','stroke-width':1.4,'stroke-dasharray':'2 3'},dg);
+el('path',{d:pd(DRAIN.overflow),fill:'none',stroke:'var(--pl-drain)','stroke-width':1.8},dg);
+(function(){const a=P(...DRAIN.trench[0]),b=P(...DRAIN.trench[1]);tipAttr(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--pl-drain)','stroke-width':5},dg),'Линейный водоотводный лоток','Пластиковый лоток DN100 с решёткой класса C250, по нему можно ездить. Перехватывает воду с въезда перед воротами гаража.');
+ DRAIN.spouts.forEach(s=>{const q=P(...s);tipAttr(el('rect',{x:q[0]-4,y:q[1]-4,width:8,height:8,fill:'var(--pl-paper)',stroke:'var(--pl-drain)','stroke-width':2},dg),'Дождеприёмник под водостоком','Пескоуловитель 300×300 с корзиной.');});
+ DRAIN.barrels.forEach(s=>{const q=P(...s);tipAttr(el('circle',{cx:q[0],cy:q[1],r:0.4*S,fill:'var(--pl-water)',stroke:'var(--pl-drain)','stroke-width':1.5},dg),'Бочка для дождевой воды 200 л','Собирает воду с крыши хозпостройки, из неё поливают огород. Закрыта крышкой, чтобы туда не упали дети.');});
+ const w=P(...DRAIN.well);tipAttr(el('circle',{cx:w[0],cy:w[1],r:0.5*S,fill:'var(--pl-paper)',stroke:'var(--pl-drain)','stroke-width':2.5},dg),'Поглощающий колодец Ø1 м','Кольца ЖБИ, щебёночное дно 0,5 м. Принимает перелив из дождевого сада и воду кольцевого дренажа.');})();
+/* отступы */
+const sg=G.set;
+const SETS=[{d:[5,3,3,3,3],c:'var(--pl-set1)',n:'Пятно застройки дома: 5 м от ул. Авиации, 3 м от соседей и проездов'},{d:[3,1,1,1,1],c:'var(--pl-set2)',n:'Хозпостройки: 3 м от улицы, 1 м от соседей и проездов'},{d:[4,4,4,4,4],c:'var(--pl-set3)',n:'Высокие деревья: 4 м от границ'}];
+SETS.forEach(s=>{tipAttr(el('polygon',{points:ps(inset(s.d)),fill:'none',stroke:s.c,'stroke-width':1.6,'stroke-dasharray':'7 4'},sg),s.n,'Линия ограничения. Нормы ориентировочные, их надо сверить с градпаспортом.');});
+/* размеры */
+const dmg=G.dims;
+const SIDE_TXT=['16,74','26,77','32,64','56,79','43,00'];
+PLOT.forEach((a,i)=>{const b=PLOT[(i+1)%N];const m=add(mul(add(a,b),.5),mul(nIn(i),-1.9));const q=P(...m);let ang=Math.atan2(-(b[1]-a[1]),b[0]-a[0])*180/Math.PI;if(ang>90)ang-=180;if(ang<-90)ang+=180;
+ el('text',{x:q[0],y:q[1]+4,transform:`rotate(${ang} ${q[0]} ${q[1]})`,'font-size':12,'font-weight':600,fill:'var(--pl-text)','text-anchor':'middle','font-family':'JetBrains Mono, monospace','paint-order':'stroke',stroke:'var(--pl-out)','stroke-width':3},dmg,SIDE_TXT[i]+' м');});
+PLOT.forEach((p,i)=>{const nn=add(nIn(i),nIn((i-1+N)%N));const q=P(...add(p,mul(nn,-1.4)));el('text',{x:q[0],y:q[1]+4,'font-size':12,'font-weight':800,fill:'var(--pl-text)','text-anchor':'middle'},dmg,VN[i]);});
+const tk=el('marker',{id:'tick',viewBox:'0 0 10 10',refX:5,refY:5,markerWidth:6,markerHeight:6,orient:'auto'},defs);el('path',{d:'M5 0V10',stroke:'var(--pl-set1)','stroke-width':2},tk);
+function dimSeg(p,f,label,off){const a=P(...p),b=P(...f);el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--pl-set1)','stroke-width':1,'marker-start':'url(#tick)','marker-end':'url(#tick)'},dmg);const m=P(...mul(add(p,f),.5));el('text',{x:m[0]+(off?off[0]:3),y:m[1]+(off?off[1]:-3),'font-size':10.5,'font-weight':700,fill:'var(--pl-set1)','font-family':'JetBrains Mono, monospace','paint-order':'stroke',stroke:'var(--pl-paper)','stroke-width':2.5},dmg,label||len(sub(p,f)).toFixed(1).replace('.',',')+' м');}
+dimSeg(Lp(11.09,0),Lp(11.09,BS),'8,0');
+dimSeg(Lp(-12.5,4.0),Lp(-15.48,4.0),'3,0',[-10,-4]);
+dimSeg(Lp(-3.3,3.6),Lp(0,3.6),'3,3',[-9,-5]);
+/* подписи */
+const lab=G.labels;const RA=-TH*180/Math.PI;
+function TL(a,b,t,o){o=o||{};const q=P(...Lp(a,b));return el('text',{x:q[0],y:q[1],transform:`rotate(${RA} ${q[0]} ${q[1]})`,'font-size':o.s||11,'font-weight':o.w||600,fill:o.c||'var(--pl-text)','text-anchor':o.a||'middle','paint-order':'stroke',stroke:'var(--pl-paper)','stroke-width':o.sw!=null?o.sw:2.6},lab,t);}
+TL(5.55,5.4,'ДОМ №1',{s:13,w:800,c:'var(--pl-paper)',sw:0});TL(5.55,3.2,'11,09 × 9,1',{s:10,w:500,c:'var(--pl-paper)',sw:0});
+TL(-7.9,1.4,'№2 хозпостройка',{s:10,w:700,c:'var(--pl-paper)',sw:0});TL(-4.8,3.4,'КЖ',{s:9,w:700,c:'var(--pl-paper)',sw:0});
+TL(12.6,6.8,'терр.',{s:9.5});TL(-2.95,24.3,'P',{s:11,w:800});TL(18.3,7.1,'патио',{s:10});TL(6.75,18.8,'ГАРАЖ',{s:12,w:800,c:'var(--pl-paper)',sw:0});TL(6.75,16.9,'6,5 × 6,5',{s:9.5,w:500,c:'var(--pl-paper)',sw:0});TL(2.45,7.9,'вход',{s:9,w:700,c:'var(--pl-paper)',sw:0});
+TL(-8.1,10.1,'детская',{s:10});TL(13.5,14.3,'теплица',{s:9.5});TL(-13.6,1.6,'дрова',{s:8.5});
+TL(-13.3,-4.0,'компост',{s:9});TL(24.5,5.6,'дождевой сад',{s:9});TL(-2.5,BN-1.0,'ворота',{s:9.5,c:'var(--warn)'});TL(2.6,BN-2.2,'калитка',{s:8.5,c:'var(--warn)'});TL(-2.3,30.7,'септик',{s:8});TL(9,15.1,'скважина',{s:9});
+/* компас и масштаб */
+(function(){const c=P(60,52);const g=el('g',{},lab);el('circle',{cx:c[0],cy:c[1],r:20,fill:'var(--pl-paper)',stroke:'var(--pl-fence)'},g);el('path',{d:`M${c[0]} ${c[1]-17}L${c[0]+7} ${c[1]+8}L${c[0]} ${c[1]+3}L${c[0]-7} ${c[1]+8}z`,fill:'var(--pl-fence)'},g);el('text',{x:c[0],y:c[1]-24,'font-size':13,'font-weight':800,fill:'var(--pl-text)','text-anchor':'middle'},g,'С');
+ const s0=P(-14,-10),s1=P(-4,-10);for(let k=0;k<5;k++){const a=P(-14+k*2,-10);el('rect',{x:a[0],y:a[1]-4,width:2*S,height:6,fill:k%2?'var(--pl-paper)':'var(--pl-fence)',stroke:'var(--pl-fence)','stroke-width':.8},g);}
+ el('text',{x:s0[0],y:s0[1]-8,'font-size':10.5,fill:'var(--pl-text)','font-family':'JetBrains Mono, monospace'},g,'0');el('text',{x:s1[0],y:s1[1]-8,'font-size':10.5,fill:'var(--pl-text)','text-anchor':'end','font-family':'JetBrains Mono, monospace'},g,'10 м');
+ const t=P(36,-10.6);el('text',{x:t[0],y:t[1],'font-size':11,fill:'var(--pl-text)',opacity:.7},g,`Площадь по сторонам генплана ${AREA.toFixed(0)} м² · по кадастру 1671 м²`);})();
+
+/* tooltip */
+const tip=document.getElementById('tip'),sheet=document.getElementById('sheet'),sel=document.getElementById('sel');
+function show(e,t){const n=t.getAttribute('data-tip'),d=t.getAttribute('data-desc')||'';tip.innerHTML=`<b>${n}</b>${d}`;tip.hidden=false;const r=sheet.getBoundingClientRect();let x=e.clientX-r.left+14,y=e.clientY-r.top+14;if(x>r.width-290)x=e.clientX-r.left-290;if(y>r.height-120)y=e.clientY-r.top-110;tip.style.left=Math.max(4,x)+'px';tip.style.top=Math.max(4,y)+'px';sel.innerHTML=`<b>${n}</b>${d}`;}
+svg.addEventListener('mousemove',e=>{const t=e.target.closest('[data-tip]');if(t)show(e,t);else tip.hidden=true;});
+svg.addEventListener('mouseleave',()=>tip.hidden=true);
+svg.addEventListener('click',e=>{const t=e.target.closest('[data-tip]');if(t){sel.innerHTML=`<b>${t.getAttribute('data-tip')}</b>${t.getAttribute('data-desc')||''}`;}});
+
+/* ---------- таблицы ---------- */
+const nf=(v,d)=>v.toFixed(d==null?1:d).replace('.',',');
+(function(){const t=document.getElementById('plantTable');const cats=[['Деревья декоративные','Д'],['Плодовые','П'],['Хвойные','Х'],['Кустарники','К'],['Ягодные','Я'],['Лианы','Л']];
+ let h='<thead><tr><th>Код</th><th>Растение</th><th>Латынь</th><th>Размер</th><th class="num">Шт.</th><th>Зачем и где</th></tr></thead><tbody>';
+ cats.forEach(([cn,pre])=>{h+=`<tr><th colspan="6" style="padding-top:14px">${cn}</th></tr>`;Object.keys(PL).filter(k=>k[0]===pre&&PL[k].q).forEach(k=>{const d=PL[k];h+=`<tr><td><span class="code">${k}</span></td><td><b>${d.n}</b></td><td><i>${d.l}</i></td><td>${d.h}</td><td class="num">${k==='Я3'?nf((PL[k].q-1)*0.6,0)+' м ряда':k==='Х1'?d.q+' (≈'+nf((PL[k].q-1)*0.7,0)+' м)':d.q}</td><td>${d.note}</td></tr>`;});});
+ t.innerHTML=h+'</tbody>';
+ let b='<thead><tr><th>Код</th><th>Цветник</th><th class="num">Площадь</th><th>Состав</th></tr></thead><tbody>';BEDS_FL.forEach(x=>{b+=`<tr><td><span class="code">${x.code}</span></td><td><b>${x.name}</b></td><td class="num">${nf(Math.abs(sArea(x.poly)))} м²</td><td>${x.sp}</td></tr>`;});document.getElementById('bedTable').innerHTML=b+'</tbody>';})();
+(function(){/* нормы */
+ const rows=[];const chk=(name,pts,need,needStreet,note)=>{let worst=null;for(let i=0;i<N;i++){const need_i=(EDGES[i].street&&needStreet!=null)?needStreet:need;const d=Math.min(...pts.map(p=>dSeg(p,PLOT[i],PLOT[(i+1)%N])));const r={i,d,need:need_i,ok:d>=need_i-0.05};if(!worst||(d-need_i)<(worst.d-worst.need))worst=r;}rows.push({name,...worst,note});};
+ const hp=HOUSE.poly.concat(TERRACE.poly);
+ chk('Дом №1 с террасой',hp,3,5,'по генплану; до соседей и проездов 3 м, до улицы 5 м');
+ chk('Хозпостройка №2',BUILD[1].poly,1,3,'по генплану; 1 м до соседей и проездов');
+ chk('Гараж',BUILD[5].poly,1,3,'новая постройка; 1 м до соседей и проездов, 3 м до улицы');chk('Волейбольная площадка',COURT.poly,1,null,'1 м до ограды, вдоль проезда ловушка для мяча');chk('Дровник',BUILD[2].poly,1,3,'1 м');chk('Теплица',BUILD[3].poly,1,3,'1 м');chk('Компостер',BUILD[4].poly,1,3,'1 м');
+ const treeNeed={tree:2,fruit:2,con:2};PLANTS.forEach(p=>{const d=PL[p.c];if(!treeNeed[d.t]||d.r<1.5)return;const tall=p.c==='Д4'||p.c==='Д2';chk(`${p.c} ${d.n}`,[[p.x,p.y]],tall?4:2,null,tall?'высокое дерево: 4 м':'среднее дерево: 2 м');});
+ chk('Кустарники (ближайший)',PLANTS.filter(p=>['shrub','berry','hedge'].includes(PL[p.c].t)).map(p=>[p.x,p.y]),1,null,'1 м');
+ let h='<thead><tr><th>Объект</th><th>Ближайшая граница</th><th class="num">Факт</th><th class="num">Норма</th><th></th></tr></thead><tbody>';
+ rows.forEach(r=>{h+=`<tr><td><b>${r.name}</b><div class="small muted">${r.note}</div></td><td>${EDGES[r.i].n} (${EDGES[r.i].nb})</td><td class="num">${nf(r.d)} м</td><td class="num">≥ ${nf(r.need,0)} м</td><td>${r.ok?'<span class="pill ok">в норме</span>':'<span class="pill bad">мало</span>'}</td></tr>`;});
+ const pr=(name,d,need,note)=>{h+=`<tr><td><b>${name}</b><div class="small muted">${note}</div></td><td>—</td><td class="num">${nf(d)} м</td><td class="num">≥ ${nf(need,0)} м</td><td>${d>=need-0.05?'<span class="pill ok">в норме</span>':'<span class="pill bad">мало</span>'}</td></tr>`;};
+ const sept=circlePoly(SEPTIC.c[0],SEPTIC.c[1],SEPTIC.r,SEPTIC.r,16);
+ pr('Септик ↔ дом',polyDist(sept,hp),5,'санитарный разрыв до фундамента');
+ pr('Септик ↔ скважина',len(sub(SEPTIC.c,WELL.c)),20,'для герметичного септика; при грунтовой доочистке нужно 50 м, тогда только станция биоочистки');
+ pr('Дом ↔ дом соседа Ж',polyDist(hp,NB[0].poly),8,'противопожарный разрыв; точное значение зависит от степени огнестойкости');
+ pr('Хозпостройка ↔ дом соседа Ж',polyDist(BUILD[1].poly,NB[0].poly),8,'противопожарный разрыв, уточнить по материалам');
+ pr('Гараж ↔ дом соседа Ж',polyDist(BUILD[5].poly,NB[0].poly),8,'противопожарный разрыв, уточнить по материалам');
+ pr('Гараж ↔ дом №1',polyDist(BUILD[5].poly,hp),3,'на своём участке не нормируется, нужно для прохода и света');
+ pr('Компостер ↔ дом соседа Ж',polyDist(BUILD[4].poly,NB[0].poly),8,'санитарная практика 8–12 м');
+ h+=`<tr><td colspan="5" class="small muted">Дом ↔ хозпостройка: 3,3 м по генплану. Обе постройки на одном участке, противопожарный разрыв между ними не нормируется, но стена хозпостройки, обращённая к дому, лучше без окон и из негорючих материалов.</td></tr>`;
+ document.getElementById('normTable').innerHTML=h+'</tbody>';
+ /* баланс */
+ const a=p=>Math.abs(sArea(p));const pathA=PATHS.reduce((s,pa)=>{let L=0;for(let i=0;i<pa.pts.length-1;i++)L+=len(sub(pa.pts[i+1],pa.pts[i]));return s+L*pa.w;},0);
+ const otm=a(Rl(-1,-1,12.1,10.1))-a(HOUSE.poly)+a(Rl(-13.2,-0.7,-2.6,5.4))-a(BUILD[1].poly);
+ const bal=[['Дом №1, терраса, крыльца',a(HOUSE.poly)+a(TERRACE.poly)+a(PORCH.poly)+a(STEPS.poly)+a(STOOP.poly)],['Хозпостройка №2, гараж, дровник, теплица, компост',BUILD.slice(1).reduce((s,b)=>s+a(b.poly),0)],['Отмостка',otm],['Въезд к гаражу и гостевые места',a(PARK.poly)],['Волейбольная площадка',a(COURT.poly)],['Дорожки',pathA],['Патио',Math.PI*PATIO.r**2],['Детская площадка',a(KIDS.poly)],['Грядки',BEDS.reduce((s,b)=>s+a(b.poly),0)],['Цветники и дождевой сад',BEDS_FL.reduce((s,b)=>s+a(b.poly),0)]];
+ const used=bal.reduce((s,r)=>s+r[1],0);bal.push(['Газон, посадки, ягодник, сад',AREA-used]);
+ let b='<thead><tr><th>Элемент</th><th class="num">м²</th><th class="num">%</th></tr></thead><tbody>';bal.forEach(r=>{b+=`<tr><td>${r[0]}</td><td class="num">${nf(r[1],0)}</td><td class="num">${nf(r[1]/AREA*100)}</td></tr>`;});
+ b+=`<tr><td><b>Итого</b></td><td class="num"><b>${nf(AREA,0)}</b></td><td class="num">100</td></tr><tr><td colspan="3" class="small muted">Площадь посчитана по сторонам генплана, по кадастру 1671 м². Застроено ${nf((bal[0][1]+bal[1][1])/AREA*100)} % участка, озеленено около ${nf((AREA-used+BEDS_FL.reduce((s,b)=>s+a(b.poly),0))/AREA*100,0)} %.</td></tr>`;
+ document.getElementById('balTable').innerHTML=b+'</tbody>';
+ document.getElementById('lawnTxt').innerHTML=`Газона около <b>${nf((AREA-used)*0.8,0)} м²</b> без учёта места под кронами. Для детей и собак нужна износостойкая смесь: мятлик луговой 40 %, райграс пастбищный 30 %, овсяница красная 30 %. Норма высева 35–40 г/м², то есть около ${nf((AREA-used)*0.8*0.04,0)} кг семян. Плодородный слой 10–15 см по утрамбованному основанию. Собаки обычно бегают вдоль ограды и протаптывают там тропу. Поэтому вдоль соседских границ лучше сразу засыпать гравийную полосу шириной 0,6 м. В плодовом саду газон можно заменить лугом с клевером и косить раз в месяц.`;
+ let e='<thead><tr><th>Сторона</th><th>Соседство</th><th class="num">Длина</th></tr></thead><tbody>';PLOT.forEach((p,i)=>{e+=`<tr><td>${VN[i]}–${VN[(i+1)%N]} · ${EDGES[i].n}</td><td>${EDGES[i].nb}</td><td class="num">${SIDE_TXT[i]} м</td></tr>`;});
+ e+=`<tr><td colspan="3" class="small muted">Длины — по подписям на генплане, периметр 175,94 м. Ворота, калитка и въезд к гаражу — на северной стороне А–Б, с ул. Авиации. Остальные стороны выходят на пожарный проезд или к соседу №20.</td></tr>`;document.getElementById('edgeTable').innerHTML=e+'</tbody>';
+ /* свет */
+ const cnt={};LIGHTS.forEach(l=>cnt[l.t]=(cnt[l.t]||0)+1);let lt='<thead><tr><th>Светильник</th><th class="num">Шт.</th></tr></thead><tbody>';Object.keys(L_T).forEach(k=>{if(k==='S'){lt+=`<tr><td>${L_T[k]}</td><td class="num">≈ 16 м</td></tr>`;return;}lt+=`<tr><td>${L_T[k]}</td><td class="num">${cnt[k]||0}</td></tr>`;});document.getElementById('lightTable').innerHTML=lt+'</tbody>';
+ let ft='<thead><tr><th>Участок ограды</th><th>Тип</th><th class="num">Длина</th></tr></thead><tbody>';FENCE.forEach(f=>{ft+=`<tr><td>${VN[f.i]}–${VN[(f.i+1)%N]}</td><td>${f.type}</td><td class="num">${SIDE_TXT[f.i]} м</td></tr>`;});ft+=`<tr><td>—</td><td>${GATE.name}; ${WICKET.name}</td><td class="num"></td></tr>`;document.getElementById('fenceTable').innerHTML=ft+'</tbody>';
+})();
+
+/* ---------- вкладки ---------- */
+const tabs=[...document.querySelectorAll('.tabs button')];
+function openTab(name){tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==name);if(name==='v3')window.dispatchEvent(new Event('open3d'));if(location.hash!=='#'+name)history.replaceState(null,'','#'+name);}
+tabs.forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.tab)));
+const h0=location.hash.slice(1);if(tabs.some(b=>b.dataset.tab===h0))openTab(h0);
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(tabs.some(b=>b.dataset.tab===h))openTab(h);});
+})();
+</script>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const D=window.SITE;let started=false;
+window.addEventListener('open3d',()=>{if(!started){started=true;init();}else window.dispatchEvent(new Event('resize'));});
+if(location.hash==='#v3'&&!started){started=true;init();}
+function init(){
+ const box=document.getElementById('v3d'),msg=document.getElementById('v3dmsg');
+ const cx=24,cy=26;const V=(x,y,z)=>new THREE.Vector3(x-cx,z||0,-(y-cy));
+ const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.outputColorSpace=THREE.SRGBColorSpace;box.appendChild(renderer.domElement);
+ const scene=new THREE.Scene();const sky=new THREE.Color('#cfe0ea');scene.background=sky;scene.fog=new THREE.Fog(sky,110,230);
+ const cam=new THREE.PerspectiveCamera(45,1,0.1,600);
+ const ctr=new OrbitControls(cam,renderer.domElement);ctr.enableDamping=true;ctr.maxPolarAngle=Math.PI*0.49;
+ const hemi=new THREE.HemisphereLight('#e8f2ff','#5d6b45',0.9);scene.add(hemi);
+ const sun=new THREE.DirectionalLight('#fff4e0',2.2);sun.position.set(25,60,45);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-60,right:60,top:60,bottom:-60,far:220});scene.add(sun);
+ const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.9});
+ const mats={out:M('#a9b48e'),lawn:M('#7fae55'),road:M('#8d8a84'),pave:M('#a7a39b'),path:M('#cdbfa6'),wall:M('#ece6da'),plinth:M('#8f8a82'),roof:M('#3d3635'),wood:M('#a8743f'),soil:M('#5b3c22'),trunk:M('#5a4330'),
+  tree:M('#4f8a3c'),con:M('#2f6b4b'),fruit:M('#7aa23f'),shrub:M('#6a9c4a'),berry:M('#7d4a5f'),flower:M('#c98bb8'),water:new THREE.MeshStandardMaterial({color:'#5f9cc4',roughness:.2,metalness:.1}),
+  glass:new THREE.MeshStandardMaterial({color:'#d9f0f4',transparent:true,opacity:.35,roughness:.1}),win:new THREE.MeshStandardMaterial({color:'#4a6572',roughness:.15,metalness:.3}),mesh:new THREE.MeshStandardMaterial({color:'#2f5a3a',transparent:true,opacity:.45}),fence:M('#3a3f44'),stone:M('#8a7d6c'),mulch:M('#9b6f45'),nb:M('#c9c2b5'),lamp:new THREE.MeshStandardMaterial({color:'#ffd27a',emissive:'#000000'})};
+ const add=(g,m,x,y,z,opts)=>{const o=new THREE.Mesh(g,m);o.position.copy(V(x,y,z));o.castShadow=!(opts&&opts.noShadow);o.receiveShadow=true;scene.add(o);return o;};
+ const shape=poly=>{const s=new THREE.Shape();poly.forEach((p,i)=>i?s.lineTo(p[0]-cx,(p[1]-cy)):s.moveTo(p[0]-cx,(p[1]-cy)));return s;};
+ const flat=(poly,m,h,z)=>{const g=new THREE.ExtrudeGeometry(shape(poly),{depth:h,bevelEnabled:false});g.rotateX(-Math.PI/2);const o=new THREE.Mesh(g,m);o.position.y=z||0;o.receiveShadow=true;o.castShadow=h>0.2;scene.add(o);return o;};
+ /* группа в локальной сетке дома: точка (a,b,z) → (a, z, -b) */
+ const G=new THREE.Group();G.position.copy(V(D.H0[0],D.H0[1],0));G.rotation.y=D.TH;scene.add(G);
+ const gAdd=(g,m,a,b,z,opts)=>{const o=new THREE.Mesh(g,m);o.position.set(a,z||0,-b);o.castShadow=!(opts&&opts.noShadow);o.receiveShadow=true;G.add(o);return o;};
+ const gBox=(a1,b1,a2,b2,z1,z2,m,opts)=>gAdd(new THREE.BoxGeometry(a2-a1,z2-z1,b2-b1),m,(a1+a2)/2,(b1+b2)/2,(z1+z2)/2,opts);
+ const gable=(a1,b1,a2,b2,z,rise,over,m)=>{const d=b2-b1,w=a2-a1;const s=new THREE.Shape();s.moveTo(-d/2-over,-0.15);s.lineTo(0,rise);s.lineTo(d/2+over,-0.15);s.lineTo(-d/2-over,-0.15);
+  const g=new THREE.ExtrudeGeometry(s,{depth:w+over*2,bevelEnabled:false});g.translate(0,0,-(w+over*2)/2);g.rotateY(Math.PI/2);const r=new THREE.Mesh(g,m);r.position.set((a1+a2)/2,z,-(b1+b2)/2);r.castShadow=true;r.receiveShadow=true;G.add(r);return r;};
+ const gnd=new THREE.Mesh(new THREE.PlaneGeometry(500,500),mats.out);gnd.rotation.x=-Math.PI/2;gnd.position.y=-0.02;gnd.receiveShadow=true;scene.add(gnd);
+ /* улицы (юг и восток) по генплану */
+ [[0,6.75,5.5,30,0],[3,2.3,4,6,1],[2,2.3,4,3,1],[1,2.3,4,3,1]].forEach(([i,off,w,ext,lane])=>{const a=D.PLOT[i],b=D.PLOT[(i+1)%D.PLOT.length],n=D.nIn(i);const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);const m=[(a[0]+b[0])/2-n[0]*off,(a[1]+b[1])/2-n[1]*off];
+  const o=new THREE.Mesh(new THREE.BoxGeometry(L+ext*2,lane?0.03:0.05,w),lane?M('#b5ad9d'):mats.road);o.position.copy(V(m[0],m[1],0.02));o.rotation.y=Math.atan2(dy,dx);o.receiveShadow=true;scene.add(o);});
+ /* соседи Ж и Н */
+ flat(D.NB[0].poly,mats.nb,3.0);flat(D.NB[1].poly,mats.nb,2.4);
+ flat(D.PLOT,mats.lawn,0.05);
+ flat(D.PARK.poly,mats.pave,0.1);
+ D.PATHS.forEach(pa=>{for(let i=0;i<pa.pts.length-1;i++){const a=pa.pts[i],b=pa.pts[i+1];const L=Math.hypot(b[0]-a[0],b[1]-a[1]);const g=new THREE.BoxGeometry(L+pa.w*0.6,0.08,pa.w);const o=new THREE.Mesh(g,mats.path);o.position.copy(V((a[0]+b[0])/2,(a[1]+b[1])/2,0.06));o.rotation.y=Math.atan2(b[1]-a[1],b[0]-a[0]);o.receiveShadow=true;scene.add(o);}});
+ {const g=new THREE.CylinderGeometry(D.PATIO.r,D.PATIO.r,0.1,40);add(g,mats.pave,D.PATIO.c[0],D.PATIO.c[1],0.07);const f=new THREE.TorusGeometry(0.45,0.12,8,20);const t=add(f,mats.stone,D.PATIO.c[0],D.PATIO.c[1],0.35);t.rotation.x=Math.PI/2;
+  for(let k=0;k<3;k++){const a=(-30+k*120)*Math.PI/180;const bx=new THREE.BoxGeometry(1.4,0.45,0.4);const o=add(bx,mats.wood,D.PATIO.c[0]+Math.cos(a)*1.65,D.PATIO.c[1]+Math.sin(a)*1.65,0.25);o.rotation.y=a+Math.PI/2;}}
+ /* детская */
+ flat(D.KIDS.poly,mats.mulch,0.08);
+ gBox(-10.6,7.8,-8.6,9.8,0,0.3,M('#e8d6a0'));gBox(-10.6,11.0,-9.0,12.6,0,1.6,M('#c8733f'));
+ [-7.6,-5.4].forEach(a=>gAdd(new THREE.CylinderGeometry(.06,.06,2.4),mats.fence,a,12.2,1.2));gBox(-7.6,12.15,-5.4,12.25,2.35,2.45,mats.fence);
+ [-7.0,-6.0].forEach(a=>gBox(a-0.3,11.45,a+0.3,11.7,0.45,0.5,mats.wood));
+ D.BEDS.forEach(b=>flat(b.poly,mats.wood,0.4));D.BEDS.forEach(b=>flat(b.poly,mats.soil,0.02,0.4));
+ D.BEDS_FL.forEach(b=>flat(b.poly,b.code==='М3'?mats.water:mats.flower,b.code==='М3'?0.06:0.18));
+ /* кровля: фронтоны в цвете стен, два ската с выносом */
+ const gRoof=(a1,b1,a2,b2,z,rise,over,mw,mr)=>{gable(a1,b1,a2,b2,z,rise,0,mw);const d=b2-b1,w=a2-a1,h=d/2,al=Math.atan2(rise,h),Ls=(h+over)/Math.cos(al),t=0.12,bm=(b1+b2)/2;
+  [-1,1].forEach(sg=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w+2*over,t,Ls),mr);const cb=bm+sg*(Ls/2)*Math.cos(al),cz=z+rise-(Ls/2)*Math.sin(al)+t/2;m.position.set((a1+a2)/2,cz,-cb);m.rotation.x=sg<0?al:-al;m.castShadow=m.receiveShadow=true;G.add(m);});
+  gBox(a1-over,bm-0.12,a2+over,bm+0.12,z+rise,z+rise+0.1,mr);};
+ /* дом №1 по 3D-проекту dom-11x9: только оболочка — стены 360 мм, окна, двери, без инженерных систем.
+    Проект повёрнут на 180°: a = 11,09 − x, b = z (мм → м). Пол +0,4 над землёй, карниз +2,865 и конёк +6,600 от пола */
+ const FL=0.4,WT=FL+2.865,mFr=M('#3b3d40'),mDoor=M('#5a4330'),mFloor=M('#b08a62');
+ const op=(a,b,lo,hi,n,door)=>({a,b,lo,hi,n:n||1,door});
+ const wall=(ax,c1,c2,L,ops)=>{const bx=(s1,s2,z1,z2,m,k1,k2)=>{k1=k1==null?c1:k1;k2=k2==null?c2:k2;const o={noShadow:m===mats.win};return ax==='a'?gBox(s1,k1,s2,k2,FL+z1,FL+z2,m,o):gBox(k1,s1,k2,s2,FL+z1,FL+z2,m,o);};
+  const top=WT-FL,mid=(c1+c2)/2;let cur=0;ops.sort((p,q)=>p.a-q.a);
+  ops.forEach(o=>{if(o.a>cur)bx(cur,o.a,0,top,mats.wall);if(o.lo>0)bx(o.a,o.b,0,o.lo,mats.wall);bx(o.a,o.b,o.hi,top,mats.wall);
+   if(o.door)bx(o.a,o.b,0,o.hi,mDoor,mid-0.03,mid+0.03);
+   else{bx(o.a,o.b,o.lo,o.hi,mats.win,mid-0.015,mid+0.015);const f=0.06,k1=mid-0.04,k2=mid+0.04;
+    bx(o.a,o.b,o.lo,o.lo+f,mFr,k1,k2);bx(o.a,o.b,o.hi-f,o.hi,mFr,k1,k2);bx(o.a,o.a+f,o.lo,o.hi,mFr,k1,k2);bx(o.b-f,o.b,o.lo,o.hi,mFr,k1,k2);
+    for(let i=1;i<o.n;i++){const x=o.a+(o.b-o.a)*i/o.n;bx(x-0.03,x+0.03,o.lo,o.hi,mFr,k1,k2);}}
+   cur=o.b;});
+  if(cur<L)bx(cur,L,0,top,mats.wall);};
+ gBox(-1,-1,12.1,10.1,0,0.05,mats.pave,{noShadow:true});
+ gBox(0,0,11.09,9.1,0,FL,mats.plinth);gBox(0.3,0.3,10.8,8.8,FL,FL+0.02,mFloor,{noShadow:true});
+ wall('a',0,0.36,11.09,[op(8.41,10.56,0.9,2.5,2),op(4.89,5.49,0,2.5,1),op(0.6,2.75,0,2.5,3)]);          /* юг: кухня, санузел, спальня (окно в пол) */
+ wall('a',8.74,9.1,11.09,[op(5.69,8.89,0,2.5,3),op(1.99,2.89,0,2.1,1,true),op(0.69,1.39,0.9,2.5,1)]);   /* север: гостиная в пол, входная дверь, котельная */
+ wall('b',10.75,11.09,9.1,[op(0.6,2.72,0.9,2.5,2),op(6.7,8.4,0,2.5,2)]);                                  /* восток: окно, дверь на террасу */
+ wall('b',0,0.34,9.1,[]);                                                                                 /* запад: глухая */
+ gBox(0.34,3.46,10.75,3.66,FL,WT,mats.wall);gBox(7.47,3.66,7.77,8.74,FL,WT,mats.wall);                    /* внутренние стены по плану */
+ gRoof(0,0,11.09,9.1,WT,3.735,0.5,mats.wall,mats.roof);
+ /* южный выход из спальни: площадка, 2 ступени, козырёк */
+ gBox(0.4,-1.0,2.95,0,0,FL,mats.pave);for(let k=0;k<2;k++)gBox(0.4,-1.6+k*0.3,2.95,-1.0,0,0.135*(k+1),mats.pave);
+ gBox(0.35,-1.1,3.0,0.0,FL+2.62,FL+2.72,mats.roof);
+ /* главный вход с севера: площадка, 2 ступени, козырёк */
+ gBox(1.5,9.1,3.4,10.0,0,FL,mats.pave);gBox(1.5,10.0,3.4,10.6,0,0.135,mats.pave);gBox(1.5,10.0,3.4,10.3,0.135,0.27,mats.pave);
+ gBox(1.5,9.1,3.4,10.2,FL+2.25,FL+2.35,mats.roof);
+ /* терраса 3×4,5 на уровне пола, пергола */
+ gBox(11.09,4.6,14.09,9.1,0,FL-0.02,mats.wood);
+ [[13.95,4.75],[13.95,6.85],[13.95,8.95]].forEach(([a,b])=>gBox(a-.07,b-.07,a+.07,b+.07,FL,FL+2.45,mats.wood));
+ gBox(13.88,4.6,14.02,9.1,FL+2.3,FL+2.45,mats.wood);for(let k=0;k<6;k++)gBox(11.09,4.7+k*0.83,14.09,4.78+k*0.83,FL+2.45,FL+2.55,mats.wood);
+ gBox(14.09,6.4,14.69,7.6,0,0.13,mats.wood);gBox(14.09,6.4,14.39,7.6,0.13,0.26,mats.wood);
+ gBox(11.1,9.1,12.2,9.7,0,0.13,mats.pave);gBox(11.1,9.1,12.2,9.4,0.13,0.26,mats.pave);
+ /* хозпостройка №2 */
+ gBox(-12.5,0,-3.3,4.7,0,2.8,M('#d9cfbf'));gRoof(-12.5,0,-3.3,4.7,2.8,1.6,0.35,M('#d9cfbf'),mats.roof);
+ gBox(-6.0,-0.03,-3.6,0,0.1,2.3,M('#6b4a2f'),{noShadow:true});gBox(-11,-0.03,-7.2,0,0,2.4,M('#6b4a2f'),{noShadow:true});
+ /* гараж на 2 машины: двое ворот на север, дверь в огород на восток */
+ gBox(3.5,15.0,10.0,21.5,0,2.8,mats.wall);gRoof(3.5,15.0,10.0,21.5,2.8,1.4,0.35,mats.wall,mats.roof);
+ const mGate=M('#6e6a63');[[3.9,6.4],[7.1,9.6]].forEach(([a1,a2])=>{gBox(a1,21.5,a2,21.55,0.02,2.2,mGate,{noShadow:true});for(let k=1;k<5;k++)gBox(a1,21.55,a2,21.57,k*0.44-0.01,k*0.44+0.01,mFr,{noShadow:true});});
+ gBox(10.0,17.6,10.05,18.5,0,2.05,mDoor,{noShadow:true});
+ /* дровник, теплица, компост */
+ gBox(-14.5,0.6,-12.7,4.2,0,1.6,mats.wood);gBox(-14.6,0.5,-12.6,4.3,2.1,2.2,mats.roof);
+ {const g=new THREE.CylinderGeometry(1.5,1.5,5,18,1,true,0,Math.PI);g.rotateZ(Math.PI/2);
+  const o=new THREE.Mesh(g,mats.glass);o.position.set(13.5,0.4,-14.7);G.add(o);gBox(11.0,13.2,16.0,16.2,0,0.4,mats.glass,{noShadow:true});}
+ flat(D.BUILD[4].poly,mats.wood,1.0);
+ /* волейбольная площадка: песок, сетка, ловушка вдоль проезда */
+ {const C=D.COURT,sand=M('#e6d29c'),net=new THREE.MeshStandardMaterial({color:'#f2f2ee',transparent:true,opacity:.55,side:THREE.DoubleSide}),trapM=new THREE.MeshStandardMaterial({color:'#1f2a24',transparent:true,opacity:.28,side:THREE.DoubleSide});
+  flat(C.poly,sand,0.07);
+  const bar=(p,q,w,h,z,m)=>{const L=Math.hypot(q[0]-p[0],q[1]-p[1]);const o=new THREE.Mesh(new THREE.BoxGeometry(L,h,w),m);o.position.copy(V((p[0]+q[0])/2,(p[1]+q[1])/2,z+h/2));o.rotation.y=Math.atan2(q[1]-p[1],q[0]-p[0]);scene.add(o);return o;};
+  C.net.forEach(p=>add(new THREE.CylinderGeometry(.05,.05,2.55,10),mats.fence,p[0],p[1],1.275));
+  bar(C.net[0],C.net[1],0.02,1.0,1.43,net).castShadow=false;bar(C.net[0],C.net[1],0.03,0.07,2.4,M('#ffffff'));
+  [C.att[0],C.att[1]].forEach(([p,q])=>bar(p,q,0.05,0.01,0.075,M('#ffffff')));
+  [[C.poly[0],C.poly[1]],[C.poly[1],C.poly[2]],[C.poly[2],C.poly[3]],[C.poly[3],C.poly[0]]].forEach(([p,q])=>bar(p,q,0.05,0.01,0.075,M('#ffffff')));
+  C.traps.forEach(([t1,t2])=>{const n=Math.max(2,Math.round(Math.hypot(t2[0]-t1[0],t2[1]-t1[1])/3));for(let k=0;k<=n;k++){const x=t1[0]+(t2[0]-t1[0])*k/n,y=t1[1]+(t2[1]-t1[1])*k/n;add(new THREE.CylinderGeometry(.04,.04,4,8),mats.fence,x,y,2);}
+  bar(t1,t2,0.01,3.8,0.2,trapM).castShadow=false;});
+  C.masts.forEach(p=>add(new THREE.CylinderGeometry(.06,.08,4,8),mats.fence,p[0],p[1],2));}
+ /* септик, скважина, колодец, бочки */
+ add(new THREE.CylinderGeometry(.35,.35,.12,16),mats.fence,D.SEPTIC.c[0],D.SEPTIC.c[1],.1);
+ add(new THREE.CylinderGeometry(.4,.4,.15,16),mats.stone,D.WELL.c[0],D.WELL.c[1],.1);
+ add(new THREE.CylinderGeometry(.5,.5,.15,16),mats.stone,D.DRAIN.well[0],D.DRAIN.well[1],.08);
+ D.DRAIN.barrels.forEach(p=>add(new THREE.CylinderGeometry(.4,.4,.9,16),M('#3d6b8a'),p[0],p[1],.45));
+ /* ограда */
+ const fenceSeg=(p1,p2,street)=>{const h=1.8;const l=Math.hypot(p2[0]-p1[0],p2[1]-p1[1]);const o=new THREE.Mesh(new THREE.BoxGeometry(l,h,street?0.06:0.03),street?mats.wood:mats.mesh);o.position.copy(V((p1[0]+p2[0])/2,(p1[1]+p2[1])/2,h/2+(street?0.2:0)));o.rotation.y=Math.atan2(p2[1]-p1[1],p2[0]-p1[0]);o.castShadow=street;scene.add(o);
+  if(street){const c=new THREE.Mesh(new THREE.BoxGeometry(l,0.2,0.25),mats.plinth);c.position.copy(V((p1[0]+p2[0])/2,(p1[1]+p2[1])/2,0.1));c.rotation.y=o.rotation.y;scene.add(c);}
+  const n=Math.ceil(l/2.5);for(let k=0;k<=n;k++){const t=k/n;add(new THREE.BoxGeometry(.08,h+.25,.08),mats.fence,p1[0]+(p2[0]-p1[0])*t,p1[1]+(p2[1]-p1[1])*t,(h+.25)/2);}};
+ const gp=a=>D.Lp(a,D.BN);
+ D.FENCE.forEach(f=>{const a=D.PLOT[f.i],b=D.PLOT[(f.i+1)%D.PLOT.length];
+  if(f.i===0){[[a,gp(D.GATE.a1)],[gp(D.GATE.a2),gp(D.WICKET.a1)],[gp(D.WICKET.a2),b]].forEach(([p,q])=>fenceSeg(p,q,true));}else fenceSeg(a,b,!!f.street);});
+ gBox(D.GATE.a1,D.BN-0.03,D.GATE.a2,D.BN+0.03,0.05,1.85,M('#2d3236'));
+ /* растения */
+ const sph=new THREE.SphereGeometry(1,14,10),cone=new THREE.ConeGeometry(1,1,10),cyl=new THREE.CylinderGeometry(.1,.14,1,6);
+ const hmap={'Д1':5,'Д3':6.5,'П1':4.5,'П2':4,'П3':4,'П4':4,'П5':4,'П6':4,'П7':3.6,'П8':3.6,'П9':3,'П10':3,'Х1':2,'Х2':1,'Х3':.5,'К1':1.7,'К2':.7,'К3':2.2,'К4':2.2,'К5':2.8,'К6':2.3,'Я1':1.3,'Я2':1.1,'Я3':1.5,'Я4':1.5,'Я5':1.4};
+ D.PLANTS.forEach(p=>{const d=D.PL[p.c],h=hmap[p.c]||1,r=d.r;if(d.t==='vine')return;
+  if(d.t==='tree'||d.t==='fruit'){const tr=add(cyl,mats.trunk,p.x,p.y,h*0.25);tr.scale.set(1.3,h*0.5,1.3);const c=add(sph,d.t==='fruit'?mats.fruit:mats.tree,p.x,p.y,h*0.62);c.scale.set(r,h*0.42,r);}
+  else if(d.t==='con'||d.t==='hedge'){if(p.c==='Х3'){const c=add(sph,mats.con,p.x,p.y,h*0.3);c.scale.set(r,h*0.5,r);}else if(p.c==='Х2'){const c=add(sph,mats.con,p.x,p.y,h*0.45);c.scale.set(r,h*0.55,r);}else if(p.c==='Х1'){const c=add(new THREE.BoxGeometry(1,1,1),mats.con,p.x,p.y,h/2);c.scale.set(0.8,h,0.8);}else{const c=add(cone,mats.con,p.x,p.y,h/2+0.3);c.scale.set(r,h,r);}}
+  else{const c=add(sph,d.t==='berry'?mats.berry:(p.c==='К4'?M('#5b2f3a'):p.c==='К2'?M('#c9a23a'):p.c==='К1'?M('#d8e6b8'):mats.shrub),p.x,p.y,h*0.5);c.scale.set(r,h*0.5,r);}});
+ /* лианы на опорах */
+ D.PLANTS.filter(p=>D.PL[p.c].t==='vine').forEach(p=>{const c=add(new THREE.CylinderGeometry(.3,.35,2.4,8),mats.tree,p.x,p.y,1.4);});
+ /* свет */
+ const lampMeshes=[],pts=[];
+ D.LIGHTS.forEach(l=>{const h=l.t==='C'?0.6:l.t==='G'?1.9:l.t==='V'?4.05:l.t==='F'||l.t==='B'?2.5:0.1;if(l.t==='C')add(new THREE.CylinderGeometry(.05,.05,.6,8),mats.fence,l.x,l.y,.3);
+  const m=add(new THREE.SphereGeometry(l.t==='P'||l.t==='U'?.08:.11,10,8),mats.lamp.clone(),l.x,l.y,h,{noShadow:true});lampMeshes.push(m);pts.push({l,h});});
+ const plights=[];const pick=pts.filter(p=>['V','G','F','U'].includes(p.l.t)).concat(pts.filter((p,i)=>!['V','G','F','U'].includes(p.l.t)&&i%3===0)).slice(0,18);
+ pick.forEach(p=>{const L=new THREE.PointLight(p.l.t==='V'?'#fff3dc':'#ffc77a',0,p.l.t==='V'?16:p.l.t==='U'?10:7,p.l.t==='V'?1.2:1.6);L.position.copy(V(p.l.x,p.l.y,p.l.t==='U'?0.4:p.h));scene.add(L);plights.push(L);});
+ const garl=[];for(let k=0;k<28;k++){const a=k/28*Math.PI*2;garl.push(add(new THREE.SphereGeometry(.05,6,6),mats.lamp.clone(),D.PATIO.c[0]+Math.cos(a)*2.6,D.PATIO.c[1]+Math.sin(a)*2.6,2.2,{noShadow:true}));}
+ [0,1,2,3].forEach(k=>{const a=k/4*Math.PI*2+0.4;add(new THREE.CylinderGeometry(.05,.05,2.2,6),mats.fence,D.PATIO.c[0]+Math.cos(a)*2.6,D.PATIO.c[1]+Math.sin(a)*2.6,1.1);});
+ const fire=new THREE.PointLight('#ff8a3a',0,8,1.5);fire.position.copy(V(D.PATIO.c[0],D.PATIO.c[1],0.7));scene.add(fire);
+ function mode(eve){document.getElementById('b-day').setAttribute('aria-pressed',!eve);document.getElementById('b-eve').setAttribute('aria-pressed',eve);
+  const c=new THREE.Color(eve?'#1c2738':'#cfe0ea');scene.background=c;scene.fog.color=c;hemi.intensity=eve?0.12:0.9;sun.intensity=eve?0.05:2.2;
+  plights.forEach(l=>l.intensity=eve?(l.distance>12?18:l.distance>8?9:5):0);fire.intensity=eve?8:0;
+  lampMeshes.concat(garl).forEach(m=>{m.material.emissive.set(eve?'#ffb347':'#000000');m.material.emissiveIntensity=eve?2:0;});}
+ document.getElementById('b-day').onclick=()=>mode(false);document.getElementById('b-eve').onclick=()=>mode(true);
+ const flyW=(p,pz,t,tz)=>{const a=V(p[0],p[1],pz),b=V(t[0],t[1],tz);cam.position.copy(a);ctr.target.copy(b);ctr.update();};
+ document.getElementById('b-top').onclick=()=>{cam.position.set(0,95,0.01);ctr.target.set(0,0,0);ctr.update();};
+ document.getElementById('b-persp').onclick=()=>flyW(D.Lp(-4,50),7,D.Lp(-1,14),1);
+ document.getElementById('b-gate').onclick=()=>flyW(D.Lp(0.3,33.8),1.7,D.Lp(2.45,9.5),1.6);
+ document.getElementById('b-volley').onclick=()=>flyW(D.Lp(-10.2,34.3),4.5,D.Lp(-10.2,19),0.5);
+ document.getElementById('b-garden').onclick=()=>flyW(D.Lp(13.2,7.8),2.0,D.Lp(30,-1),1.2);
+ flyW(D.Lp(-18,-30),32,D.Lp(8,12),0);
+ function size(){const w=box.clientWidth,h=box.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+ new ResizeObserver(size).observe(box);size();
+ msg.textContent='Дом и хозпостройка поставлены по генплану. Дом собран по 3D-проекту: стены, окна и двери, без инженерных систем. Гараж, площадка и сад — по пометкам заказчика. Деревья показаны примерно через 7–10 лет после посадки.';
+ (function loop(){requestAnimationFrame(loop);ctr.update();renderer.render(scene,cam);})();
+}
+</script>
