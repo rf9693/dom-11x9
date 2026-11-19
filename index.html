@@ -157,6 +157,7 @@ h1{font:500 16px/1.25 var(--f-display);margin:0;text-wrap:balance}
     <label class="check"><input type="checkbox" id="kitT"> Открыть кухню: шкафы, ящики, техника</label>
     <label class="check"><input type="checkbox" id="scrT"> Опустить экран</label>
     <label class="check"><input type="checkbox" id="sockT" checked> Розетки</label>
+      <label class="check"><input type="checkbox" id="recT" checked> Рекуператор в шкафу</label>
   </div>
   <p class="hint more">Вращение: левая кнопка мыши или один палец. Сдвиг: правая кнопка или два пальца. Масштаб: колесо или щипок. Потолок виден только в видах «изнутри».</p>
 </div>
@@ -1070,7 +1071,39 @@ const KANIM=[];
 // колонна стиральная + сушильная машина в углу у стены спальни, рядом шкаф 1300 до потолка
 (function(){const x=7640,z=5780;
   [[0,850],[850,1700]].forEach(([a,b])=>{box(x,z,x+600,z+600,a,b-10,mWhite);const dr=cyl(x+300,z+610,170,a+390,a+410,mGraphite,32);dr.rotation.x=Math.PI/2;dr.position.z=(z+610)*S;box(x+40,z+598,x+560,z+602,b-110,b-50,M(0xC9CDD0))});
-  box(8240,5780,9520,6380,0,2780,M(0xE9E4DA,{roughness:.6}));box(8880,6378,8882,6382,0,2780,mGraphite);})();
+  window.CAB40=box(8240,5780,9520,6380,0,2780,M(0xE9E4DA,{roughness:.6}));box(8880,6378,8882,6382,0,2780,mGraphite);})();
+/* RECUP40 */ /* самодельный рекуператор в левой части шкафа прихожей: корпус 530 × 1000 × 380, вентиляторы, подогрев, трубы к потолку */
+(function(){const G=new THREE.Group();root.add(G);
+  const mP=M(0xC9A46A,{roughness:.7}),mF=M(0x5A5F64,{roughness:.4}),mO=M(0xD2691E,{roughness:.5}),mK=M(0x2B2D2F,{roughness:.8}),
+    mB=M(0x2F78B7,{roughness:.5}),mR=M(0xD0342C,{roughness:.5}),mA=M(0xAEBBC4,{roughness:.35,metalness:.5}),mW=M(0xF2F2EE,{roughness:.6}),mFl=M(0xB9BEC2,{roughness:.5,metalness:.3});
+  const c=(x,z,r,y1,y2,m)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,(y2-y1)*S,24),m);o.position.set(x*S,(y1+y2)/2*S,z*S);o.castShadow=true;G.add(o);return o};
+  const ch=(x1,x2,y,z,r,m)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,Math.abs(x2-x1)*S,24),m);o.rotation.z=Math.PI/2;o.position.set((x1+x2)/2*S,y*S,z*S);G.add(o)};
+  const cz=(x,y,z1,z2,r,m)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r*S,r*S,Math.abs(z2-z1)*S,24),m);o.rotation.x=Math.PI/2;o.position.set(x*S,y*S,(z1+z2)/2*S);G.add(o)};
+  // корпус: задняя стенка, боковины, верх, низ; спереди прозрачная крышка с пакетами внутри
+  box(8415,5990,8945,6002,1350,2350,mP,G);box(8415,5990,8427,6370,1350,2350,mP,G);box(8933,5990,8945,6370,1350,2350,mP,G);
+  box(8415,5990,8945,6370,2338,2350,mP,G);box(8415,5990,8945,6370,1350,1362,mP,G);
+  [[2075],[1623]].forEach(([y])=>{const o=new THREE.Mesh(new THREE.BoxGeometry(.3,.3,.294),mA);o.rotation.z=Math.PI/4;o.position.set(8680*S,y*S,6180*S);G.add(o)});
+  const lid=box(8415,6358,8945,6370,1350,2350,M(0xC9A46A,{roughness:.7,transparent:true,opacity:.35,depthWrite:false}),G);
+  // кронштейны
+  box(8470,5990,8490,6370,1300,1350,mFl,G);box(8870,5990,8890,6370,1300,1350,mFl,G);
+  // сверху вентилятор притока (SUP) и гибкие шумоглушители SUP и ETA до потолка
+  c(8540,6180,80,2350,2420,mO);c(8540,6180,125,2420,2600,mF);c(8540,6180,82,2600,2780,mFl);
+  c(8820,6180,80,2350,2780,mFl);
+  // снизу: ODA через подогрев и обратный клапан, EHA через вентилятор выброса
+  c(8540,6180,80,1000,1350,mO);c(8540,6180,95,1050,1250,M(0x9AA0A6,{roughness:.4,metalness:.4}));
+  c(8820,6180,125,1050,1260,mF);c(8820,6180,80,850,1350,mO);
+  cz(8540,850,5885,6180,80,mK);cz(8820,850,5885,6180,80,mK);ch(8350,8540,850,5885,93,mK);ch(8820,8905,850,5885,93,mK);
+  // стояки забора и выброса за корпусом в K-Flex, до потолка
+  c(8350,5885,93,850,2780,mK);c(8905,5885,93,850,2780,mK);
+  // полосы: синяя приток, красная вытяжка
+  c(8540,6180,84,2650,2690,mB);c(8820,6180,84,2650,2690,mR);c(8350,5885,96,2500,2540,mB);c(8905,5885,96,2500,2540,mR);
+  // щиток автоматики слева от корпуса, слив конденсата
+  box(8250,6180,8400,6240,1600,1900,mW,G);
+  const hs=new THREE.Mesh(new THREE.CylinderGeometry(.008,.008,.5,8),M(0xE8E8E8));hs.position.set(8930*S,1100*S,6300*S);G.add(hs);
+  const cb=document.getElementById("recT"),cab=window.CAB40;cab.material.transparent=true;
+  const ap=()=>{const on=cb.checked;G.visible=on;cab.material.opacity=on?.22:1;cab.material.depthWrite=!on;cab.castShadow=!on;cab.material.needsUpdate=true};
+  cb.onchange=ap;ap()})();
+
 /* Котельная — стена по видео заказчика: x 10750, от z 6900 до угла с окном 700 */
 (function(){const mPP=M(0xDCDCD8,{roughness:.55}),mPEX=M(0xD42A2A,{roughness:.45}),mRed=M(0xC9302C,{roughness:.4}),mBlk=M(0x222426,{roughness:.6}),
   mBlue=M(0x2E6FB8,{roughness:.35}),mFlask=M(0xEEF2F3,{roughness:.1,transparent:true,opacity:.75}),mLcd=M(0x223038,{roughness:.2}),
