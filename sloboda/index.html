@@ -92,7 +92,7 @@ td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:ta
 .v3d-bar button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer}
 .v3d-bar button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .v3d-msg{position:absolute;inset:auto 12px 12px 12px;font-size:12.5px;color:var(--muted);pointer-events:none}
-.wleg{position:absolute;top:10px;left:10px;max-width:330px;display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:rgba(255,255,255,.88);color:#22302a;border-radius:4px;font-size:12px;line-height:1.35;pointer-events:none}.wleg[hidden]{display:none}.wleg span{display:flex;gap:6px;align-items:flex-start}.wleg .sw{flex:none;width:18px;height:6px;margin-top:5px;border-radius:3px}.wleg .a{background:#2f9bff}.wleg .p{background:repeating-linear-gradient(90deg,#1f6fa8 0 6px,#9fe3ff 6px 10px)}.wleg .r{background:#7d8288}
+.wleg{position:absolute;top:10px;left:10px;max-width:330px;display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:rgba(255,255,255,.88);color:#22302a;border-radius:4px;font-size:12px;line-height:1.35;pointer-events:none}.wleg[hidden]{display:none}.wleg span{display:flex;gap:6px;align-items:flex-start}.wleg .sw{flex:none;width:18px;height:6px;margin-top:5px;border-radius:3px}.wleg .a{background:#2f9bff}.wleg .p{background:repeating-linear-gradient(90deg,#1f6fa8 0 6px,#9fe3ff 6px 10px)}.wleg .r{background:#7d8288}.wleg .s{background:repeating-linear-gradient(90deg,#7a4a24 0 6px,#f0b070 6px 10px)}
 .muted{color:var(--muted)}
 .small{font-size:13px}
 ul.plain{margin:0;padding-left:18px}
@@ -159,7 +159,7 @@ ul.plain li{margin:3px 0}
       <label class="kz" title="Спутниковая модель сглаживает рельеф, на месте перепад больше">Перепад <input type="range" id="kz" min="1" max="4" step="0.5" value="2" aria-label="Усиление перепада рельефа"> <output id="kzo">×2</output></label>
       <span class="muted small">Вращение — левая кнопка мыши, сдвиг — правая, масштаб — колесо или два пальца.</span>
     </div>
-    <div id="v3d"><div class="v3d-msg" id="v3dmsg">Загрузка 3D…</div><div class="wleg" id="wleg" hidden><b>Куда уходит вода</b><span><i class="sw a"></i>сток по поверхности — вниз по склону, к северу и западу</span><span><i class="sw p"></i>дренаж и ливнёвка, бегущие полосы — направление течения (трубы лежат на 0,6–0,9 м под землёй, показаны поверх)</span><span><i class="sw r"></i>водосточные трубы → дождеприёмники → кольцевой дренаж → пруд → поглощающий колодец</span></div></div>
+    <div id="v3d"><div class="v3d-msg" id="v3dmsg">Загрузка 3D…</div><div class="wleg" id="wleg" hidden><b>Куда уходит вода</b><span><i class="sw a"></i>сток по поверхности — вниз по склону, к северу и западу</span><span><i class="sw p"></i>дренаж и ливнёвка, бегущие полосы — направление течения (трубы лежат на 0,6–0,9 м под землёй, показаны поверх)</span><span><i class="sw s"></i>канализация из дома в септик, ориентировочно — по видео траншеи</span><span><i class="sw r"></i>водосточные трубы → дождеприёмники → кольцевой дренаж → пруд → поглощающий колодец</span></div></div>
   </section>
 
   <!-- ===== РАСТЕНИЯ ===== -->
@@ -229,6 +229,7 @@ ul.plain li{margin:3px 0}
           <li>С крыши хозпостройки вода стекает в две бочки по 200 л. Из них поливают плодовый сад.</li>
           <li>Линейный лоток перед воротами гаража: вода с въезда не затекает в гараж. Под песком волейбольной площадки дренажный щебень 20 см, выпуск в поглощающий колодец: он теперь рядом, у южного края площадки.</li>
           <li><b>Септик</b> или станция биоочистки — у ул. Авиации, в мощении въезда: люки класса B125, по ним можно ездить. Ассенизатор встаёт у ворот, на пожарный проезд заезжать не нужно. До дома от него больше 5 м, до скважины больше 20 м.</li>
+          <li><b>Канализация</b> (ориентировочно, по видео траншеи): выпуск из северной стены у котельной, дальше прямо к септику, около 21,6 м трубой ПВХ Ø110 с уклоном 2 %. Глубина около 1,2 м, ниже промерзания, или мельче с утеплением. Ревизия у выпуска и смотровой колодец посередине, в мощении въезда.</li>
           <li><b>Скважина</b> (водоснабжение местное) — у северной двери дома, рядом с мини-котельной. Её место условное, его нужно уточнить.</li>
         </ul>
       </div>
@@ -332,6 +333,7 @@ const KIDS={poly:Rl(-11.2,7.2,-5.0,13.2),name:'Детская площадка 6
 const BEDS=[].concat(...[11.0,12.8,14.6].map(a=>[[17.0,19.8]].map(([b1,b2])=>({poly:Rl(a,b1,a+1.2,b2),name:'Высокая грядка 1,2×'+String(+(b2-b1).toFixed(1)).replace('.',',')+' м',tip:'Короб из лиственницы или оцинковки высотой 40 см: собаки и дети его не топчут. Снизу сетка от кротов. Конёк грядок с севера на юг.'}))));
 const RAIN={c:Lp(-12.9,10.9),rx:1.4,ry:3.3,name:'Пруд ~14,5 м²',tip:'На месте дождевого сада, в нижней части участка у западной ограды. Глубина до 1 м в центре, по краю мелководная полка 0,3 м под болотные растения. Плёнка ПВХ или бутилкаучук по геотекстилю. Наполняется водой с крыши дома, перелив — в поглощающий колодец. Детская площадка рядом: с её стороны штакетник 0,9 м, а глубокую часть закрыть сварной решёткой на 10 см под водой.'};
 const SEPTIC={c:Lp(-2.3,31.4),r:1.0,name:'Септик или станция биоочистки',tip:'Под въездом у ворот, люки класса B125 в мощении, по ним можно ездить. Ассенизатор встаёт на ул. Авиации у ворот, хватает шланга 10 м. С пожарного проезда обслуживать нельзя. До дома больше 5 м, до скважины больше 20 м.'};
+const SEWER={pts:Ll([[1.05,9.1],[-2.3,30.45]]),rev:Lp(1.05,9.55),insp:Lp(-0.63,19.78),name:'Канализация: выпуск из дома → септик',tip:'Ориентировочно, по видео от 23.11.2026: траншея уже выкопана от северной стены у котельной, рядом со второй дверью, прямо к ул. Авиации. Труба ПВХ Ø110 (рыжая, для наружной канализации) без поворотов, около 21,6 м, уклон 2 % в сторону септика — перепад трубы около 0,45 м; земля по трассе тоже понижается к улице. Глубина — ниже промерзания, около 1,2 м, или мельче, но тогда трубу утеплить скорлупой или ЭППС. Дно траншеи выровнять, песчаная подушка 10–15 см, засыпка песком на 15 см над трубой, сигнальная лента. Ревизия — у выпуска из дома, смотровой колодец Ø315–400 — примерно посередине, под мощением въезда, люк класса B125. До скважины 8,6 м, до деревьев больше 3 м, под гаражом не проходит.'};
 const WELL={c:Lp(9,13.8),name:'Скважина (условно)',tip:'Водоснабжение местное. Скважина — у северного фасада, ближе к котельной. Оголовок в кессоне, сверху лючок на газоне.'};
 const COURT={poly:Ll([[-6.2,15.5],[-6.2,31.5],[-14.2,31.5],[-14.2,15.5]]),net:[Lp(-15.0,23.5),Lp(-5.4,23.5)],att:[[Lp(-14.2,20.5),Lp(-6.2,20.5)],[Lp(-14.2,26.5),Lp(-6.2,26.5)]],
  traps:[[Lp(-15.0,14.5),Lp(-15.0,33.5)],[Lp(-5.2,22.0),Lp(-5.2,33.5)]],masts:[Lp(-15.0,18.0),Lp(-15.0,29.0)],lab:Lp(-11.6,18.8),
@@ -481,7 +483,7 @@ const zT=(x,y)=>{const t=tF(x,y),s=PADS.map(pd=>sstep(padDist(pd,x,y)/PAD_R));le
  for(let i=0;i<s.length;i++){if(s[i]>=1)continue;let a=1-s[i];for(let j=0;j<s.length;j++)if(j!==i)a*=s[j];num+=a*PADS[i].lvl;den+=a;}
  if(den<1e-12){const i=s.indexOf(Math.min(...s));return PADS[i].lvl;}return num/den;};
 
-window.SITE={RELIEF,TERR,tF,zT,PADS,COURT,BN,PLOT,BUILD,TERRACE,PORCH,STEPS,STOOP,NDOOR,cpl,GS1,GS2,GD1,GD2,GC,GTH,PARK,PATIO,KIDS,BEDS,RAIN,SEPTIC,WELL,PATHS,BEDS_FL,PL,PLANTS,LIGHTS,FENCE,GATE,WICKET,DRAIN,NB,edgePt,nIn,Lp,TH,H0,BS};
+window.SITE={RELIEF,TERR,tF,zT,PADS,COURT,BN,PLOT,BUILD,TERRACE,PORCH,STEPS,STOOP,NDOOR,cpl,GS1,GS2,GD1,GD2,GC,GTH,PARK,PATIO,KIDS,BEDS,RAIN,SEPTIC,SEWER,WELL,PATHS,BEDS_FL,PL,PLANTS,LIGHTS,FENCE,GATE,WICKET,DRAIN,NB,edgePt,nIn,Lp,TH,H0,BS};
 
 /* ---------- SVG ---------- */
 const S=11,X0=-16,X1=68,Y1=70,Y0=-12,W=(X1-X0)*S,H=(Y1-Y0)*S;
@@ -639,6 +641,8 @@ tipAttr(el('path',{d:pd(DRAIN.ring),fill:'none',stroke:'var(--pl-drain)','stroke
 DRAIN.pipes.forEach(pp=>el('path',{d:pd(pp),fill:'none',stroke:'var(--pl-drain)','stroke-width':1.8,'stroke-dasharray':'7 3'},dg));
 el('path',{d:pd(DRAIN.outlet),fill:'none',stroke:'var(--pl-drain)','stroke-width':1.4,'stroke-dasharray':'2 3'},dg);
 el('path',{d:pd(DRAIN.overflow),fill:'none',stroke:'var(--pl-drain)','stroke-width':1.8},dg);
+tipAttr(el('path',{d:pd(SEWER.pts),fill:'none',stroke:'#8a5a2b','stroke-width':2.4,'stroke-dasharray':'10 3 2 3'},bg),SEWER.name,SEWER.tip);
+(function(){const r=P(...SEWER.rev),q=P(...SEWER.insp);tipAttr(el('rect',{x:r[0]-3.5,y:r[1]-3.5,width:7,height:7,fill:'var(--pl-paper)',stroke:'#8a5a2b','stroke-width':1.8},bg),'Ревизия на выпуске канализации','Тройник с заглушкой или ревизия Ø110 сразу за стеной, чтобы прочистить выпуск.');tipAttr(el('circle',{cx:q[0],cy:q[1],r:0.3*S,fill:'var(--pl-paper)',stroke:'#8a5a2b','stroke-width':2},bg),'Смотровой колодец канализации','Пластиковый Ø315–400 с телескопом и чугунным люком B125: стоит в мощении въезда. Нужен на длинной трассе, чтобы прочищать трубу с двух сторон.');})();
 (function(){const a=P(...DRAIN.trench[0]),b=P(...DRAIN.trench[1]);tipAttr(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--pl-drain)','stroke-width':5},dg),'Линейный водоотводный лоток','Пластиковый лоток DN100 с решёткой класса C250, по нему можно ездить. Перехватывает воду с въезда перед воротами гаража.');
  DRAIN.spouts.forEach(s=>{const q=P(...s);tipAttr(el('rect',{x:q[0]-4,y:q[1]-4,width:8,height:8,fill:'var(--pl-paper)',stroke:'var(--pl-drain)','stroke-width':2},dg),'Дождеприёмник под водостоком','Пескоуловитель 300×300 с корзиной.');});
  DRAIN.barrels.forEach(s=>{const q=P(...s);tipAttr(el('circle',{cx:q[0],cy:q[1],r:0.4*S,fill:'var(--pl-water)',stroke:'var(--pl-drain)','stroke-width':1.5},dg),'Бочка для дождевой воды 200 л','Собирает воду с крыши хозпостройки, из неё поливают огород. Закрыта крышкой, чтобы туда не упали дети.');});
@@ -912,6 +916,7 @@ function init(){
   C.masts.forEach(p=>add(new THREE.CylinderGeometry(.06,.08,4,8),mats.fence,p[0],p[1],2));}
  /* септик, скважина, колодец, бочки */
  add(new THREE.CylinderGeometry(.35,.35,.12,16),mats.fence,D.SEPTIC.c[0],D.SEPTIC.c[1],.1);
+ add(new THREE.CylinderGeometry(.24,.24,.1,16),mats.fence,D.SEWER.insp[0],D.SEWER.insp[1],.08);
  add(new THREE.CylinderGeometry(.4,.4,.15,16),mats.stone,D.WELL.c[0],D.WELL.c[1],.1);
  add(new THREE.CylinderGeometry(.5,.5,.15,16),mats.stone,D.DRAIN.well[0],D.DRAIN.well[1],.08);
  D.DRAIN.barrels.forEach(p=>add(new THREE.CylinderGeometry(.4,.4,.9,16),M('#3d6b8a'),p[0],p[1],.45));
@@ -1004,14 +1009,15 @@ function init(){
   [[-0.12,-0.12],[11.21,-0.12],[11.21,9.22],[-0.12,9.22]].forEach(([a,b])=>{gAdd(new THREE.CylinderGeometry(.05,.05,WT-0.1,10),dpM,a,b,(WT-0.1)/2+0.1);gAdd(new THREE.BoxGeometry(.12,.08,.12),dpM,a,b,0.12);
    gBox(a-0.17,b-0.17,a+0.17,b+0.17,0,0.06,M('#3b3e41'),{noShadow:true});});}
  const stripe=texC(64,8,(g,w,h)=>{g.fillStyle='#1f6fa8';g.fillRect(0,0,w,h);g.fillStyle='#9fe3ff';g.fillRect(0,0,w*0.38,h);});
+ const stripeS=texC(64,8,(g,w,h)=>{g.fillStyle='#7a4a24';g.fillRect(0,0,w,h);g.fillStyle='#f0b070';g.fillRect(0,0,w*0.38,h);});
  const pipeMs=[];
- const pipe=(pts,r,op)=>{const ps=[];for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1],L=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.ceil(L/0.5));
+ const pipe=(pts,r,op,tex)=>{const ps=[];for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1],L=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.ceil(L/0.5));
    for(let j=(i?1:0);j<=n;j++){const s=j/n,x=a[0]+(b[0]-a[0])*s,y=a[1]+(b[1]-a[1])*s;ps.push(V(x,y,zK(x,y)+r+0.04));}}
   let L=0;for(let i=1;i<ps.length;i++)L+=ps[i].distanceTo(ps[i-1]);const cp=new THREE.CurvePath();for(let i=1;i<ps.length;i++)cp.add(new THREE.LineCurve3(ps[i-1],ps[i]));
-  const tx=stripe.clone();tx.needsUpdate=true;tx.repeat.set(L/0.8,1);const m=new THREE.MeshBasicMaterial({map:tx,transparent:true,opacity:op||0.95,depthWrite:false});pipeMs.push(m);
+  const tx=(tex||stripe).clone();tx.needsUpdate=true;tx.repeat.set(L/0.8,1);const m=new THREE.MeshBasicMaterial({map:tx,transparent:true,opacity:op||0.95,depthWrite:false});pipeMs.push(m);
   const o=new THREE.Mesh(new THREE.TubeGeometry(cp,Math.max(8,ps.length*2),r,8,false),m);o.renderOrder=3;WP.add(o);};
  const buildWater=()=>{WP.children.slice().forEach(o=>{o.geometry.dispose();if(o.material.map)o.material.map.dispose();o.material.dispose();WP.remove(o);});pipeMs.length=0;
-  D.DRAIN.pipes.forEach(p=>pipe(p,0.1));pipe(D.DRAIN.outlet,0.08,0.85);pipe(D.DRAIN.overflow,0.1);
+  D.DRAIN.pipes.forEach(p=>pipe(p,0.1));pipe(D.SEWER.pts,0.1,0.95,stripeS);pipe(D.DRAIN.outlet,0.08,0.85);pipe(D.DRAIN.overflow,0.1);
   /* кольцевой дренаж: от верхнего юго-восточного угла двумя ветками к выпуску на западе */
   const R=D.DRAIN.ring,W=D.DRAIN.outlet[0];pipe([R[1],R[0],W],0.075,0.8);pipe([R[1],R[2],R[3],W],0.075,0.8);
   /* лоток на въезде и сток в него */
