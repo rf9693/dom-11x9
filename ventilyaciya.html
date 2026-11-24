@@ -1,3 +1,6 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
 <title>Вентиляция с рекуператором — дом 11×9</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1228,4 +1231,19 @@ render();
 #pnav span{background:#1f2a33;color:#fff}
 @media (max-width:640px){#pnav b{display:none}#pnav{font-size:12px}#pnav a,#pnav span{padding:7px 9px}}
 @media print{#pnav{display:none}}
-</style><div aria-hidden="true" style="height:64px"></div><nav id="pnav" aria-label="Страницы проекта"><b>Дом 11×9</b><a href="./">3D-модель</a><a href="dom-11x9.html">План и проект</a><a href="potolki-shtukaturka.html">Потолки</a><span aria-current="page">Вентиляция</span><a href="kuhnya-chertezh.html">Кухня</a><a href="sloboda/">Генплан участка</a></nav><!--/PNAV-->
+</style><style id="polish-css">
+#pnav{font-family:inherit;border-color:rgba(0,0,0,.1);box-shadow:0 8px 24px -8px rgba(20,28,34,.32),0 1px 2px rgba(20,28,34,.08)}
+#pnav a,#pnav span{transition:background-color .15s ease-out,color .15s ease-out}
+#pnav a:active{background:rgba(0,0,0,.12)}
+#pnav a:focus-visible{outline:2px solid #1f2a33;outline-offset:-2px}
+#pnav.dk{background:rgba(34,38,40,.94);border-color:rgba(255,255,255,.12);box-shadow:0 8px 24px -8px rgba(0,0,0,.6)}
+#pnav.dk b{color:#9da1a5}#pnav.dk a{color:#ecedeb}#pnav.dk a:hover{background:rgba(255,255,255,.08)}
+#pnav.dk span{background:#ecedeb;color:#1f2a33}#pnav.dk a:focus-visible{outline-color:#ecedeb}
+@media (prefers-reduced-motion:reduce){#pnav a,#pnav span{transition:none}}
+</style><div aria-hidden="true" style="height:64px"></div><nav id="pnav" aria-label="Страницы проекта"><b>Дом 11×9</b><a href="./">3D-модель</a><a href="dom-11x9.html">План и проект</a><a href="potolki-shtukaturka.html">Потолки</a><span aria-current="page">Вентиляция</span><a href="kuhnya-chertezh.html">Кухня</a><a href="sloboda/">Генплан участка</a></nav><!--/PNAV--><script id="polish-js">(function(){var n=document.getElementById("pnav");if(!n)return;
+function fade(){var l=n.scrollLeft>2,r=n.scrollLeft+n.clientWidth<n.scrollWidth-2,m=(l||r)?"linear-gradient(90deg,"+(l?"transparent,#000 28px":"#000,#000")+","+(r?"#000 calc(100% - 28px),transparent":"#000,#000")+")":"";n.style.webkitMaskImage=m;n.style.maskImage=m}
+function dark(){var c=getComputedStyle(document.body).backgroundColor.match(/\d+(\.\d+)?/g);if(!c)return;var a=c.length>3?+c[3]:1,y=(.2126*c[0]+.7152*c[1]+.0722*c[2])/255;n.classList.toggle("dk",a>.5&&y<.4)}
+var cur=n.querySelector("[aria-current]");if(cur&&n.scrollWidth>n.clientWidth)n.scrollLeft=cur.offsetLeft-(n.clientWidth-cur.offsetWidth)/2;
+n.addEventListener("scroll",fade,{passive:true});addEventListener("resize",fade);fade();dark();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){setTimeout(dark,50)})}catch(e){}
+new MutationObserver(function(){setTimeout(dark,50)}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme","class"]});})();</script>
