@@ -72,6 +72,22 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-a
 th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
 .tbl{overflow-x:auto}
+.seg{display:inline-flex;flex-wrap:wrap;max-width:100%;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper);margin:4px 0 14px}
+.seg button{font:500 14px var(--f-body);color:var(--ink);background:transparent;border:0;padding:8px 13px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.front{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:760px){.front{grid-template-columns:minmax(0,1fr)}.seg button{flex:1 1 50%;border-bottom:1px solid var(--line)}}
+.front svg{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.front svg .d{font:11px var(--f-mono);fill:var(--muted)}
+.front svg .dw{fill:#4A463F}
+.front svg .da{font:11px var(--f-mono);fill:var(--acc)}
+.stext{display:flex;flex-direction:column;gap:10px}
+.stext h3{font:600 16px/1.35 var(--f-body);margin:0}
+.stext ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted)}
+.legend b{display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.12)}
 @media print{body{background:#fff}.card{break-inside:avoid}}
 </style>
 <body>
@@ -83,6 +99,21 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
 </header>
 
 <div class="note"><b>Две водорозетки — это под накладную душевую систему</b>: смеситель на эксцентриках, от него вверх штанга с тропической лейкой. Её целиком вешают <b>после плитки</b>, до плитки — только выводы. Если вы всё-таки купили встраиваемую систему (снаружи только панель и ручки), водорозетки не нужны: трубы заводят прямо в её скрытую коробку, и делать это надо до штукатурки.</div>
+
+<section class="card" id="front">
+  <div class="sh"><span class="eyebrow">ВИД НА СТЕНУ</span><h2>Как это монтируется и как выглядит в стене</h2></div>
+  <p class="muted">Стена душа спереди, ширина 1 м, в масштабе. Высоты берутся из калькулятора ниже: поменяйте цифры, и рисунок перестроится.</p>
+  <div class="seg" role="group" aria-label="Стадия">
+    <button type="button" data-st="1" aria-pressed="true">1. Открытая стена</button>
+    <button type="button" data-st="2" aria-pressed="false">2. Штукатурка и гидро</button>
+    <button type="button" data-st="3" aria-pressed="false">3. Плитка</button>
+    <button type="button" data-st="4" aria-pressed="false">4. Готовый душ</button>
+  </div>
+  <div class="front">
+    <svg id="fsvg" viewBox="0 0 400 600" role="img" aria-label="Стена душа спереди"></svg>
+    <div class="stext" id="stext" aria-live="polite"></div>
+  </div>
+</section>
 
 <section class="card">
   <div class="sh"><span class="eyebrow">РАЗРЕЗ</span><h2>Как вывод должен оказаться в готовой стене</h2></div>
@@ -229,6 +260,72 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
     set('r4','нужно '+need+' мм', t, d<=0&&d>=-5);
   }
   ids.forEach(function(i){$(i).addEventListener('input',calc)});calc();
+})();
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  function v(i){var x=parseFloat($(i).value);return isNaN(x)?0:x}
+  var st=1;
+  var T={
+   1:['Открытая стена: трубы и выводы','<ul><li>Две трубы (горячая слева, холодная справа) идут к водорозеткам в штробе.</li><li>Водорозетки прикручены к <b>монтажной планке</b>: она держит межосевое 150 мм и не даёт выводам провернуться.</li><li>Планка крепится к блоку дюбелями, выводы смотрят строго от стены, по уровню.</li><li>На резьбе временные заглушки; систему проверяют давлением до штукатурки.</li></ul>'],
+   2:['Штукатурка и гидроизоляция','<ul><li>Стена заштукатурена по маякам, планка и трубы скрыты, наружу выходят только торцы водорозеток.</li><li>Синим показана мастика: в душе на высоту 2,2 м.</li><li>На каждом выводе <b>манжета</b>, вклеенная в первый слой мастики.</li></ul>'],
+   3:['Плитка','<ul><li>Плитка 30×60 вертикально; выводы лучше попадают в середину плитки, а не в шов.</li><li>Отверстия Ø 25–30 мм коронкой, торец водорозетки в плоскости плитки.</li><li>Щель вокруг вывода заполняют санитарным силиконом.</li><li>На стене больше ничего не видно: только два отверстия с резьбой.</li></ul>'],
+   4:['Готовый душ','<ul><li>В водорозетки вкручены эксцентрики, на них смеситель; декоративные чашки закрывают отверстия.</li><li>От смесителя вверх идёт штанга, наверху тропическая лейка; верхний держатель штанги крепится дюбелем через плитку.</li><li>На штанге держатель ручного душа, шланг от нижнего выхода смесителя.</li><li>Всё это вешается после затирки и снимается без разборки плитки.</li></ul>']
+  };
+  function draw(){
+    var h=v('h')||1100, sys=v('sys')||1000, ceil=v('ceil')||2750, H=Math.max(ceil,h+sys+200);
+    var y0=575, k=545/H, W=1000, x0=36, Y=function(m){return y0-m*k}, X=function(m){return x0+m*k}, cx=X(500);
+    var o=[];
+    o.push('<defs><clipPath id="cw"><rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'"/></clipPath></defs>');
+    o.push('<g clip-path="url(#cw)"><rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'" fill="var(--l-block)"/>');
+    if(st===1){
+      for(var r=0;r*250<H;r++){var yy=Y(r*250);o.push('<line x1="'+X(0)+'" x2="'+X(W)+'" y1="'+yy+'" y2="'+yy+'" stroke="rgba(0,0,0,.18)"/>');
+        for(var c=(r%2?312:625);c<W;c+=625)o.push('<line x1="'+X(c)+'" x2="'+X(c)+'" y1="'+yy+'" y2="'+Y((r+1)*250)+'" stroke="rgba(0,0,0,.18)"/>');}
+      [[-75,'#C0503A'],[75,'#3F78B5']].forEach(function(p){var x=X(500+p[0]);
+        o.push('<rect x="'+(x-4)+'" y="'+Y(h)+'" width="8" height="'+(h*k)+'" fill="rgba(0,0,0,.14)"/>');
+        o.push('<line x1="'+x+'" x2="'+x+'" y1="'+y0+'" y2="'+Y(h)+'" stroke="var(--pipe)" stroke-width="4"/>');
+        o.push('<circle cx="'+x+'" cy="'+(y0-30)+'" r="3.5" fill="'+p[1]+'"/>');});
+      o.push('<rect x="'+X(360)+'" y="'+(Y(h)-4)+'" width="'+(280*k)+'" height="8" rx="2" fill="var(--chrome)"/>');
+    }
+    if(st>=2)o.push('<rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'" fill="var(--l-plast)"/>');
+    if(st===2){o.push('<rect x="'+X(0)+'" y="'+Y(2200)+'" width="'+(W*k)+'" height="'+(2200*k)+'" fill="var(--l-mast)" opacity=".45"/>');
+      o.push('<line x1="'+X(0)+'" x2="'+X(W)+'" y1="'+Y(2200)+'" y2="'+Y(2200)+'" stroke="var(--l-mast)" stroke-width="1.5"/>');
+      [-75,75].forEach(function(d){o.push('<rect x="'+(X(500+d)-12)+'" y="'+(Y(h)-12)+'" width="24" height="24" rx="3" fill="var(--l-mast)"/>')});}
+    if(st>=3){o.push('<rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'" fill="var(--l-tile)"/>');
+      for(var c2=50;c2<W;c2+=300)o.push('<line x1="'+X(c2)+'" x2="'+X(c2)+'" y1="'+Y(H)+'" y2="'+y0+'" stroke="var(--line)"/>');
+      for(var r2=1;r2*600<H;r2++)o.push('<line x1="'+X(0)+'" x2="'+X(W)+'" y1="'+Y(r2*600)+'" y2="'+Y(r2*600)+'" stroke="var(--line)"/>');}
+    o.push('</g><rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'" fill="none" stroke="var(--line)"/>');
+    if(st<=3)[-75,75].forEach(function(d){o.push('<circle cx="'+X(500+d)+'" cy="'+Y(h)+'" r="4.5" fill="var(--pipe)" stroke="#5a3a1a"/><circle cx="'+X(500+d)+'" cy="'+Y(h)+'" r="2" fill="#3a2a1a"/>')});
+    if(st===4){
+      var top=h+sys, hs=h+650;
+      o.push('<rect x="'+(cx-2.5)+'" y="'+Y(top+80)+'" width="5" height="'+((top+80-h)*k)+'" rx="2" fill="var(--chrome)"/>');
+      o.push('<rect x="'+(cx-7)+'" y="'+(Y(top+80)-4)+'" width="14" height="6" rx="2" fill="var(--chrome)"/>');
+      o.push('<rect x="'+(cx-125*k)+'" y="'+(Y(top)-2)+'" width="'+(250*k)+'" height="5" rx="2.5" fill="var(--chrome)"/>');
+      for(var i=-4;i<=4;i++){var lx=cx+i*25*k;o.push('<line x1="'+lx+'" x2="'+(lx+i*2)+'" y1="'+(Y(top)+6)+'" y2="'+(Y(top)+26)+'" stroke="var(--blue)" stroke-dasharray="2 3" opacity=".75"/>')}
+      [-75,75].forEach(function(d){o.push('<circle cx="'+X(500+d)+'" cy="'+Y(h)+'" r="'+(28*k+1)+'" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>')});
+      o.push('<rect x="'+X(350)+'" y="'+(Y(h)-6)+'" width="'+(300*k)+'" height="12" rx="6" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>');
+      o.push('<circle cx="'+X(350)+'" cy="'+Y(h)+'" r="6" fill="var(--chrome)" stroke="rgba(0,0,0,.3)"/><circle cx="'+X(650)+'" cy="'+Y(h)+'" r="6" fill="var(--chrome)" stroke="rgba(0,0,0,.3)"/>');
+      o.push('<rect x="'+(cx+2)+'" y="'+(Y(hs)-3)+'" width="6" height="6" fill="var(--chrome)"/>');
+      o.push('<rect x="'+(cx+7)+'" y="'+(Y(hs)-6)+'" width="7" height="34" rx="3" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>');
+      o.push('<path d="M'+cx+' '+(Y(h)+6)+' C '+(cx+6)+' '+(y0-14)+', '+(cx+52)+' '+(y0-14)+', '+(cx+11)+' '+(Y(hs)+28)+'" fill="none" stroke="var(--chrome)" stroke-width="2"/>');
+      o.push('<text x="'+(X(0)+6)+'" y="'+(Y(top)+4)+'" class="d dw">лейка</text><text x="'+(X(0)+6)+'" y="'+(Y(hs)+4)+'" class="d dw">ручной душ</text><text x="'+(X(0)+6)+'" y="'+(Y(h)+4)+'" class="d dw">смеситель</text>');
+    }
+    o.push('<rect x="'+(X(0)-6)+'" y="'+y0+'" width="'+(W*k+12)+'" height="8" fill="var(--paper)" stroke="var(--line)"/><text x="'+X(0)+'" y="'+(y0+20)+'" class="d">верх поддона = 0</text>');
+    o.push('<line x1="'+(X(0)-6)+'" x2="'+(X(W)+120)+'" y1="'+Y(ceil)+'" y2="'+Y(ceil)+'" stroke="var(--muted)" stroke-dasharray="5 4"/><text x="'+(X(W)+8)+'" y="'+(Y(ceil)-5)+'" class="d">потолок '+ceil+'</text>');
+    var dx=X(W)+18;
+    function dim(a,b,label,cls,x){o.push('<line x1="'+x+'" x2="'+x+'" y1="'+Y(a)+'" y2="'+Y(b)+'" stroke="var(--muted)"/><line x1="'+(x-4)+'" x2="'+(x+4)+'" y1="'+Y(a)+'" y2="'+Y(a)+'" stroke="var(--muted)"/><line x1="'+(x-4)+'" x2="'+(x+4)+'" y1="'+Y(b)+'" y2="'+Y(b)+'" stroke="var(--muted)"/><text x="'+(x+5)+'" y="'+(Y(b)+14)+'" class="'+cls+'">'+label+'</text>')}
+    dim(0,h,'ось '+h,'da',dx);
+    if(st===2)dim(0,2200,'гидро 2200','d',dx+62);
+    if(st===4)dim(0,h+sys,'лейка '+(h+sys),'da',dx+62);
+    if(st<=3){var ya=Y(h)-22;o.push('<line x1="'+X(425)+'" x2="'+X(575)+'" y1="'+ya+'" y2="'+ya+'" stroke="var(--acc)"/><line x1="'+X(425)+'" x2="'+X(425)+'" y1="'+(ya-4)+'" y2="'+(ya+4)+'" stroke="var(--acc)"/><line x1="'+X(575)+'" x2="'+X(575)+'" y1="'+(ya-4)+'" y2="'+(ya+4)+'" stroke="var(--acc)"/><text x="'+cx+'" y="'+(ya-5)+'" text-anchor="middle" class="da">150</text>');}
+    if(st===1)o.push('<text x="'+(X(640)+6)+'" y="'+(Y(h)+4)+'" class="d">планка</text><text x="'+(X(425)-8)+'" y="'+(y0-26)+'" text-anchor="end" class="d">ГВ</text><text x="'+(X(575)+8)+'" y="'+(y0-26)+'" class="d">ХВ</text>');
+    if(st===2)o.push('<text x="'+(X(575)+16)+'" y="'+(Y(h)+4)+'" class="d">манжеты</text>');
+    $('fsvg').innerHTML=o.join('');
+    var lg={1:'<span><b style="background:var(--pipe)"></b>трубы, водорозетки</span><span><b style="background:var(--chrome)"></b>монтажная планка</span><span><b style="background:var(--l-block)"></b>блок</span>',2:'<span><b style="background:var(--l-plast)"></b>штукатурка</span><span><b style="background:var(--l-mast)"></b>мастика, манжеты</span>',3:'<span><b style="background:var(--l-tile)"></b>плитка 30×60</span><span><b style="background:var(--pipe)"></b>торцы водорозеток</span>',4:'<span><b style="background:var(--chrome)"></b>смеситель, штанга, лейка</span>'};
+    $('stext').innerHTML='<h3>'+T[st][0]+'</h3>'+T[st][1]+'<div class="legend">'+lg[st]+'</div>';
+  }
+  document.querySelectorAll('[data-st]').forEach(function(b){b.addEventListener('click',function(){st=+b.dataset.st;document.querySelectorAll('[data-st]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});draw()})});
+  ['h','sys','ceil'].forEach(function(i){$(i).addEventListener('input',draw)});
+  draw();
 })();
 </script>
 <!--PNAV--><style id="pnav-css">
