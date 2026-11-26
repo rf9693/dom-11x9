@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<title>Душ: от водорозеток до лейки — дом 11×9</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Что делать после вывода двух водорозеток под душевую систему с тропическим душем: проверка, опрессовка, штукатурка, гидроизоляция, плитка, монтаж. С калькулятором высоты лейки и глубины выводов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F2F2F0;--paper:#FFFFFF;--ink:#212427;--muted:#6A6E72;--line:#DCDDDA;
+  --acc:#C7651F;--acc-soft:#F6E6D8;--blue:#3D6E8F;--blue-soft:#E3ECF2;--ok:#4D7A4F;--ok-soft:#E4EEE4;--bad:#B3412E;--bad-soft:#F6E1DC;
+  --l-block:#D9D4C8;--l-plast:#C9C2B4;--l-mast:#4F7FA3;--l-glue:#A39D92;--l-tile:#F7F6F2;--pipe:#B87333;--chrome:#8C959C;
+  --f-disp:"Unbounded",system-ui,sans-serif;--f-body:"Manrope",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161819;--paper:#1F2224;--ink:#ECEDEB;--muted:#9DA1A5;--line:#33373A;
+  --acc:#F08A45;--acc-soft:#3A2A1E;--blue:#7FB2D3;--blue-soft:#1E2C36;--ok:#86B888;--ok-soft:#1F2C20;--bad:#E8806C;--bad-soft:#3A221D;
+  --l-block:#5A564E;--l-plast:#6E685D;--l-mast:#4E7C9E;--l-glue:#827C72;--l-tile:#CFCCC4;--pipe:#D08A4A;--chrome:#AEB6BC;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161819;--paper:#1F2224;--ink:#ECEDEB;--muted:#9DA1A5;--line:#33373A;
+  --acc:#F08A45;--acc-soft:#3A2A1E;--blue:#7FB2D3;--blue-soft:#1E2C36;--ok:#86B888;--ok-soft:#1F2C20;--bad:#E8806C;--bad-soft:#3A221D;
+  --l-block:#5A564E;--l-plast:#6E685D;--l-mast:#4E7C9E;--l-glue:#827C72;--l-tile:#CFCCC4;--pipe:#D08A4A;--chrome:#AEB6BC;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1{font:500 clamp(22px,3.2vw,34px)/1.15 var(--f-disp);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font:500 18px/1.3 var(--f-disp);margin:0;text-wrap:balance}
+p{margin:0}
+.muted,.lead{color:var(--muted)}
+.lead{max-width:78ch}
+a{color:var(--blue)}
+header{display:flex;flex-direction:column;gap:10px}
+.links{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sh{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font:500 12px var(--f-mono);color:var(--acc);letter-spacing:.04em}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:880px){.two{grid-template-columns:minmax(0,1fr)}}
+.note{border-left:3px solid var(--blue);background:var(--blue-soft);padding:10px 14px;border-radius:0 6px 6px 0;font-size:14px}
+.warn{border-left:3px solid var(--acc);background:var(--acc-soft);padding:10px 14px;border-radius:0 6px 6px 0;font-size:14px}
+svg{display:block;width:100%;height:auto}
+svg text{font:12px var(--f-body);fill:var(--ink)}
+svg .m{font:11px var(--f-mono);fill:var(--muted)}
+/* калькулятор */
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 16px}
+.calc label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.calc input{font:500 16px var(--f-mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
+.calc input:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.res div{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.res small{color:var(--muted);font-size:12px}
+.res b{font:500 20px var(--f-mono)}
+.res span{font-size:13px}
+.res .ok{border-color:var(--ok);background:var(--ok-soft)}
+.res .bad{border-color:var(--bad);background:var(--bad-soft)}
+.res .ok span{color:var(--ok)}.res .bad span{color:var(--bad)}
+/* шаги */
+ol.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:0}
+ol.steps>li{display:grid;grid-template-columns:38px 1fr;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+ol.steps>li:first-child{border-top:0;padding-top:4px}
+ol.steps .no{font:500 13px/32px var(--f-mono);text-align:center;border-radius:6px;height:32px;background:var(--bg);border:1px solid var(--line)}
+ol.steps li.now .no{background:var(--acc);border-color:var(--acc);color:#fff}
+ol.steps h3{font:600 16px/1.35 var(--f-body);margin:0 0 4px}
+ol.steps .when{font:500 11.5px var(--f-mono);color:var(--acc);letter-spacing:.03em;text-transform:uppercase}
+ol.steps ul{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+ol.steps p{color:var(--muted);font-size:14px;margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips span{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--bg)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
+.tbl{overflow-x:auto}
+@media print{body{background:#fff}.card{break-inside:avoid}}
+</style>
+<body>
+<div class="wrap">
+<header>
+  <h1>Душ: от двух водорозеток до тропической лейки</h1>
+  <p class="lead">Две водорозетки уже утоплены в стену и выведены. Ниже — что проверить сейчас, пока стена открыта, и что делать дальше по порядку, до готового душа. Калькулятор подскажет, где окажется лейка и на сколько водорозетки должны выступать из блока.</p>
+  <div class="links"><a href="sanuzel.html">← Санузел: работы и материалы</a><a href="dom-11x9.html">План и смета</a><a href="#calc">Калькулятор</a></div>
+</header>
+
+<div class="note"><b>Две водорозетки — это под накладную душевую систему</b>: смеситель на эксцентриках, от него вверх штанга с тропической лейкой. Её целиком вешают <b>после плитки</b>, до плитки — только выводы. Если вы всё-таки купили встраиваемую систему (снаружи только панель и ручки), водорозетки не нужны: трубы заводят прямо в её скрытую коробку, и делать это надо до штукатурки.</div>
+
+<section class="card">
+  <div class="sh"><span class="eyebrow">РАЗРЕЗ</span><h2>Как вывод должен оказаться в готовой стене</h2></div>
+  <div class="two">
+    <svg viewBox="0 0 520 300" role="img" aria-label="Разрез стены с водорозеткой: блок, штукатурка, мастика, клей, плитка; торец водорозетки заподлицо с плиткой, эксцентрик вкручен в неё">
+      <rect x="20" y="20" width="200" height="260" fill="var(--l-block)"/>
+      <rect x="220" y="20" width="44" height="260" fill="var(--l-plast)"/>
+      <rect x="264" y="20" width="6" height="260" fill="var(--l-mast)"/>
+      <rect x="270" y="20" width="16" height="260" fill="var(--l-glue)"/>
+      <rect x="286" y="20" width="26" height="260" fill="var(--l-tile)" stroke="var(--line)"/>
+      <!-- труба и водорозетка -->
+      <rect x="40" y="186" width="16" height="94" fill="var(--pipe)"/>
+      <rect x="40" y="140" width="16" height="56" fill="var(--pipe)"/>
+      <rect x="40" y="134" width="270" height="22" rx="3" fill="var(--pipe)"/>
+      <rect x="232" y="126" width="10" height="38" fill="var(--pipe)"/>
+      <!-- эксцентрик -->
+      <rect x="296" y="138" width="80" height="14" fill="var(--chrome)"/>
+      <rect x="312" y="112" width="8" height="66" rx="2" fill="var(--chrome)"/>
+      <rect x="376" y="128" width="70" height="34" rx="6" fill="var(--chrome)"/>
+      <line x1="312" y1="14" x2="312" y2="290" stroke="var(--acc)" stroke-dasharray="4 3"/>
+      <text x="318" y="30" style="fill:var(--acc)">плоскость плитки</text>
+      <text x="40" y="44">газоблок</text>
+      <text x="40" y="60" class="m">ось 1000–1200</text>
+      <text x="200" y="300" class="m">шт. 12</text>
+      <text x="252" y="300" class="m">1</text>
+      <text x="268" y="300" class="m">5</text>
+      <text x="290" y="300" class="m">9 мм</text>
+      <text x="380" y="190">эксцентрик</text>
+      <text x="380" y="206" class="m">и декор. чашка</text>
+      <text x="380" y="122">смеситель</text>
+      <text x="64" y="128">водорозетка ½″</text>
+    </svg>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <p><b>Главное правило:</b> торец водорозетки после всех слоёв должен быть <b>в плоскости плитки или на 1–3 мм глубже</b>. Выступает — декоративная чашка эксцентрика не прижмётся к плитке. Утоплен глубже 5–7 мм — эксцентрик не докрутится, понадобится удлинитель, а он часто течёт.</p>
+      <p>Слои на газоблоке у вас примерно: штукатурка 12 + мастика 1 + клей 5 + плитка 9 ≈ <b>27 мм</b>. Значит, от поверхности блока торец водорозетки должен выступать на ~24–27 мм. Точнее — в калькуляторе.</p>
+      <p class="muted">Резьба водорозетки внутренняя ½″. Эксцентрики стандартные: межосевое 150 мм, подгоняют разницу до ±10–12 мм.</p>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="calc">
+  <div class="sh"><span class="eyebrow">КАЛЬКУЛЯТОР</span><h2>Проверьте свои выводы</h2><p class="muted">Подставьте то, что намерили рулеткой. Высоты — от верха поддона (будущего чистового уровня в душе).</p></div>
+  <div class="calc">
+    <label>Ось водорозеток над поддоном, мм<input id="h" type="number" inputmode="numeric" value="1100"></label>
+    <label>От оси смесителя до низа лейки по паспорту системы, мм<input id="sys" type="number" inputmode="numeric" value="1000"></label>
+    <label>Потолок над поддоном, мм<input id="ceil" type="number" inputmode="numeric" value="2750"></label>
+    <label>Межосевое между водорозетками, мм<input id="ax" type="number" inputmode="numeric" value="150"></label>
+    <label>Разница высот двух выводов, мм<input id="dh" type="number" inputmode="numeric" value="0"></label>
+    <label>Сейчас торец выступает из блока, мм<input id="out" type="number" inputmode="numeric" value="27"></label>
+    <label>Штукатурка, мм<input id="lp" type="number" inputmode="numeric" value="12"></label>
+    <label>Мастика + клей, мм<input id="lg" type="number" inputmode="numeric" value="6"></label>
+    <label>Плитка, мм<input id="lt" type="number" inputmode="numeric" value="9"></label>
+  </div>
+  <div class="res" aria-live="polite">
+    <div id="r1"><small>Низ лейки над поддоном</small><b>—</b><span></span></div>
+    <div id="r2"><small>Запас до потолка</small><b>—</b><span></span></div>
+    <div id="r3"><small>Межосевое</small><b>—</b><span></span></div>
+    <div id="r4"><small>Глубина вывода</small><b>—</b><span></span></div>
+  </div>
+  <p class="muted" style="font-size:13px">Потолок натяжной на 2810 от чистового пола; верх поддона обычно на 40–120 мм выше пола — вычтите его. Расстояние «смеситель — лейка» есть в паспорте системы (часто пишут «высота системы» и «от оси подключения»).</p>
+</section>
+
+<section class="card">
+  <div class="sh"><span class="eyebrow">ПО ПОРЯДКУ</span><h2>Что делать дальше</h2></div>
+  <ol class="steps">
+    <li class="now"><div class="no">1</div><div><span class="when">сейчас, стена открыта</span><h3>Проверить положение выводов</h3>
+      <ul>
+        <li>Межосевое 150 мм (допуск эксцентриков 140–160).</li>
+        <li>Оба вывода на одной высоте по уровню — разница не больше 2–3 мм.</li>
+        <li>Торцы в одной плоскости, водорозетки строго перпендикулярно стене.</li>
+        <li>Горячая слева, холодная справа (если смотреть на стену).</li>
+        <li>Высота: смеситель + штанга не должны упереться в натяжной потолок — посчитайте в калькуляторе.</li>
+      </ul>
+      <p>Если что-то не так — переделывать сейчас: дальше это только с разбором плитки.</p></div></li>
+    <li><div class="no">2</div><div><span class="when">до штукатурки</span><h3>Жёстко закрепить и опрессовать</h3>
+      <ul>
+        <li>Водорозетки — на монтажную планку или хомутами к блоку на дюбели, чтобы не болтались при закручивании эксцентриков.</li>
+        <li>Временно вкрутить заглушки или соединить выводы петлёй (перемычкой).</li>
+        <li>Опрессовка: 1,5 × рабочее давление (обычно 6–10 бар), 30 минут без падения по манометру. Можно сразу открыть воду и оставить на сутки под давлением.</li>
+        <li>Сфотографировать трассу труб с рулеткой — чтобы потом не просверлить при монтаже штанги.</li>
+      </ul></div></li>
+    <li><div class="no">3</div><div><span class="when">штукатурка</span><h3>Заштукатурить вокруг, не залив резьбу</h3>
+      <ul>
+        <li>Заглушки оставить на время работ — резьба должна остаться чистой.</li>
+        <li>Маяки ставить так, чтобы плоскость стены вышла под нужную глубину выводов.</li>
+        <li>Вокруг вывода штукатурку подрезать ровно, без бугров — под манжету.</li>
+      </ul></div></li>
+    <li><div class="no">4</div><div><span class="when">гидроизоляция</span><h3>Манжета на каждый вывод</h3>
+      <ul>
+        <li>Грунт, затем первый слой мастики, в него сразу настенную манжету на водорозетку (отверстие манжеты чуть меньше трубы — натянуть).</li>
+        <li>Второй слой мастики поверх манжеты. Душевая стена мажется на высоту 2,2 м.</li>
+      </ul>
+      <div class="chips"><span>манжета настенная ×2</span><span>мастика CL 51</span></div></div></li>
+    <li><div class="no">5</div><div><span class="when">плитка</span><h3>Вырезать отверстия и уложить плитку</h3>
+      <ul>
+        <li>Раскладку планировать так, чтобы выводы не попадали на край плитки или шов — лучше на середину плитки.</li>
+        <li>Отверстия — алмазной коронкой Ø 25–30 мм: чашка эксцентрика (~Ø 50–55) закроет зазор.</li>
+        <li>После затирки зазор между плиткой и водорозеткой заполнить санитарным силиконом — вода не пойдёт в стену.</li>
+      </ul>
+      <div class="chips"><span>коронка Ø 25–30</span><span>силикон санитарный</span></div></div></li>
+    <li><div class="no">6</div><div><span class="when">через сутки после затирки</span><h3>Эксцентрики и смеситель</h3>
+      <ul>
+        <li>Подмотка на эксцентрики: лён с пастой или фум-лента, 8–10 витков.</li>
+        <li>Вкрутить, выставить межосевое по смесителю и горизонт уровнем, надеть декоративные чашки.</li>
+        <li>Прикрутить смеситель через прокладки, открыть воду, проверить на течь.</li>
+      </ul></div></li>
+    <li><div class="no">7</div><div><span class="when">финал</span><h3>Штанга и тропическая лейка</h3>
+      <ul>
+        <li>Собрать штангу со смесителем, отметить точку верхнего держателя строго по вертикали.</li>
+        <li>Сверлить плитку сверлом по плитке без удара, потом бетоном/по блоку; дюбели для газоблока или химический анкер.</li>
+        <li>Не сверлить над выводами по вертикали — там может идти труба (сверьтесь с фото из шага 2).</li>
+        <li>Повесить лейку, проверить работу переключателя «лейка — ручной душ».</li>
+      </ul>
+      <div class="chips"><span>дюбели для газобетона</span><span>сверло по плитке</span></div></div></li>
+  </ol>
+</section>
+
+<section class="card">
+  <div class="sh"><span class="eyebrow">ВЫСОТЫ</span><h2>Ориентиры для тропического душа</h2></div>
+  <div class="tbl"><table><thead><tr><th>Что</th><th>Где</th><th style="text-align:right">мм</th></tr></thead><tbody>
+    <tr><td>Ось смесителя (водорозеток)</td><td>над верхом поддона</td><td class="n">1000–1200</td></tr>
+    <tr><td>Межосевое водорозеток</td><td>по горизонтали</td><td class="n">150</td></tr>
+    <tr><td>Низ тропической лейки</td><td>над поддоном</td><td class="n">1950–2150</td></tr>
+    <tr><td>Запас от лейки до натяжного потолка</td><td>минимум</td><td class="n">≥ 50</td></tr>
+    <tr><td>Торец водорозетки</td><td>от плоскости плитки внутрь</td><td class="n">0…3</td></tr>
+    <tr><td>Гидроизоляция душевых стен</td><td>от пола</td><td class="n">2200</td></tr>
+  </tbody></table></div>
+  <p class="warn">Если смеситель стоит низко, а штанга фиксированной длины — лейка тоже окажется низко. У многих систем штанга телескопическая: проверьте ход в паспорте до того, как закроете стену.</p>
+</section>
+</div>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var ids=['h','sys','ceil','ax','dh','out','lp','lg','lt'];
+  function v(i){var x=parseFloat($(i).value);return isNaN(x)?0:x}
+  function set(id,val,txt,ok){var e=$(id);e.className=ok===null?'':(ok?'ok':'bad');e.querySelector('b').textContent=val;e.querySelector('span').textContent=txt}
+  function calc(){
+    var low=v('h')+v('sys'), gap=v('ceil')-low-15;
+    set('r1',low+' мм', low<1900?'низко — высоким будет неудобно':low>2200?'высоко, проверьте запас до потолка':'удобная высота', low>=1900&&low<=2200);
+    set('r2',gap+' мм', gap<50?'мало: лейка упрётся в полотно — укоротить штангу или опустить смеситель':'хватает (с учётом толщины лейки ~15 мм)', gap>=50);
+    var ax=v('ax'); set('r3',ax+' мм', (ax>=140&&ax<=160)?(v('dh')>3?'межосевое ок, но выводы на разной высоте — выровнять':'эксцентрики подгонят'):'вне допуска эксцентриков — переделать', ax>=140&&ax<=160&&v('dh')<=3);
+    var need=v('lp')+v('lg')+v('lt'), d=v('out')-need;
+    var t=d>0?'выступит над плиткой на '+d+' мм — утопить':d<-5?'утоплен на '+(-d)+' мм — нужен удлинитель или вывести ближе':'норма: '+(d===0?'заподлицо':'на '+(-d)+' мм глубже плитки');
+    set('r4','нужно '+need+' мм', t, d<=0&&d>=-5);
+  }
+  ids.forEach(function(i){$(i).addEventListener('input',calc)});calc();
+})();
+</script>
+<!--PNAV--><style id="pnav-css">
+#pnav{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:2147483000;display:flex;gap:2px;align-items:center;max-width:calc(100vw - 24px);overflow-x:auto;
+  padding:4px;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid rgba(0,0,0,.14);box-shadow:0 4px 16px rgba(0,0,0,.18);
+  font:500 13px/1.2 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);scrollbar-width:none}
+#pnav::-webkit-scrollbar{display:none}
+#pnav b{padding:7px 10px 7px 12px;color:#6b6b6b;font-weight:600;white-space:nowrap}
+#pnav a,#pnav span{padding:7px 12px;border-radius:999px;white-space:nowrap;text-decoration:none;color:#1f2a33}
+#pnav a:hover{background:rgba(0,0,0,.07)}
+#pnav span{background:#1f2a33;color:#fff}
+@media (max-width:640px){#pnav b{display:none}#pnav{font-size:12px}#pnav a,#pnav span{padding:7px 9px}}
+@media print{#pnav{display:none}}
+</style><style id="polish-css">
+#pnav{font-family:inherit;border-color:rgba(0,0,0,.1);box-shadow:0 8px 24px -8px rgba(20,28,34,.32),0 1px 2px rgba(20,28,34,.08)}
+#pnav a,#pnav span{transition:background-color .15s ease-out,color .15s ease-out}
+#pnav a:active{background:rgba(0,0,0,.12)}
+#pnav a:focus-visible{outline:2px solid #1f2a33;outline-offset:-2px}
+#pnav.dk{background:rgba(34,38,40,.94);border-color:rgba(255,255,255,.12);box-shadow:0 8px 24px -8px rgba(0,0,0,.6)}
+#pnav.dk b{color:#9da1a5}#pnav.dk a{color:#ecedeb}#pnav.dk a:hover{background:rgba(255,255,255,.08)}
+#pnav.dk span{background:#ecedeb;color:#1f2a33}#pnav.dk a:focus-visible{outline-color:#ecedeb}
+@media (prefers-reduced-motion:reduce){#pnav a,#pnav span{transition:none}}
+</style><div aria-hidden="true" style="height:64px"></div><nav id="pnav" aria-label="Страницы проекта"><b>Дом 11×9</b><a href="./">3D-модель</a><a href="dom-11x9.html">План и проект</a><a href="potolki-shtukaturka.html">Потолки</a><span aria-current="page">Санузел</span><a href="ventilyaciya.html">Вентиляция</a><a href="kuhnya-chertezh.html">Кухня</a><a href="sloboda/">Генплан участка</a></nav><!--/PNAV--><script id="polish-js">(function(){var n=document.getElementById("pnav");if(!n)return;
+function fade(){var l=n.scrollLeft>2,r=n.scrollLeft+n.clientWidth<n.scrollWidth-2,m=(l||r)?"linear-gradient(90deg,"+(l?"transparent,#000 28px":"#000,#000")+","+(r?"#000 calc(100% - 28px),transparent":"#000,#000")+")":"";n.style.webkitMaskImage=m;n.style.maskImage=m}
+function dark(){var c=getComputedStyle(document.body).backgroundColor.match(/\d+(\.\d+)?/g);if(!c)return;var a=c.length>3?+c[3]:1,y=(.2126*c[0]+.7152*c[1]+.0722*c[2])/255;n.classList.toggle("dk",a>.5&&y<.4)}
+var cur=n.querySelector("[aria-current]");if(cur&&n.scrollWidth>n.clientWidth)n.scrollLeft=cur.offsetLeft-(n.clientWidth-cur.offsetWidth)/2;
+n.addEventListener("scroll",fade,{passive:true});addEventListener("resize",fade);fade();dark();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){setTimeout(dark,50)})}catch(e){}
+new MutationObserver(function(){setTimeout(dark,50)}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme","class"]});})();</script>
+</body>
+</html>
