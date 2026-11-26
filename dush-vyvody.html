@@ -81,6 +81,8 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
 @media (max-width:760px){.front{grid-template-columns:minmax(0,1fr)}.seg button{flex:1 1 50%;border-bottom:1px solid var(--line)}}
 .front svg{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
 .front svg .d{font:11px var(--f-mono);fill:var(--muted)}
+.seg+.seg{margin-top:0}
+#mnote{margin:0 0 14px}
 .front svg .dw{fill:#4A463F}
 .front svg .da{font:11px var(--f-mono);fill:var(--acc)}
 .stext{display:flex;flex-direction:column;gap:10px}
@@ -98,11 +100,16 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
   <div class="links"><a href="sanuzel.html">← Санузел: работы и материалы</a><a href="dom-11x9.html">План и смета</a><a href="#calc">Калькулятор</a></div>
 </header>
 
-<div class="note"><b>Две водорозетки — это под накладную душевую систему</b>: смеситель на эксцентриках, от него вверх штанга с тропической лейкой. Её целиком вешают <b>после плитки</b>, до плитки — только выводы. Если вы всё-таки купили встраиваемую систему (снаружи только панель и ручки), водорозетки не нужны: трубы заводят прямо в её скрытую коробку, и делать это надо до штукатурки.</div>
+<div class="note"><b>Две водорозетки — это под накладную душевую систему</b>: смеситель на эксцентриках, от него вверх штанга с тропической лейкой. Её целиком вешают <b>после плитки</b>, до плитки — только выводы. Если вы всё-таки купили встраиваемую систему (снаружи только панель и ручки), водорозетки не нужны: трубы заводят прямо в её скрытую коробку, и делать это надо до штукатурки. Как переделать ваши выводы под скрытую систему, показано в блоке <a href="#front">«Вид на стену»</a>, переключатель «Скрытая».</div>
 
 <section class="card" id="front">
   <div class="sh"><span class="eyebrow">ВИД НА СТЕНУ</span><h2>Как это монтируется и как выглядит в стене</h2></div>
   <p class="muted">Стена душа спереди, ширина 1 м, в масштабе. Высоты берутся из калькулятора ниже: поменяйте цифры, и рисунок перестроится.</p>
+  <div class="seg" role="group" aria-label="Вариант системы">
+    <button type="button" data-m="nak" aria-pressed="true">Накладная — на ваши 2 вывода</button>
+    <button type="button" data-m="skr" aria-pressed="false">Скрытая — встраиваемая коробка</button>
+  </div>
+  <div class="note" id="mnote" hidden><b>Скрытая система состоит из двух покупок одной серии.</b> Первая — встраиваемая коробка, она нужна сразу, до штукатурки. Вторая — внешняя панель с ручками, её можно купить позже. Пары, например: Grohe Rapido SmartBox + панель SmartControl или Hansgrohe iBox universal + панель ShowerSelect. Коробку и панель разных систем не смешивают. Глубину ниши, высоты выводов и переключатель на 1 или 2 потребителя берут из паспорта выбранной коробки. Стене в зоне коробки нужно примерно 100 мм глубины. Если стена тонкая или несущую резать нельзя, делают фальшстену из влагостойкого ГКЛ или ЦСП на профиле, толщиной 100–120 мм.</div>
   <div class="seg" role="group" aria-label="Стадия">
     <button type="button" data-st="1" aria-pressed="true">1. Открытая стена</button>
     <button type="button" data-st="2" aria-pressed="false">2. Штукатурка и гидро</button>
@@ -264,66 +271,111 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
 (function(){
   var $=function(i){return document.getElementById(i)};
   function v(i){var x=parseFloat($(i).value);return isNaN(x)?0:x}
-  var st=1;
-  var T={
+  var st=1, m='nak';
+  var TN={
    1:['Открытая стена: трубы и выводы','<ul><li>Две трубы (горячая слева, холодная справа) идут к водорозеткам в штробе.</li><li>Водорозетки прикручены к <b>монтажной планке</b>: она держит межосевое 150 мм и не даёт выводам провернуться.</li><li>Планка крепится к блоку дюбелями, выводы смотрят строго от стены, по уровню.</li><li>На резьбе временные заглушки; систему проверяют давлением до штукатурки.</li></ul>'],
    2:['Штукатурка и гидроизоляция','<ul><li>Стена заштукатурена по маякам, планка и трубы скрыты, наружу выходят только торцы водорозеток.</li><li>Синим показана мастика: в душе на высоту 2,2 м.</li><li>На каждом выводе <b>манжета</b>, вклеенная в первый слой мастики.</li></ul>'],
    3:['Плитка','<ul><li>Плитка 30×60 вертикально; выводы лучше попадают в середину плитки, а не в шов.</li><li>Отверстия Ø 25–30 мм коронкой, торец водорозетки в плоскости плитки.</li><li>Щель вокруг вывода заполняют санитарным силиконом.</li><li>На стене больше ничего не видно: только два отверстия с резьбой.</li></ul>'],
    4:['Готовый душ','<ul><li>В водорозетки вкручены эксцентрики, на них смеситель; декоративные чашки закрывают отверстия.</li><li>От смесителя вверх идёт штанга, наверху тропическая лейка; верхний держатель штанги крепится дюбелем через плитку.</li><li>На штанге держатель ручного душа, шланг от нижнего выхода смесителя.</li><li>Всё это вешается после затирки и снимается без разборки плитки.</li></ul>']
   };
+  var TS={
+   1:['Открытая стена: ниша и встраиваемая коробка','<ul><li>В блоке вырубают <b>нишу под коробку</b>, примерно 230×230 мм. Глубину берут из паспорта коробки: обычно 75–110 мм от лица будущей плитки.</li><li><b>Ваши две водорозетки снимают.</b> Трубы, которые к ним шли, удлиняют и заводят в нижние входы коробки: горячую слева, холодную справа.</li><li>Из верхнего выхода коробки труба идёт в штробе вверх, к водорозетке под кронштейн лейки.</li><li>Из бокового выхода труба идёт к <b>шланговому подключению</b> для ручного душа. Оно нужно, если переключатель на два потребителя.</li><li>Коробку выставляют по уровню. Глубину проверяют по меткам min/max на её защитной крышке.</li><li>Проверка давлением делается до штукатурки.</li></ul>'],
+   2:['Штукатурка и гидроизоляция','<ul><li>Стену штукатурят вокруг коробки. Защитная крышка торчит до будущей плоскости плитки: так видно, что глубина правильная.</li><li>Мастику наносят на высоту 2,2 м и выше вывода лейки.</li><li>У коробки есть своя <b>гидроизоляционная манжета-фланец</b> (идёт в комплекте). Её вклеивают в мастику так же, как манжеты на выводах.</li></ul>'],
+   3:['Плитка','<ul><li>Плитку кладут вокруг защитной крышки, отверстие вырезают по ней или по шаблону из комплекта.</li><li>Ещё два отверстия нужны под вывод лейки вверху и под шланговое подключение сбоку.</li><li>Крышку не снимают до конца плиточных работ и затирки.</li></ul>'],
+   4:['Готовый душ: снаружи только панель и лейка','<ul><li>Крышку снимают и ставят <b>внешнюю панель</b> с ручкой или кнопками. Она закрывает отверстие целиком.</li><li>В верхний вывод вкручивают <b>кронштейн из стены</b>, на нём висит тропическая лейка.</li><li>Сбоку стоит шланговое подключение и держатель ручного душа.</li><li>Штанги и смесителя на стене нет: вся механика внутри коробки, а панель снимается для обслуживания.</li></ul>']
+  };
   function draw(){
-    var h=v('h')||1100, sys=v('sys')||1000, ceil=v('ceil')||2750, H=Math.max(ceil,h+sys+200);
-    var y0=575, k=545/H, W=1000, x0=36, Y=function(m){return y0-m*k}, X=function(m){return x0+m*k}, cx=X(500);
+    var h=v('h')||1100, sys=v('sys')||1000, ceil=v('ceil')||2750, top=h+sys, ho=top+60, H=Math.max(ceil,top+220), wp=(m==='skr')?Math.max(2200,ho+100):2200;
+    var y0=575, k=545/H, W=1000, x0=36, Y=function(q){return y0-q*k}, X=function(q){return x0+q*k}, cx=X(500), hs=h+650;
     var o=[];
-    o.push('<defs><clipPath id="cw"><rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'"/></clipPath></defs>');
-    o.push('<g clip-path="url(#cw)"><rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'" fill="var(--l-block)"/>');
+    function R(a,b,c,d,at){o.push('<rect x="'+X(a)+'" y="'+Y(d)+'" width="'+((c-a)*k)+'" height="'+((d-b)*k)+'" '+at+'/>')}
+    function L(x1,y1,x2,y2,at){o.push('<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" '+at+'/>')}
+    function C(x,y,r,at){o.push('<circle cx="'+x+'" cy="'+y+'" r="'+r+'" '+at+'/>')}
+    function outlet(xm,ym){C(X(xm),Y(ym),4.5,'fill="var(--pipe)" stroke="#5a3a1a"');C(X(xm),Y(ym),2,'fill="#3a2a1a"')}
+    function esc(xm,ym){C(X(xm),Y(ym),28*k+1,'fill="var(--chrome)" stroke="rgba(0,0,0,.25)"')}
+    o.push('<defs><clipPath id="cw"><rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'"/></clipPath></defs><g clip-path="url(#cw)">');
+    R(0,0,W,H,'fill="var(--l-block)"');
     if(st===1){
-      for(var r=0;r*250<H;r++){var yy=Y(r*250);o.push('<line x1="'+X(0)+'" x2="'+X(W)+'" y1="'+yy+'" y2="'+yy+'" stroke="rgba(0,0,0,.18)"/>');
-        for(var c=(r%2?312:625);c<W;c+=625)o.push('<line x1="'+X(c)+'" x2="'+X(c)+'" y1="'+yy+'" y2="'+Y((r+1)*250)+'" stroke="rgba(0,0,0,.18)"/>');}
-      [[-75,'#C0503A'],[75,'#3F78B5']].forEach(function(p){var x=X(500+p[0]);
-        o.push('<rect x="'+(x-4)+'" y="'+Y(h)+'" width="8" height="'+(h*k)+'" fill="rgba(0,0,0,.14)"/>');
-        o.push('<line x1="'+x+'" x2="'+x+'" y1="'+y0+'" y2="'+Y(h)+'" stroke="var(--pipe)" stroke-width="4"/>');
-        o.push('<circle cx="'+x+'" cy="'+(y0-30)+'" r="3.5" fill="'+p[1]+'"/>');});
-      o.push('<rect x="'+X(360)+'" y="'+(Y(h)-4)+'" width="'+(280*k)+'" height="8" rx="2" fill="var(--chrome)"/>');
+      for(var r=0;r*250<H;r++){var yy=Y(r*250);L(X(0),yy,X(W),yy,'stroke="rgba(0,0,0,.18)"');
+        for(var c=(r%2?312:625);c<W;c+=625)L(X(c),yy,X(c),Y((r+1)*250),'stroke="rgba(0,0,0,.18)"');}
+      if(m==='nak'){
+        [[-75,'#C0503A'],[75,'#3F78B5']].forEach(function(p){var x=X(500+p[0]);
+          R(500+p[0]-20,0,500+p[0]+20,h,'fill="rgba(0,0,0,.14)"');
+          L(x,y0,x,Y(h),'stroke="var(--pipe)" stroke-width="4"');C(x,y0-30,3.5,'fill="'+p[1]+'"');});
+        R(360,h-20,640,h+20,'rx="2" fill="var(--chrome)"');
+      }else{
+        R(385,h-115,615,h+115,'fill="rgba(0,0,0,.25)"');
+        [[-60,'#C0503A'],[60,'#3F78B5']].forEach(function(p){var x=X(500+p[0]);
+          R(500+p[0]-20,0,500+p[0]+20,h-100,'fill="rgba(0,0,0,.14)"');
+          L(x,y0,x,Y(h-100),'stroke="var(--pipe)" stroke-width="4"');C(x,y0-30,3.5,'fill="'+p[1]+'"');});
+        R(480,h+100,520,ho,'fill="rgba(0,0,0,.14)"');L(cx,Y(h+100),cx,Y(ho),'stroke="var(--pipe)" stroke-width="4"');
+        R(600,h-20,720,h+20,'fill="rgba(0,0,0,.14)"');L(X(600),Y(h),X(720),Y(h),'stroke="var(--pipe)" stroke-width="4"');
+        R(400,h-100,600,h+100,'rx="5" fill="var(--l-glue)" stroke="rgba(0,0,0,.4)"');
+        C(cx,Y(h),45*k,'fill="none" stroke="rgba(0,0,0,.4)"');
+      }
     }
-    if(st>=2)o.push('<rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'" fill="var(--l-plast)"/>');
-    if(st===2){o.push('<rect x="'+X(0)+'" y="'+Y(2200)+'" width="'+(W*k)+'" height="'+(2200*k)+'" fill="var(--l-mast)" opacity=".45"/>');
-      o.push('<line x1="'+X(0)+'" x2="'+X(W)+'" y1="'+Y(2200)+'" y2="'+Y(2200)+'" stroke="var(--l-mast)" stroke-width="1.5"/>');
-      [-75,75].forEach(function(d){o.push('<rect x="'+(X(500+d)-12)+'" y="'+(Y(h)-12)+'" width="24" height="24" rx="3" fill="var(--l-mast)"/>')});}
-    if(st>=3){o.push('<rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'" fill="var(--l-tile)"/>');
-      for(var c2=50;c2<W;c2+=300)o.push('<line x1="'+X(c2)+'" x2="'+X(c2)+'" y1="'+Y(H)+'" y2="'+y0+'" stroke="var(--line)"/>');
-      for(var r2=1;r2*600<H;r2++)o.push('<line x1="'+X(0)+'" x2="'+X(W)+'" y1="'+Y(r2*600)+'" y2="'+Y(r2*600)+'" stroke="var(--line)"/>');}
-    o.push('</g><rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'" fill="none" stroke="var(--line)"/>');
-    if(st<=3)[-75,75].forEach(function(d){o.push('<circle cx="'+X(500+d)+'" cy="'+Y(h)+'" r="4.5" fill="var(--pipe)" stroke="#5a3a1a"/><circle cx="'+X(500+d)+'" cy="'+Y(h)+'" r="2" fill="#3a2a1a"/>')});
-    if(st===4){
-      var top=h+sys, hs=h+650;
-      o.push('<rect x="'+(cx-2.5)+'" y="'+Y(top+80)+'" width="5" height="'+((top+80-h)*k)+'" rx="2" fill="var(--chrome)"/>');
-      o.push('<rect x="'+(cx-7)+'" y="'+(Y(top+80)-4)+'" width="14" height="6" rx="2" fill="var(--chrome)"/>');
-      o.push('<rect x="'+(cx-125*k)+'" y="'+(Y(top)-2)+'" width="'+(250*k)+'" height="5" rx="2.5" fill="var(--chrome)"/>');
-      for(var i=-4;i<=4;i++){var lx=cx+i*25*k;o.push('<line x1="'+lx+'" x2="'+(lx+i*2)+'" y1="'+(Y(top)+6)+'" y2="'+(Y(top)+26)+'" stroke="var(--blue)" stroke-dasharray="2 3" opacity=".75"/>')}
-      [-75,75].forEach(function(d){o.push('<circle cx="'+X(500+d)+'" cy="'+Y(h)+'" r="'+(28*k+1)+'" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>')});
-      o.push('<rect x="'+X(350)+'" y="'+(Y(h)-6)+'" width="'+(300*k)+'" height="12" rx="6" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>');
-      o.push('<circle cx="'+X(350)+'" cy="'+Y(h)+'" r="6" fill="var(--chrome)" stroke="rgba(0,0,0,.3)"/><circle cx="'+X(650)+'" cy="'+Y(h)+'" r="6" fill="var(--chrome)" stroke="rgba(0,0,0,.3)"/>');
-      o.push('<rect x="'+(cx+2)+'" y="'+(Y(hs)-3)+'" width="6" height="6" fill="var(--chrome)"/>');
-      o.push('<rect x="'+(cx+7)+'" y="'+(Y(hs)-6)+'" width="7" height="34" rx="3" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>');
-      o.push('<path d="M'+cx+' '+(Y(h)+6)+' C '+(cx+6)+' '+(y0-14)+', '+(cx+52)+' '+(y0-14)+', '+(cx+11)+' '+(Y(hs)+28)+'" fill="none" stroke="var(--chrome)" stroke-width="2"/>');
-      o.push('<text x="'+(X(0)+6)+'" y="'+(Y(top)+4)+'" class="d dw">лейка</text><text x="'+(X(0)+6)+'" y="'+(Y(hs)+4)+'" class="d dw">ручной душ</text><text x="'+(X(0)+6)+'" y="'+(Y(h)+4)+'" class="d dw">смеситель</text>');
+    if(st>=2)R(0,0,W,H,'fill="var(--l-plast)"');
+    if(st===2){R(0,0,W,wp,'fill="var(--l-mast)" opacity=".45"');L(X(0),Y(wp),X(W),Y(wp),'stroke="var(--l-mast)" stroke-width="1.5"');
+      if(m==='nak')[-75,75].forEach(function(d){o.push('<rect x="'+(X(500+d)-12)+'" y="'+(Y(h)-12)+'" width="24" height="24" rx="3" fill="var(--l-mast)"/>')});
+      else{R(370,h-130,630,h+130,'rx="6" fill="var(--l-mast)"');[[500,ho],[720,h]].forEach(function(p){o.push('<rect x="'+(X(p[0])-12)+'" y="'+(Y(p[1])-12)+'" width="24" height="24" rx="3" fill="var(--l-mast)"/>')});}}
+    if(st>=3){R(0,0,W,H,'fill="var(--l-tile)"');
+      for(var c2=50;c2<W;c2+=300)L(X(c2),Y(H),X(c2),y0,'stroke="var(--line)"');
+      for(var r2=1;r2*600<H;r2++)L(X(0),Y(r2*600),X(W),Y(r2*600),'stroke="var(--line)"');}
+    o.push('</g>');R(0,0,W,H,'fill="none" stroke="var(--line)"');
+    if(m==='nak'){
+      if(st<=3){outlet(425,h);outlet(575,h);}
+      if(st===4){
+        R(500-12,h,500+12,top+80,'rx="2" fill="var(--chrome)"');
+        o.push('<rect x="'+(cx-7)+'" y="'+(Y(top+80)-4)+'" width="14" height="6" rx="2" fill="var(--chrome)"/>');
+        o.push('<rect x="'+(cx-125*k)+'" y="'+(Y(top)-2)+'" width="'+(250*k)+'" height="5" rx="2.5" fill="var(--chrome)"/>');
+        esc(425,h);esc(575,h);
+        o.push('<rect x="'+X(350)+'" y="'+(Y(h)-6)+'" width="'+(300*k)+'" height="12" rx="6" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>');
+        C(X(350),Y(h),6,'fill="var(--chrome)" stroke="rgba(0,0,0,.3)"');C(X(650),Y(h),6,'fill="var(--chrome)" stroke="rgba(0,0,0,.3)"');
+        o.push('<rect x="'+(cx+2)+'" y="'+(Y(hs)-3)+'" width="6" height="6" fill="var(--chrome)"/><rect x="'+(cx+7)+'" y="'+(Y(hs)-6)+'" width="7" height="34" rx="3" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>');
+        o.push('<path d="M'+cx+' '+(Y(h)+6)+' C '+(cx+6)+' '+(y0-14)+', '+(cx+52)+' '+(y0-14)+', '+(cx+11)+' '+(Y(hs)+28)+'" fill="none" stroke="var(--chrome)" stroke-width="2"/>');
+        o.push('<text x="'+(X(0)+6)+'" y="'+(Y(hs)+4)+'" class="d dw">ручной душ</text><text x="'+(X(0)+6)+'" y="'+(Y(h)+4)+'" class="d dw">смеситель</text>');
+      }
+    }else{
+      if(st===2||st===3){R(420,h-80,580,h+80,'rx="4" fill="var(--paper)" stroke="var(--muted)" stroke-dasharray="4 3"');
+        o.push('<text x="'+cx+'" y="'+(Y(h)+4)+'" text-anchor="middle" class="d">крышка</text>');}
+      if(st<=3){outlet(500,ho);outlet(720,h);}
+      if(st===4){
+        R(410,h-90,590,h+90,'rx="8" fill="var(--chrome)" stroke="rgba(0,0,0,.3)"');
+        C(cx,Y(h+20),32*k+2,'fill="var(--paper)" stroke="rgba(0,0,0,.3)"');
+        C(X(460),Y(h-55),10*k+2,'fill="var(--paper)" stroke="rgba(0,0,0,.3)"');C(X(540),Y(h-55),10*k+2,'fill="var(--paper)" stroke="rgba(0,0,0,.3)"');
+        esc(500,ho);
+        o.push('<rect x="'+(cx-2.5)+'" y="'+Y(ho)+'" width="5" height="'+((ho-top)*k)+'" fill="var(--chrome)"/>');
+        o.push('<rect x="'+(cx-125*k)+'" y="'+(Y(top)-2)+'" width="'+(250*k)+'" height="5" rx="2.5" fill="var(--chrome)"/>');
+        esc(720,h);
+        o.push('<rect x="'+(X(720)+7)+'" y="'+(Y(h)-40)+'" width="7" height="34" rx="3" fill="var(--chrome)" stroke="rgba(0,0,0,.25)"/>');
+        o.push('<path d="M'+X(720)+' '+(Y(h)+5)+' C '+(X(720)-4)+' '+(y0-14)+', '+(X(720)+40)+' '+(y0-14)+', '+(X(720)+10)+' '+(Y(h)-6)+'" fill="none" stroke="var(--chrome)" stroke-width="2"/>');
+        o.push('<text x="'+(X(0)+6)+'" y="'+(Y(h)+4)+'" class="d dw">панель</text>');
+      }
     }
+    if(st===4){for(var i=-4;i<=4;i++){var lx=cx+i*25*k;L(lx,Y(top)+6,lx+i*2,Y(top)+26,'stroke="var(--blue)" stroke-dasharray="2 3" opacity=".75"')}
+      o.push('<text x="'+(X(0)+6)+'" y="'+(Y(top)+4)+'" class="d dw">'+(m==='skr'?'кронштейн, лейка':'лейка')+'</text>');}
     o.push('<rect x="'+(X(0)-6)+'" y="'+y0+'" width="'+(W*k+12)+'" height="8" fill="var(--paper)" stroke="var(--line)"/><text x="'+X(0)+'" y="'+(y0+20)+'" class="d">верх поддона = 0</text>');
-    o.push('<line x1="'+(X(0)-6)+'" x2="'+(X(W)+120)+'" y1="'+Y(ceil)+'" y2="'+Y(ceil)+'" stroke="var(--muted)" stroke-dasharray="5 4"/><text x="'+(X(W)+8)+'" y="'+(Y(ceil)-5)+'" class="d">потолок '+ceil+'</text>');
+    L(X(0)-6,Y(ceil),X(W)+120,Y(ceil),'stroke="var(--muted)" stroke-dasharray="5 4"');o.push('<text x="'+(X(W)+8)+'" y="'+(Y(ceil)-5)+'" class="d">потолок '+ceil+'</text>');
     var dx=X(W)+18;
-    function dim(a,b,label,cls,x){o.push('<line x1="'+x+'" x2="'+x+'" y1="'+Y(a)+'" y2="'+Y(b)+'" stroke="var(--muted)"/><line x1="'+(x-4)+'" x2="'+(x+4)+'" y1="'+Y(a)+'" y2="'+Y(a)+'" stroke="var(--muted)"/><line x1="'+(x-4)+'" x2="'+(x+4)+'" y1="'+Y(b)+'" y2="'+Y(b)+'" stroke="var(--muted)"/><text x="'+(x+5)+'" y="'+(Y(b)+14)+'" class="'+cls+'">'+label+'</text>')}
-    dim(0,h,'ось '+h,'da',dx);
-    if(st===2)dim(0,2200,'гидро 2200','d',dx+62);
-    if(st===4)dim(0,h+sys,'лейка '+(h+sys),'da',dx+62);
-    if(st<=3){var ya=Y(h)-22;o.push('<line x1="'+X(425)+'" x2="'+X(575)+'" y1="'+ya+'" y2="'+ya+'" stroke="var(--acc)"/><line x1="'+X(425)+'" x2="'+X(425)+'" y1="'+(ya-4)+'" y2="'+(ya+4)+'" stroke="var(--acc)"/><line x1="'+X(575)+'" x2="'+X(575)+'" y1="'+(ya-4)+'" y2="'+(ya+4)+'" stroke="var(--acc)"/><text x="'+cx+'" y="'+(ya-5)+'" text-anchor="middle" class="da">150</text>');}
-    if(st===1)o.push('<text x="'+(X(640)+6)+'" y="'+(Y(h)+4)+'" class="d">планка</text><text x="'+(X(425)-8)+'" y="'+(y0-26)+'" text-anchor="end" class="d">ГВ</text><text x="'+(X(575)+8)+'" y="'+(y0-26)+'" class="d">ХВ</text>');
-    if(st===2)o.push('<text x="'+(X(575)+16)+'" y="'+(Y(h)+4)+'" class="d">манжеты</text>');
+    function dim(a,b,label,cls,x){L(x,Y(a),x,Y(b),'stroke="var(--muted)"');L(x-4,Y(a),x+4,Y(a),'stroke="var(--muted)"');L(x-4,Y(b),x+4,Y(b),'stroke="var(--muted)"');o.push('<text x="'+(x+5)+'" y="'+(Y(b)+14)+'" class="'+cls+'">'+label+'</text>')}
+    dim(0,h,(m==='skr'?'центр ':'ось ')+h,'da',dx);
+    if(st===2)dim(0,wp,'гидро '+wp,'d',dx+62);
+    else if(st===4)dim(0,top,'лейка '+top,'da',dx+62);
+    else if(m==='skr')dim(0,ho,'вывод '+ho,'da',dx+62);
+    if(m==='nak'&&st<=3){var ya=Y(h)-22;L(X(425),ya,X(575),ya,'stroke="var(--acc)"');L(X(425),ya-4,X(425),ya+4,'stroke="var(--acc)"');L(X(575),ya-4,X(575),ya+4,'stroke="var(--acc)"');o.push('<text x="'+cx+'" y="'+(ya-5)+'" text-anchor="middle" class="da">150</text>');}
+    if(st===1){o.push(m==='nak'?'<text x="'+(X(640)+6)+'" y="'+(Y(h)+4)+'" class="d">планка</text>':'<text x="'+(X(720)+8)+'" y="'+(Y(h)-8)+'" class="d">шланг.</text><text x="'+(cx+8)+'" y="'+(Y(ho)+4)+'" class="d">к лейке</text><text x="'+(X(385)-6)+'" y="'+(Y(h+115)+12)+'" text-anchor="end" class="d">коробка</text>');
+      var gx=m==='nak'?75:60;o.push('<text x="'+(X(500-gx)-8)+'" y="'+(y0-26)+'" text-anchor="end" class="d">ГВ</text><text x="'+(X(500+gx)+8)+'" y="'+(y0-26)+'" class="d">ХВ</text>');}
+    if(st===2)o.push(m==='nak'?'<text x="'+(X(575)+16)+'" y="'+(Y(h)+4)+'" class="d">манжеты</text>':'<text x="'+(X(370)-6)+'" y="'+(Y(h)+4)+'" text-anchor="end" class="d">фланец</text>');
     $('fsvg').innerHTML=o.join('');
-    var lg={1:'<span><b style="background:var(--pipe)"></b>трубы, водорозетки</span><span><b style="background:var(--chrome)"></b>монтажная планка</span><span><b style="background:var(--l-block)"></b>блок</span>',2:'<span><b style="background:var(--l-plast)"></b>штукатурка</span><span><b style="background:var(--l-mast)"></b>мастика, манжеты</span>',3:'<span><b style="background:var(--l-tile)"></b>плитка 30×60</span><span><b style="background:var(--pipe)"></b>торцы водорозеток</span>',4:'<span><b style="background:var(--chrome)"></b>смеситель, штанга, лейка</span>'};
+    var T=m==='nak'?TN:TS;
+    var lg=m==='nak'?{1:'<span><b style="background:var(--pipe)"></b>трубы, водорозетки</span><span><b style="background:var(--chrome)"></b>монтажная планка</span><span><b style="background:var(--l-block)"></b>блок</span>',2:'<span><b style="background:var(--l-plast)"></b>штукатурка</span><span><b style="background:var(--l-mast)"></b>мастика, манжеты</span>',3:'<span><b style="background:var(--l-tile)"></b>плитка 30×60</span><span><b style="background:var(--pipe)"></b>торцы водорозеток</span>',4:'<span><b style="background:var(--chrome)"></b>смеситель, штанга, лейка</span>'}
+      :{1:'<span><b style="background:var(--l-glue)"></b>встраиваемая коробка</span><span><b style="background:var(--pipe)"></b>трубы, выводы</span><span><b style="background:var(--l-block)"></b>блок</span>',2:'<span><b style="background:var(--l-plast)"></b>штукатурка</span><span><b style="background:var(--l-mast)"></b>мастика, фланец, манжеты</span><span><b style="background:var(--paper)"></b>защитная крышка</span>',3:'<span><b style="background:var(--l-tile)"></b>плитка 30×60</span><span><b style="background:var(--paper)"></b>защитная крышка</span>',4:'<span><b style="background:var(--chrome)"></b>панель, кронштейн, лейка, ручной душ</span>'};
     $('stext').innerHTML='<h3>'+T[st][0]+'</h3>'+T[st][1]+'<div class="legend">'+lg[st]+'</div>';
+    $('mnote').hidden=(m!=='skr');
   }
-  document.querySelectorAll('[data-st]').forEach(function(b){b.addEventListener('click',function(){st=+b.dataset.st;document.querySelectorAll('[data-st]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});draw()})});
+  function bind(sel,set){document.querySelectorAll(sel).forEach(function(b){b.addEventListener('click',function(){set(b);document.querySelectorAll(sel).forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});draw()})})}
+  bind('[data-st]',function(b){st=+b.dataset.st});
+  bind('[data-m]',function(b){m=b.dataset.m});
   ['h','sys','ceil'].forEach(function(i){$(i).addEventListener('input',draw)});
   draw();
 })();
