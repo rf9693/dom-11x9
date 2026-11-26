@@ -90,6 +90,25 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
 .stext ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted)}
 .legend b{display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.12)}
+.mnt{display:grid;grid-template-columns:minmax(0,460px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:760px){.mnt{grid-template-columns:minmax(0,1fr)}}
+.mnt svg{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.mnt svg .d{font:11px var(--f-mono);fill:var(--muted)}
+.mnt svg .da{font:11px var(--f-mono);fill:var(--acc)}
+.mnt #mdet{max-width:360px}
+.mside{display:flex;flex-direction:column;gap:12px}
+.mside h3{font:600 16px/1.35 var(--f-body);margin:0}
+.mside ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.mside .when{font:500 11.5px var(--f-mono);color:var(--acc);letter-spacing:.03em}
+.mcap{font-size:12.5px;color:var(--muted);margin:-6px 0 0}
+.mnav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 14px}
+.mnav .seg button{padding:8px 11px;font-family:var(--f-mono)}
+.mbtn{font:500 14px var(--f-body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 13px;cursor:pointer}
+.mbtn:disabled{opacity:.4;cursor:default}
+@media (max-width:760px){.mnav{justify-content:space-between}.mnav .seg{order:3;width:100%;flex-wrap:nowrap}.mnav .seg button{flex:1 1 0;min-width:0;padding:9px 0;border-bottom:0}}
+.mbtn:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.mbuy{columns:2 260px;column-gap:28px;margin:0;padding-left:18px}
+.mbuy li{break-inside:avoid;margin-bottom:4px}
 @media print{body{background:#fff}.card{break-inside:avoid}}
 </style>
 <body>
@@ -109,7 +128,7 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
     <button type="button" data-m="nak" aria-pressed="true">Накладная — на ваши 2 вывода</button>
     <button type="button" data-m="skr" aria-pressed="false">Скрытая — встраиваемая коробка</button>
   </div>
-  <div class="note" id="mnote" hidden><b>Скрытая система состоит из двух покупок одной серии.</b> Первая — встраиваемая коробка, она нужна сразу, до штукатурки. Вторая — внешняя панель с ручками, её можно купить позже. Пары, например: Grohe Rapido SmartBox + панель SmartControl или Hansgrohe iBox universal + панель ShowerSelect. Коробку и панель разных систем не смешивают. Глубину ниши, высоты выводов и переключатель на 1 или 2 потребителя берут из паспорта выбранной коробки. Стене в зоне коробки нужно примерно 100 мм глубины. Если стена тонкая или несущую резать нельзя, делают фальшстену из влагостойкого ГКЛ или ЦСП на профиле, толщиной 100–120 мм.</div>
+  <div class="note" id="mnote" hidden><b>Скрытая система состоит из двух покупок одной серии.</b> Первая — встраиваемая коробка, она нужна сразу, до штукатурки. Вторая — внешняя панель с ручками, её можно купить позже. Пары, например: Grohe Rapido SmartBox + панель SmartControl или Hansgrohe iBox universal + панель ShowerSelect. Коробку и панель разных систем не смешивают. Глубину ниши, высоты выводов и переключатель на 1 или 2 потребителя берут из паспорта выбранной коробки. Сама работа по шагам, от ваших водорозеток до коробки, показана в следующем блоке: <a href="#montazh">«Монтаж скрытой системы»</a>. Стене в зоне коробки нужно примерно 100 мм глубины. Если стена тонкая или несущую резать нельзя, делают фальшстену из влагостойкого ГКЛ или ЦСП на профиле, толщиной 100–120 мм.</div>
   <div class="seg" role="group" aria-label="Стадия">
     <button type="button" data-st="1" aria-pressed="true">1. Открытая стена</button>
     <button type="button" data-st="2" aria-pressed="false">2. Штукатурка и гидро</button>
@@ -120,6 +139,33 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
     <svg id="fsvg" viewBox="0 0 400 600" role="img" aria-label="Стена душа спереди"></svg>
     <div class="stext" id="stext" aria-live="polite"></div>
   </div>
+</section>
+
+<section class="card" id="montazh">
+  <div class="sh"><span class="eyebrow">МОНТАЖ СКРЫТОЙ СИСТЕМЫ</span><h2>По шагам: от ваших водорозеток до коробки в газоблоке</h2></div>
+  <p class="muted">Слева стена спереди, оранжевым выделено, что делается на этом шаге. Справа крупно узел этого шага. Высоты берутся из калькулятора.</p>
+  <div class="mnav"><button type="button" class="mbtn" id="mprev">← Назад</button><div class="seg" role="group" aria-label="Шаг монтажа"><button type="button" data-ms="1" aria-pressed="true" aria-label="Шаг 1">1</button><button type="button" data-ms="2" aria-pressed="false" aria-label="Шаг 2">2</button><button type="button" data-ms="3" aria-pressed="false" aria-label="Шаг 3">3</button><button type="button" data-ms="4" aria-pressed="false" aria-label="Шаг 4">4</button><button type="button" data-ms="5" aria-pressed="false" aria-label="Шаг 5">5</button><button type="button" data-ms="6" aria-pressed="false" aria-label="Шаг 6">6</button><button type="button" data-ms="7" aria-pressed="false" aria-label="Шаг 7">7</button><button type="button" data-ms="8" aria-pressed="false" aria-label="Шаг 8">8</button><button type="button" data-ms="9" aria-pressed="false" aria-label="Шаг 9">9</button></div><button type="button" class="mbtn" id="mnext">Дальше →</button></div>
+  <div class="mnt">
+    <svg id="msvg" viewBox="0 0 470 600" role="img" aria-label="Стена спереди на текущем шаге"></svg>
+    <div class="mside">
+      <svg id="mdet" viewBox="0 0 300 240" role="img" aria-label="Узел крупно"></svg>
+      <p class="mcap">Узел крупно, без масштаба.</p>
+      <div id="mtext" aria-live="polite"></div>
+    </div>
+  </div>
+  <h3 style="font:600 16px var(--f-body);margin:22px 0 8px">Что понадобится</h3>
+  <ul class="mbuy">
+    <li>Встраиваемая коробка и (позже) панель одной серии</li>
+    <li>Труба: полипропилен 20 или металлопластик 16 — та же, что у вас, примерно 3–4 м</li>
+    <li>Муфты на обрезанные трубы — 2 шт</li>
+    <li>Переходники НР ½″ на входы и выходы коробки — 3–4 шт</li>
+    <li>Водорозетки — 2 шт (к лейке и под шланговое подключение)</li>
+    <li>Утеплитель для труб 6 мм на горячую трубу и трубу к лейке</li>
+    <li>Клипсы и дюбели для газобетона</li>
+    <li>Лён с пастой или нить для резьбы</li>
+    <li>Гипсовая или цементная смесь для штроб, серпянка, грунт</li>
+    <li>Инструмент: штроборез для газобетона или ручной, ножовка по газобетону, труборез, паяльник для ППР или пресс-клещи, уровень, опрессовщик (можно взять в аренду)</li>
+  </ul>
 </section>
 
 <section class="card">
@@ -378,6 +424,94 @@ td.n{text-align:right;white-space:nowrap;font-family:var(--f-mono)}
   bind('[data-m]',function(b){m=b.dataset.m});
   ['h','sys','ceil'].forEach(function(i){$(i).addEventListener('input',draw)});
   draw();
+})();
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  function v(i){var x=parseFloat($(i).value);return isNaN(x)?0:x}
+  var s=1, N=9;
+  // крупные узлы, 300×240
+  var B='<rect x="20" y="15" width="150" height="210" fill="var(--l-block)"/><text x="30" y="35" class="d">газоблок</text>';
+  var FACE='<line x1="170" y1="15" x2="170" y2="225" stroke="var(--muted)" stroke-dasharray="3 3"/>';
+  function tx(x,y,t,c){return '<text x="'+x+'" y="'+y+'" class="'+(c||'d')+'">'+t+'</text>'}
+  var SEC='<rect x="20" y="30" width="260" height="140" fill="var(--l-block)"/>'+tx(28,48,'газоблок (вид сверху, разрез)');
+  var D={
+   1:B+FACE+'<path d="M150 225 V120 Q150 110 160 110 H176" fill="none" stroke="var(--pipe)" stroke-width="6"/><rect x="150" y="101" width="30" height="18" rx="2" fill="var(--pipe)" stroke="#5a3a1a"/>'+tx(186,114,'водорозетка')+tx(186,190,'труба в штробе')+tx(186,40,'лицо блока')+tx(20,238,'вид сбоку, как сейчас'),
+   2:B+FACE+'<path d="M150 225 V170" fill="none" stroke="var(--pipe)" stroke-width="6"/><path d="M150 165 V120 Q150 110 160 110 H176" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 3"/><rect x="150" y="101" width="30" height="18" rx="2" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/><line x1="138" y1="172" x2="162" y2="164" stroke="var(--acc)" stroke-width="2"/><line x1="138" y1="178" x2="162" y2="170" stroke="var(--acc)" stroke-width="2"/>'+tx(186,114,'снять')+tx(186,170,'рез','da')+tx(186,184,'ниже низа коробки')+tx(186,198,'на 50–70 мм'),
+   3:SEC+'<rect x="120" y="125" width="44" height="45" fill="var(--bg)" stroke="var(--muted)"/><circle cx="142" cy="146" r="14" fill="none" stroke="var(--muted)" stroke-dasharray="2 2"/><circle cx="142" cy="146" r="10" fill="var(--pipe)"/><rect x="20" y="170" width="260" height="14" fill="var(--l-plast)"/>'+tx(24,198,'штукатурка')+'<line x1="120" y1="112" x2="164" y2="112" stroke="var(--acc)"/>'+tx(126,106,'40','da')+'<line x1="176" y1="125" x2="176" y2="170" stroke="var(--acc)"/>'+tx(182,150,'40–45','da')+tx(150,222,'труба 20 + утеплитель')+'<line x1="142" y1="160" x2="150" y2="212" stroke="var(--muted)"/>',
+   4:'<rect x="20" y="15" width="180" height="210" fill="var(--l-block)"/>'+tx(28,35,'газоблок')+'<rect x="112" y="72" width="88" height="96" fill="rgba(0,0,0,.25)"/><rect x="112" y="78" width="10" height="84" fill="var(--l-plast)"/><rect x="122" y="82" width="74" height="76" rx="4" fill="var(--l-glue)" stroke="rgba(0,0,0,.4)"/><rect x="196" y="95" width="30" height="50" fill="var(--paper)" stroke="var(--muted)" stroke-dasharray="3 2"/><line x1="226" y1="15" x2="226" y2="225" stroke="var(--acc)" stroke-dasharray="5 3"/>'+tx(232,30,'плитка','da')+tx(232,44,'(будущая)','d')+tx(232,124,'крышка')+tx(30,64,'раствор')+'<line x1="60" y1="68" x2="116" y2="100" stroke="var(--muted)"/><line x1="122" y1="186" x2="226" y2="186" stroke="var(--acc)"/><line x1="122" y1="181" x2="122" y2="191" stroke="var(--acc)"/><line x1="226" y1="181" x2="226" y2="191" stroke="var(--acc)"/>'+tx(126,204,'75–110 мм — по паспорту','da'),
+   5:'<rect x="70" y="20" width="160" height="56" rx="4" fill="var(--l-glue)" stroke="rgba(0,0,0,.4)"/>'+tx(80,42,'коробка')+tx(80,58,'вход ВР ½″')+'<rect x="108" y="76" width="24" height="16" rx="2" fill="var(--chrome)"/><line x1="120" y1="92" x2="120" y2="150" stroke="var(--acc)" stroke-width="10"/><rect x="104" y="150" width="32" height="16" rx="3" fill="var(--chrome)"/><line x1="120" y1="166" x2="120" y2="228" stroke="var(--pipe)" stroke-width="10"/>'+tx(150,88,'переходник НР ½″','da')+tx(150,124,'новая труба','da')+tx(150,162,'муфта','da')+tx(150,212,'старая труба'),
+   6:B+'<line x1="196" y1="15" x2="196" y2="225" stroke="var(--acc)" stroke-dasharray="5 3"/>'+tx(204,30,'плитка','da')+'<path d="M150 225 V120 Q150 110 160 110 H190" fill="none" stroke="var(--pipe)" stroke-width="6"/><rect x="150" y="101" width="46" height="18" rx="2" fill="var(--pipe)" stroke="#5a3a1a"/><line x1="156" y1="98" x2="132" y2="80" stroke="var(--ink)" stroke-width="2"/><line x1="156" y1="122" x2="132" y2="140" stroke="var(--ink)" stroke-width="2"/>'+tx(30,70,'дюбели для газобетона')+tx(204,114,'торец —')+tx(204,128,'в плоскости')+tx(204,142,'плитки'),
+   7:'<rect x="20" y="15" width="260" height="210" fill="var(--l-block)"/><rect x="110" y="15" width="44" height="210" fill="rgba(0,0,0,.25)"/><line x1="132" y1="15" x2="132" y2="225" stroke="var(--muted)" stroke-width="16" opacity=".35"/><line x1="132" y1="15" x2="132" y2="225" stroke="var(--pipe)" stroke-width="6"/>'+[50,130,210].map(function(y){return '<rect x="116" y="'+(y-4)+'" width="32" height="8" rx="2" fill="var(--ink)"/>'}).join('')+tx(164,54,'клипса или точка')+tx(164,68,'гипса')+tx(164,134,'шаг 50–60 см','da')+tx(30,190,'утеплитель')+tx(30,204,'на горячей'),
+   8:'<circle cx="90" cy="100" r="52" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>'+[0,1,2,3,4,5,6].map(function(i){var a=Math.PI*(0.8+i*1.4/6),c=Math.cos(a),t=Math.sin(a);return '<line x1="'+(90+c*40)+'" y1="'+(100+t*40)+'" x2="'+(90+c*48)+'" y2="'+(100+t*48)+'" stroke="var(--ink)"/>'}).join('')+'<line x1="90" y1="100" x2="122" y2="74" stroke="var(--acc)" stroke-width="3"/><circle cx="90" cy="100" r="4" fill="var(--ink)"/>'+tx(76,132,'бар')+'<path d="M90 152 V200 H250" fill="none" stroke="var(--chrome)" stroke-width="4"/>'+tx(160,190,'к выводу')+tx(160,100,'1,5× рабочего','da')+tx(160,116,'30 мин — падение')+tx(160,130,'≤ 0,6 бар')+tx(160,146,'2 ч рабочим ≤ 0,2'),
+   9:SEC+'<rect x="120" y="125" width="44" height="45" fill="var(--l-plast)" stroke="var(--muted)"/><circle cx="142" cy="146" r="14" fill="none" stroke="var(--muted)" stroke-dasharray="2 2"/><circle cx="142" cy="146" r="10" fill="var(--pipe)"/><line x1="70" y1="172" x2="214" y2="172" stroke="var(--acc)" stroke-width="2" stroke-dasharray="3 2"/><rect x="20" y="174" width="260" height="14" fill="var(--l-plast)" opacity=".7"/>'+tx(176,140,'смесь в штробу')+tx(70,206,'серпянка ±5 см за края','da')+tx(70,222,'потом штукатурка')
+  };
+  var S={
+   1:['Перекрыть воду и разметить','<ul><li>Перекройте воду на вводе и откройте кран ниже, чтобы сбросить давление.</li><li>Разметьте на стене <b>центр коробки</b> на высоте ваших выводов (её ставят вместо них), <b>вывод лейки</b> вверху и <b>шланговое подключение</b> сбоку.</li><li>Наметьте штробы. Они идут только вертикально и горизонтально, не наискосок: так через годы будет понятно, где сверлить нельзя.</li><li>Пунктиром показано, что придётся вскрыть.</li></ul>'],
+   2:['Снять водорозетки и обрезать трубы','<ul><li>Если стена уже оштукатурена, вскройте её вокруг выводов.</li><li>Открутите планку и снимите водорозетки.</li><li><b>Трубы режут труборезом</b> на 50–70 мм ниже низа будущей коробки. Это запас, чтобы поставить муфту.</li><li>Полипропилен обрезают ровно, под прямым углом. Металлопластик после реза калибруют.</li></ul>'],
+   3:['Штробы и ниша в газоблоке','<ul><li>Газоблок режется легко: штроборезом с пылесосом или ручным штроборезом для газобетона.</li><li><b>Штроба 40×40–45 мм</b> под трубу 20 мм в утеплителе. Без утеплителя хватит 30×30. Над трубой должно остаться не меньше 10 мм под штукатурку.</li><li><b>Нишу под коробку</b> делают примерно 230×230 мм. Глубину берут по паспорту: от тыла коробки до лица будущей плитки обычно 75–110 мм.</li><li>В перегородке 100 мм штробу глубже 40 мм не делают, горизонтальные участки — как можно короче. Если глубины не хватает, ставят фальшстену.</li><li>Пыль из штроб выметают и грунтуют.</li></ul>'],
+   4:['Поставить коробку в нишу','<ul><li>Коробку крепят шурупами на <b>дюбели для газобетона</b> и/или сажают на раствор.</li><li>Её выставляют по уровню. Глубину проверяют по меткам min/max на защитной крышке: крышка должна доходить до будущей плоскости плитки.</li><li>Стрелки на коробке показывают верх и направление воды; входы — внизу.</li></ul>','4'],
+   5:['Подключить старые трубы к коробке','<ul><li>На обрезанный конец ставят муфту, от неё новая труба идёт к входу коробки.</li><li><b>Полипропилен 20:</b> муфта на пайку и в конце комбинированный переходник 20 × ½″ с наружной резьбой (НР).</li><li><b>Металлопластик 16:</b> пресс-муфта и пресс-фитинг 16 × ½″ НР.</li><li>Входы коробки обычно ½″ внутренняя резьба (ВР). Резьбу уплотняют льном с пастой или нитью. Горячая вода идёт на вход с меткой H (красный), холодная — на C (синий).</li></ul>'],
+   6:['Выводы к лейке и ручному душу','<ul><li>Из верхнего выхода коробки ставят переходник, и труба идёт в штробе вверх до <b>водорозетки под кронштейн</b> лейки.</li><li>Из бокового выхода — до <b>шлангового подключения</b>. Если переключатель на одного потребителя, этот выход глушат.</li><li>Водорозетки в газоблоке крепят на дюбели для газобетона, а лучше на закладную планку. Торец выставляют в будущую плоскость плитки, как в разрезе ниже на странице.</li></ul>'],
+   7:['Закрепить и утеплить трубы','<ul><li>Трубу в штробе фиксируют клипсами на дюбелях или точками гипса через 50–60 см, чтобы она не болталась при заделке.</li><li>Горячую трубу и трубу к лейке одевают в утеплитель 6 мм (энергофлекс). Он даёт полипропилену место на удлинение от нагрева и не даёт стене остывать трубу.</li></ul>'],
+   8:['Опрессовать до заделки','<ul><li>На все выводы ставят заглушки. На коробку — её испытательную крышку или заглушку из комплекта.</li><li>Опрессовщиком дают давление в 1,5 раза выше рабочего (обычно 6–9 бар).</li><li>Для пластиковых труб по СП 73.13330: за 30 минут падение не больше 0,6 бар, затем 2 часа при рабочем давлении — не больше 0,2 бар.</li><li>Обойдите и протрите салфеткой каждое соединение. Только после этого штробы заделывают.</li></ul>'],
+   9:['Заделать штробы','<ul><li>Штробы заполняют гипсовой или цементной смесью вровень со стеной. Защитная крышка коробки остаётся на месте.</li><li>Поверх каждой штробы клеят <b>серпянку</b> с заходом по 5 см на блок, чтобы по шву не пошла трещина.</li><li>Дальше идут штукатурка, гидроизоляция с фланцем коробки, плитка и панель: это стадии 2–4 в блоке <a href="#front">«Вид на стену»</a>, вариант «Скрытая».</li></ul>']
+  };
+  function front(){
+    var h=v('h')||1100, sys=v('sys')||1000, top=h+sys, ho=top+60, H=ho+220, hc=h-170;
+    var y0=575, k=545/H, W=1000, x0=36, Y=function(q){return y0-q*k}, X=function(q){return x0+q*k};
+    var o=[];
+    function R(a,b,c,d,at){o.push('<rect x="'+X(a)+'" y="'+Y(d)+'" width="'+((c-a)*k)+'" height="'+((d-b)*k)+'" '+at+'/>')}
+    function L(x1,y1,x2,y2,at){o.push('<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" '+at+'/>')}
+    function C(x,y,r,at){o.push('<circle cx="'+x+'" cy="'+y+'" r="'+r+'" '+at+'/>')}
+    function P(pts,at){o.push('<polyline points="'+pts.map(function(p){return X(p[0])+','+Y(p[1])}).join(' ')+'" fill="none" '+at+'/>')}
+    function outlet(xm,ym){C(X(xm),Y(ym),4.5,'fill="var(--pipe)" stroke="#5a3a1a"');C(X(xm),Y(ym),2,'fill="#3a2a1a"')}
+    var tr=[[385,h-115,615,h+115],[405,hc-10,460,h-100],[540,hc-10,595,h-100],[480,h+100,520,ho+30],[600,h-20,740,h+20]];
+    o.push('<defs><clipPath id="cw2"><rect x="'+X(0)+'" y="'+Y(H)+'" width="'+(W*k)+'" height="'+(H*k)+'"/></clipPath></defs><g clip-path="url(#cw2)">');
+    R(0,0,W,H,'fill="var(--l-block)"');
+    for(var r=0;r*250<H;r++){var yy=Y(r*250);L(X(0),yy,X(W),yy,'stroke="rgba(0,0,0,.15)"');for(var c=(r%2?312:625);c<W;c+=625)L(X(c),yy,X(c),Y((r+1)*250),'stroke="rgba(0,0,0,.15)"');}
+    var ht=s>=2?hc:h;
+    R(405,0,445,ht,'fill="var(--l-plast)"');R(555,0,595,ht,'fill="var(--l-plast)"');
+    if(s>=3)tr.forEach(function(t){R(t[0],t[1],t[2],t[3],'fill="'+(s>=9?'var(--l-plast)':'rgba(0,0,0,.28)')+'"')});
+    if(s<=2)tr.forEach(function(t){R(t[0],t[1],t[2],t[3],'fill="none" stroke="var(--acc)" stroke-width="1.5" stroke-dasharray="4 3"')});
+    if(s===7)[[425,0,ht],[575,0,ht]].forEach(function(p){R(p[0]-14,p[1],p[0]+14,p[2],'fill="var(--muted)" opacity=".25"')});
+    L(X(425),y0,X(425),Y(ht),'stroke="var(--pipe)" stroke-width="4"');L(X(575),y0,X(575),Y(ht),'stroke="var(--pipe)" stroke-width="4"');
+    o.push('</g>');R(0,0,W,H,'fill="none" stroke="var(--line)"');
+    if(s===1){R(360,h-20,640,h+20,'rx="2" fill="var(--chrome)"');outlet(425,h);outlet(575,h);}
+    if(s===2){C(X(425),Y(h),5,'fill="none" stroke="var(--muted)" stroke-dasharray="2 2"');C(X(575),Y(h),5,'fill="none" stroke="var(--muted)" stroke-dasharray="2 2"');
+      [425,575].forEach(function(x){L(X(x),Y(ht),X(x),Y(h),'stroke="var(--muted)" stroke-dasharray="3 3"');L(X(x)-7,Y(hc)+2,X(x)+7,Y(hc)-2,'stroke="var(--acc)" stroke-width="2"')});}
+    if(s>=4){R(400,h-100,600,h+100,'rx="5" fill="var(--l-glue)" stroke="'+(s===4?'var(--acc)':'rgba(0,0,0,.4)')+'" stroke-width="'+(s===4?2:1)+'"');
+      C(X(500),Y(h),45*k,'fill="none" stroke="rgba(0,0,0,.4)"');}
+    if(s>=9)R(420,h-80,580,h+80,'rx="4" fill="var(--paper)" stroke="var(--muted)" stroke-dasharray="4 3"');
+    if(s>=5){var c5=s===5?'var(--acc)':'var(--pipe)';
+      P([[425,hc],[425,h-130],[440,h-130],[440,h-100]],'stroke="'+c5+'" stroke-width="4"');P([[575,hc],[575,h-130],[560,h-130],[560,h-100]],'stroke="'+c5+'" stroke-width="4"');
+      [425,575].forEach(function(x){o.push('<rect x="'+(X(x)-5)+'" y="'+(Y(hc)-4)+'" width="10" height="8" rx="2" fill="var(--chrome)" stroke="rgba(0,0,0,.3)"/>')});}
+    if(s>=6){var c6=s===6?'var(--acc)':'var(--pipe)';P([[500,h+100],[500,ho]],'stroke="'+c6+'" stroke-width="4"');P([[600,h],[720,h]],'stroke="'+c6+'" stroke-width="4"');outlet(500,ho);outlet(720,h);}
+    if(s===7){[425,575].forEach(function(x){for(var y=250;y<hc;y+=500)L(X(x)-7,Y(y),X(x)+7,Y(y),'stroke="var(--ink)" stroke-width="2.5"')});
+      for(var y2=h+350;y2<ho;y2+=500)L(X(500)-7,Y(y2),X(500)+7,Y(y2),'stroke="var(--ink)" stroke-width="2.5"');}
+    if(s===8){[[500,ho],[720,h]].forEach(function(p){o.push('<rect x="'+(X(p[0])-5)+'" y="'+(Y(p[1])-5)+'" width="10" height="10" rx="2" fill="var(--ink)"/>')});
+      var gx=X(850),gy=Y(h+450);C(gx,gy,15,'fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"');L(gx,gy,gx+8,gy-8,'stroke="var(--acc)" stroke-width="2"');
+      o.push('<path d="M'+gx+' '+(gy+15)+' V'+(Y(h)-14)+' H'+(X(720)+8)+'" fill="none" stroke="var(--chrome)" stroke-width="2"/><text x="'+(gx-10)+'" y="'+(gy-20)+'" class="d">бар</text>');}
+    if(s===9)tr.slice(1).forEach(function(t){R(t[0]-50,t[1],t[2]+50,t[3],'fill="none" stroke="var(--acc)" stroke-dasharray="2 2" opacity=".8"')});
+    o.push('<rect x="'+(X(0)-6)+'" y="'+y0+'" width="'+(W*k+12)+'" height="8" fill="var(--paper)" stroke="var(--line)"/><text x="'+X(0)+'" y="'+(y0+20)+'" class="d">верх поддона = 0</text>');
+    var dx=X(W)+18;
+    function dim(a,b,label,cls,x){L(x,Y(a),x,Y(b),'stroke="var(--muted)"');L(x-4,Y(a),x+4,Y(a),'stroke="var(--muted)"');L(x-4,Y(b),x+4,Y(b),'stroke="var(--muted)"');o.push('<text x="'+(x+5)+'" y="'+(Y(b)+14)+'" class="'+cls+'">'+label+'</text>')}
+    dim(0,h,'центр '+h,'da',dx);dim(0,ho,'вывод '+ho,'d',dx+62);
+    if(s>=2&&s<=5)dim(0,hc,'рез '+hc,'d',dx+124);
+    o.push('<text x="'+(X(425)-8)+'" y="'+(y0-10)+'" text-anchor="end" class="d">ГВ</text><text x="'+(X(575)+8)+'" y="'+(y0-10)+'" class="d">ХВ</text>');
+    if(s<=2)o.push('<text x="'+(X(385)-6)+'" y="'+(Y(h+115)+12)+'" text-anchor="end" class="da">ниша</text><text x="'+(X(520)+6)+'" y="'+(Y(ho)+4)+'" class="da">к лейке</text><text x="'+(X(740)+6)+'" y="'+(Y(h)+4)+'" class="da">шланг.</text>');
+    return o.join('');
+  }
+  function render(){
+    $('msvg').innerHTML=front();$('mdet').innerHTML=D[s];
+    $('mtext').innerHTML='<div class="when">ШАГ '+s+' ИЗ '+N+'</div><h3>'+S[s][0]+'</h3>'+S[s][1];
+    document.querySelectorAll('[data-ms]').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.ms===s))});
+    $('mprev').disabled=s===1;$('mnext').disabled=s===N;
+  }
+  document.querySelectorAll('[data-ms]').forEach(function(b){b.addEventListener('click',function(){s=+b.dataset.ms;render()})});
+  $('mprev').addEventListener('click',function(){if(s>1){s--;render()}});
+  $('mnext').addEventListener('click',function(){if(s<N){s++;render()}});
+  ['h','sys'].forEach(function(i){$(i).addEventListener('input',render)});
+  render();
 })();
 </script>
 <!--PNAV--><style id="pnav-css">
