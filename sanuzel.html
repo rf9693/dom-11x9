@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<title>Санузел из газоблока — дом 11×9</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Санузел 2,33×3,10 м из газоблока: порядок работ, гидроизоляция, полный список материалов с количеством и ценами ОМА.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F2F2F0;--paper:#FFFFFF;--ink:#212427;--muted:#6A6E72;--line:#DCDDDA;
+  --acc:#C7651F;--acc-soft:#F6E6D8;--blue:#3D6E8F;--blue-soft:#E3ECF2;--ok:#4D7A4F;--ok-soft:#E4EEE4;
+  --l-block:#D9D4C8;--l-plast:#BFB8AA;--l-mesh:#3D6E8F;--l-mast:#4F7FA3;--l-glue:#9A948A;--l-tile:#F4F3EF;
+  --f-disp:"Unbounded",system-ui,sans-serif;--f-body:"Manrope",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161819;--paper:#1F2224;--ink:#ECEDEB;--muted:#9DA1A5;--line:#33373A;
+  --acc:#F08A45;--acc-soft:#3A2A1E;--blue:#7FB2D3;--blue-soft:#1E2C36;--ok:#86B888;--ok-soft:#1F2C20;
+  --l-block:#5A564E;--l-plast:#6E685D;--l-mesh:#7FB2D3;--l-mast:#4E7C9E;--l-glue:#827C72;--l-tile:#CFCCC4;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161819;--paper:#1F2224;--ink:#ECEDEB;--muted:#9DA1A5;--line:#33373A;
+  --acc:#F08A45;--acc-soft:#3A2A1E;--blue:#7FB2D3;--blue-soft:#1E2C36;--ok:#86B888;--ok-soft:#1F2C20;
+  --l-block:#5A564E;--l-plast:#6E685D;--l-mesh:#7FB2D3;--l-mast:#4E7C9E;--l-glue:#827C72;--l-tile:#CFCCC4;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1{font:500 clamp(22px,3.2vw,34px)/1.15 var(--f-disp);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font:500 18px/1.3 var(--f-disp);margin:0;text-wrap:balance}
+p{margin:0}
+.muted,.lead{color:var(--muted)}
+.lead{max-width:78ch}
+a{color:var(--blue)}
+header{display:flex;flex-direction:column;gap:10px}
+.links{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv div{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.kv small{display:block;color:var(--muted);font-size:12px}
+.kv span{font:500 18px var(--f-mono);font-variant-numeric:tabular-nums}
+.kv .tot{border-color:var(--acc)}
+.kv .tot span{color:var(--acc)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sh{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font:500 12px var(--f-mono);color:var(--acc);letter-spacing:.04em}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:880px){.two{grid-template-columns:minmax(0,1fr)}}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:8px}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+ol.steps li::before{content:counter(s);font:500 12px/26px var(--f-mono);text-align:center;border:1px solid var(--line);border-radius:4px;height:26px}
+ol.steps li.key::before{background:var(--acc);border-color:var(--acc);color:#fff}
+ol.steps b{font-weight:600}
+ol.steps small{display:block;color:var(--muted);font-size:13px}
+.answer{border-left:3px solid var(--acc);background:var(--acc-soft);padding:12px 14px;border-radius:0 6px 6px 0;display:flex;flex-direction:column;gap:6px}
+.answer h2{font-size:16px}
+.layers{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;font-size:13px}
+.layers div{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;padding:7px 10px;border-top:1px solid var(--line)}
+.layers div:first-child{border-top:0}
+.layers i{width:14px;height:14px;border-radius:3px;display:block;border:1px solid rgba(0,0,0,.15)}
+.layers em{font-style:normal;font:12px var(--f-mono);color:var(--muted)}
+.layers .hl{background:var(--blue-soft)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+th.r,td.n{text-align:right;white-space:nowrap}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td b{font-weight:600}
+td small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+td small.tip{color:var(--acc)}
+tr.est td.n{color:var(--acc)}
+tfoot td{font-weight:600;border-bottom:0;padding-top:10px}
+.tbl{overflow-x:auto}
+.zones td:first-child{font-weight:600}
+.chk{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px 18px;margin:0;padding:0;list-style:none}
+.chk li{padding-left:22px;position:relative;font-size:14px}
+.chk li::before{content:"";position:absolute;left:2px;top:6px;width:10px;height:10px;border:1.5px solid var(--ok);border-radius:2px}
+.foot{font-size:13px;color:var(--muted)}
+.sum td:last-child{text-align:right}
+.sum tr.big td{font:500 17px var(--f-mono);color:var(--acc);border-bottom:0}
+@media (max-width:600px){
+  .mat thead{display:none}
+  .mat tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .mat td{border:0;padding:0}
+  .mat tbody td:first-child{grid-column:1/-1}
+  .mat td.n{text-align:left;white-space:normal}
+  .mat td.n::before{content:attr(data-l);display:block;font:600 10.5px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .mat tbody td.n:last-child{text-align:right}
+  .mat tfoot tr{grid-template-columns:1fr auto;border-bottom:0}
+  .mat tfoot td.n::before{content:none}
+}
+@media (max-width:560px){th,td{padding:7px 5px}table{font-size:13.5px}.card{padding:13px}}
+@media print{body{background:#fff}.card{break-inside:avoid}}
+</style>
+<body>
+<div class="wrap">
+<header>
+  <h1>Санузел из газоблока: работы и материалы</h1>
+  <p class="lead">Санузел 2330 × 3100 мм, высота 3000 мм (натяжной потолок на 2810). Душ 900 × 900 на низком поддоне с линейным трапом, ванна 1700 × 700 вдоль стены спальни, подвесной унитаз на инсталляции. Ниже — порядок работ и всё, что нужно купить на черновую часть, с количеством и ценами.</p>
+  <div class="links"><a href="dom-11x9.html">← План и смета проекта</a><a href="./">3D-модель</a><a href="#svod">Сводка по деньгам</a></div>
+</header>
+
+<div class="kv">
+  <div><small>Пол</small><span>7,4 м²</span></div>
+  <div><small>Стены под плитку</small><span>26,7 м²</span></div>
+  <div><small>Гидроизоляция</small><span>≈20 м²</span></div>
+  <div><small>Перегородки 100 мм</small><span>≈24 м²</span></div>
+  <div class="tot"><small>Черновые материалы</small><span>2 811,45 BYN</span></div>
+</div>
+
+<section class="card">
+  <div class="sh"><span class="eyebrow">КОРОТКИЙ ОТВЕТ</span><h2>Сетка до мастики или после?</h2></div>
+  <div class="two">
+    <div class="answer">
+      <p><b>Штукатурная сетка — до мастики.</b> Её утапливают в первый слой штукатурки, она держит штукатурку на газоблоке. Мастику наносят на уже высохшую и загрунтованную штукатурку.</p>
+      <p><b>Гидроизоляционная лента — внутри мастики.</b> Ленту CL 152, углы и манжеты вклеивают в первый, ещё сырой слой мастики, затем перекрывают вторым слоем.</p>
+      <p class="muted">Мастика CL 51 эластичная, отдельная сетка в неё не нужна: армируют только стыки лентой.</p>
+    </div>
+    <div class="layers" aria-label="Слои стены от блока к плитке">
+      <div><i style="background:var(--l-block)"></i>Газоблок 100 мм на клею<em>основа</em></div>
+      <div><i style="background:#fff"></i>Грунт CT 17, 2 слоя<em>сутки</em></div>
+      <div class="hl"><i style="background:var(--l-mesh)"></i>Штукатурка + стеклосетка 160 г/м²<em>1 мм/сутки сушки</em></div>
+      <div><i style="background:#fff"></i>Грунт CT 17<em>4–6 ч</em></div>
+      <div class="hl"><i style="background:var(--l-mast)"></i>Мастика, слой 1 + лента, углы, манжеты<em>3 ч</em></div>
+      <div><i style="background:var(--l-mast)"></i>Мастика, слой 2 крест-накрест<em>24 ч + тест</em></div>
+      <div><i style="background:var(--l-glue)"></i>Клей C2TE, гребёнка 8–10 мм<em>24 ч</em></div>
+      <div><i style="background:var(--l-tile)"></i>Плитка, затирка, силикон<em>финиш</em></div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="sh"><span class="eyebrow">ПОРЯДОК РАБОТ</span><h2>От кладки до силикона</h2></div>
+  <div class="two">
+  <ol class="steps">
+    <li><span><b>Отсечка и первый ряд.</b> Рулонная гидроизоляция по полу, первый ряд блоков на растворе строго по уровню.<small>Дальше кладка на клей, шов 2–3 мм, армирование каждого 3-го ряда, связи со стенами.</small></span></li>
+    <li><span><b>Зазор под перекрытием.</b> 15–20 мм, заполнить пеной или минватой.<small>Не заклинивать: перекрытие прогибается.</small></span></li>
+    <li><span><b>Инженерия.</b> Штробы под трубы, выводы смесителей, канализация с уклоном, трап, рама инсталляции, закладные под полотенцесушитель.<small>Опрессовать водопровод до штукатурки.</small></span></li>
+    <li><span><b>Грунт и штукатурка.</b> CT 17 в 2 слоя, маяки, штукатурка с сеткой.<small>Сушка ≈ 1 сутки на 1 мм толщины, при 12 мм — около 10–14 дней.</small></span></li>
+    <li><span><b>Стяжка пола с уклоном 1–2 % к трапу</b> и короб инсталляции из ГКЛВ.</span></li>
+  </ol>
+  <ol class="steps" start="6" style="counter-reset:s 5">
+    <li class="key"><span><b>Грунт под гидроизоляцию.</b> Основание сухое, без пыли.</span></li>
+    <li class="key"><span><b>Мастика, слой 1</b> — в неё сразу лента в углы, готовые углы и манжеты на выводы труб и трап.</span></li>
+    <li class="key"><span><b>Мастика, слой 2</b> через 3 часа, поперёк первого. На полу душа — 3-й слой.</span></li>
+    <li class="key"><span><b>Проверка заливом.</b> Через 24 ч залить пол водой на 1–2 см на сутки, порог заклеить.<small>Посмотреть потолок и стены соседних комнат снизу.</small></span></li>
+    <li><span><b>Поддон и ванна</b> — до плитки или под плитку, по выбранной модели; примыкания закрыть лентой.</span></li>
+    <li><span><b>Плитка:</b> пол, затем стены снизу вверх, с СВП. Клей на плитку и на основание.</span></li>
+    <li><span><b>Затирка через 24 ч, затем силикон</b> в углы, у ванны и поддона.</span></li>
+  </ol>
+  </div>
+</section>
+
+<section class="card">
+  <div class="sh"><span class="eyebrow">ЗОНЫ ГИДРОИЗОЛЯЦИИ</span><h2>Где и на какую высоту мазать</h2></div>
+  <div class="tbl"><table class="zones"><thead><tr><th>Зона</th><th>Высота</th><th class="r">≈ м²</th></tr></thead><tbody>
+    <tr><td>Весь пол + 30 см за порог</td><td>—</td><td class="n">7,6</td></tr>
+    <tr><td>Все стены по низу</td><td>30 см от пола</td><td class="n">3,0</td></tr>
+    <tr><td>Душ 900 × 900, две стены</td><td>до 2,2 м</td><td class="n">3,4</td></tr>
+    <tr><td>Стены у ванны</td><td>до 2,0 м</td><td class="n">3,5</td></tr>
+    <tr><td>За раковиной, короб инсталляции</td><td>до 1,2 м</td><td class="n">2,5</td></tr>
+    </tbody><tfoot><tr><td colspan="2">Всего</td><td class="n">≈20</td></tr></tfoot></table></div>
+</section>
+
+<section class="card" id="kladka">
+<div class="sh"><span class="eyebrow">ЭТАП 1</span><h2>Кладка перегородок из газоблока</h2><p class="muted">Перегородки 100 мм, ≈24 м², высота до перекрытия 3,0 м.</p></div>
+<div class="tbl"><table class="mat"><thead><tr><th>Материал и расход</th><th class="r">Кол-во</th><th class="r">Цена, BYN</th><th class="r">Сумма, BYN</th></tr></thead><tbody>
+<tr class="est"><td><b>Блок газосиликатный 625×250×100, D500</b><small>24 м² ÷ 0,156 м² на блок + 5 % на подрезку</small><small class="tip">в ОМА блока 100 мм нет; цена — пересчёт с блока 200 мм (7,84 за шт) на м³, уточнить на заводе или в «Материке»</small></td><td class="n" data-l="Кол-во">160&nbsp;шт</td><td class="n" data-l="Цена">≈3,92</td><td class="n" data-l="Сумма">≈627,20</td></tr>
+<tr><td><b>Клей для блоков ilmax 2000, 25 кг</b><small>≈25 кг на 1 м³ кладки, кладки 2,4 м³</small></td><td class="n" data-l="Кол-во">3&nbsp;меш.</td><td class="n" data-l="Цена">10,69</td><td class="n" data-l="Сумма">32,07</td></tr>
+<tr class="est"><td><b>Кладочная смесь М150, 25 кг (первый ряд)</b><small>первый ряд выравнивают по уровню на растворе 10–20 мм</small></td><td class="n" data-l="Кол-во">2&nbsp;меш.</td><td class="n" data-l="Цена">≈7,00</td><td class="n" data-l="Сумма">≈14,00</td></tr>
+<tr class="est"><td><b>Отсечная гидроизоляция под первый ряд</b><small>рулонная полоса шириной 15 см по всей длине перегородок</small></td><td class="n" data-l="Кол-во">9&nbsp;м</td><td class="n" data-l="Цена">≈1,30</td><td class="n" data-l="Сумма">≈11,70</td></tr>
+<tr class="est"><td><b>Армирование швов: перфолента или сетка</b><small>каждый 3-й ряд, ≈8,6 м перегородок × 4 ряда</small></td><td class="n" data-l="Кол-во">35&nbsp;м</td><td class="n" data-l="Цена">≈0,90</td><td class="n" data-l="Сумма">≈31,50</td></tr>
+<tr class="est"><td><b>Гибкие связи / Т-анкеры к несущим стенам</b><small>по 2 шт в каждом 2-м ряду в местах примыкания</small></td><td class="n" data-l="Кол-во">40&nbsp;шт</td><td class="n" data-l="Цена">≈0,80</td><td class="n" data-l="Сумма">≈32,00</td></tr>
+<tr><td><b>Пена монтажная WUNDER Foam 750 мл</b><small>деформационный зазор 15–20 мм под перекрытием, 9 м</small></td><td class="n" data-l="Кол-во">2&nbsp;бал.</td><td class="n" data-l="Цена">16,25</td><td class="n" data-l="Сумма">32,50</td></tr>
+</tbody><tfoot><tr><td colspan="3">Итого по этапу</td><td class="n">780,97</td></tr></tfoot></table></div></section>
+<section class="card" id="steny">
+<div class="sh"><span class="eyebrow">ЭТАП 2</span><h2>Подготовка стен: грунт, штукатурка, сетка</h2><p class="muted">Штукатурка по маякам 6 мм, средняя толщина 12 мм, ≈28 м² со стороны санузла.</p></div>
+<div class="tbl"><table class="mat"><thead><tr><th>Материал и расход</th><th class="r">Кол-во</th><th class="r">Цена, BYN</th><th class="r">Сумма, BYN</th></tr></thead><tbody>
+<tr><td><b>Грунтовка Ceresit CT 17 SuperGrunt, 10 л</b><small>газоблок впитывает: 2 слоя по 0,15–0,2 л/м²</small></td><td class="n" data-l="Кол-во">1&nbsp;кан.</td><td class="n" data-l="Цена">49,43</td><td class="n" data-l="Сумма">49,43</td></tr>
+<tr><td><b>Штукатурка цементная Ceresit, 25 кг</b><small>28 м² × 12 мм × 1,6 кг/м² на 1 мм ≈ 540 кг</small></td><td class="n" data-l="Кол-во">22&nbsp;меш.</td><td class="n" data-l="Цена">9,87</td><td class="n" data-l="Сумма">217,14</td></tr>
+<tr><td><b>Маяк штукатурный 6×3000 мм</b><small>шаг 1,0–1,2 м по периметру ≈11 м</small></td><td class="n" data-l="Кол-во">12&nbsp;шт</td><td class="n" data-l="Цена">2,90</td><td class="n" data-l="Сумма">34,80</td></tr>
+<tr><td><b>Стеклосетка штукатурная ССШ-160, 5×5 мм, 1×50 м</b><small>утапливается в первый слой штукатурки, нахлёст 10 см</small></td><td class="n" data-l="Кол-во">1&nbsp;рул.</td><td class="n" data-l="Цена">57,54</td><td class="n" data-l="Сумма">57,54</td></tr>
+<tr><td><b>Уголок штукатурный 23×23×3000</b><small>откосы окна, наружные углы</small></td><td class="n" data-l="Кол-во">3&nbsp;шт</td><td class="n" data-l="Цена">2,75</td><td class="n" data-l="Сумма">8,25</td></tr>
+</tbody><tfoot><tr><td colspan="3">Итого по этапу</td><td class="n">367,16</td></tr></tfoot></table></div></section>
+<section class="card" id="gidro">
+<div class="sh"><span class="eyebrow">ЭТАП 3</span><h2>Гидроизоляция</h2><p class="muted">Площадь ≈20 м²: весь пол, на стены 30 см, душ на 2,2 м, стены у ванны на 2,0 м, за раковиной, короб инсталляции, 30 см за порог двери.</p></div>
+<div class="tbl"><table class="mat"><thead><tr><th>Материал и расход</th><th class="r">Кол-во</th><th class="r">Цена, BYN</th><th class="r">Сумма, BYN</th></tr></thead><tbody>
+<tr><td><b>Грунтовка Ceresit CT 17, 5 л</b><small>по сухой штукатурке и стяжке перед мастикой</small></td><td class="n" data-l="Кол-во">1&nbsp;кан.</td><td class="n" data-l="Цена">36,82</td><td class="n" data-l="Сумма">36,82</td></tr>
+<tr><td><b>Мастика Ceresit CL 51, 15 кг</b><small>1,4 кг/м² на 1 мм; 2 слоя = 1 мм × 20 м² = 28 кг</small></td><td class="n" data-l="Кол-во">2&nbsp;ведро</td><td class="n" data-l="Цена">172,13</td><td class="n" data-l="Сумма">344,26</td></tr>
+<tr><td><b>Мастика Ceresit CL 51, 5 кг</b><small>3-й слой на пол душа и у трапа (до 1,5 мм)</small></td><td class="n" data-l="Кол-во">1&nbsp;ведро</td><td class="n" data-l="Цена">70,34</td><td class="n" data-l="Сумма">70,34</td></tr>
+<tr><td><b>Лента гидроизоляционная Ceresit CL 152, 10 м</b><small>все углы пол–стена и стена–стена в мокрой зоне, примыкания поддона и ванны ≈19 м</small></td><td class="n" data-l="Кол-во">2&nbsp;рул.</td><td class="n" data-l="Цена">95,88</td><td class="n" data-l="Сумма">191,76</td></tr>
+<tr><td><b>Угол внутренний 90° PLITONIT (уп. 2 шт)</b><small>6 внутренних углов на полу и в душе</small></td><td class="n" data-l="Кол-во">3&nbsp;уп.</td><td class="n" data-l="Цена">35,06</td><td class="n" data-l="Сумма">105,18</td></tr>
+<tr><td><b>Угол наружный 270° PLITONIT</b><small>2 наружных угла: короб, откос</small></td><td class="n" data-l="Кол-во">2&nbsp;шт</td><td class="n" data-l="Цена">35,06</td><td class="n" data-l="Сумма">70,12</td></tr>
+<tr class="est"><td><b>Манжета настенная для выводов труб</b><small>смесители душа и ванны, раковина, бачок, полотенцесушитель</small></td><td class="n" data-l="Кол-во">12&nbsp;шт</td><td class="n" data-l="Цена">≈8,00</td><td class="n" data-l="Сумма">≈96,00</td></tr>
+<tr class="est"><td><b>Манжета напольная (трап, канализация)</b><small>трап душа, выпуск ванны, запас</small></td><td class="n" data-l="Кол-во">3&nbsp;шт</td><td class="n" data-l="Цена">≈15,00</td><td class="n" data-l="Сумма">≈45,00</td></tr>
+</tbody><tfoot><tr><td colspan="3">Итого по этапу</td><td class="n">959,48</td></tr></tfoot></table></div></section>
+<section class="card" id="plitka">
+<div class="sh"><span class="eyebrow">ЭТАП 4</span><h2>Укладка плитки: клей, затирка, расходники</h2><p class="muted">Стены 26,7 м² плиткой 30×60, пол 7,4 м² керамогранитом 30×60. Сама плитка — в смете проекта, ниже.</p></div>
+<div class="tbl"><table class="mat"><thead><tr><th>Материал и расход</th><th class="r">Кол-во</th><th class="r">Цена, BYN</th><th class="r">Сумма, BYN</th></tr></thead><tbody>
+<tr><td><b>Клей для плитки Ceresit CM 16 Flex (C2TE S1), 25 кг</b><small>стены 26,7 м² × 4 кг + пол 8,5 м² × 5 кг ≈ 150 кг + запас</small></td><td class="n" data-l="Кол-во">7&nbsp;меш.</td><td class="n" data-l="Цена">29,97</td><td class="n" data-l="Сумма">209,79</td></tr>
+<tr><td><b>Затирка Ceresit CE 40 aquastatic 03 мраморно-белый, 5 кг</b><small>стены, шов 2 мм ≈ 0,15 кг/м²</small></td><td class="n" data-l="Кол-во">1&nbsp;ведро</td><td class="n" data-l="Цена">34,32</td><td class="n" data-l="Сумма">34,32</td></tr>
+<tr><td><b>Затирка эпоксидная EPOXYELITE, 1 кг</b><small>пол и душевая зона: не впитывает воду, не темнеет</small></td><td class="n" data-l="Кол-во">2&nbsp;шт</td><td class="n" data-l="Цена">65,85</td><td class="n" data-l="Сумма">131,70</td></tr>
+<tr><td><b>СВП: клипса 2 мм WUNDER (100 шт)</b><small>≈12 клипс на м², 35 м²</small></td><td class="n" data-l="Кол-во">5&nbsp;уп.</td><td class="n" data-l="Цена">11,52</td><td class="n" data-l="Сумма">57,60</td></tr>
+<tr><td><b>СВП: клин WUNDER (100 шт)</b><small>многоразовые</small></td><td class="n" data-l="Кол-во">2&nbsp;уп.</td><td class="n" data-l="Цена">11,24</td><td class="n" data-l="Сумма">22,48</td></tr>
+<tr><td><b>Герметик санитарный Ceresit CS 25 белый, 280 мл</b><small>шов ванна–стена, поддон, внутренние углы, примыкание к полу</small></td><td class="n" data-l="Кол-во">3&nbsp;шт</td><td class="n" data-l="Цена">27,98</td><td class="n" data-l="Сумма">83,94</td></tr>
+<tr class="est"><td><b>Профиль-уголок алюминиевый для плитки 10 мм, 2,7 м</b><small>откосы окна, рёбра короба инсталляции</small></td><td class="n" data-l="Кол-во">6&nbsp;шт</td><td class="n" data-l="Цена">≈12,00</td><td class="n" data-l="Сумма">≈72,00</td></tr>
+</tbody><tfoot><tr><td colspan="3">Итого по этапу</td><td class="n">611,83</td></tr></tfoot></table></div></section>
+<section class="card" id="korob">
+<div class="sh"><span class="eyebrow">ЭТАП 5</span><h2>Короб инсталляции</h2><p class="muted">Короб под подвесной унитаз и стояк, ГКЛВ в 1 слой по металлокаркасу.</p></div>
+<div class="tbl"><table class="mat"><thead><tr><th>Материал и расход</th><th class="r">Кол-во</th><th class="r">Цена, BYN</th><th class="r">Сумма, BYN</th></tr></thead><tbody>
+<tr><td><b>ГКЛВ Knauf 2500×1200×12,5 мм</b><small>короб ≈ 1,2 × 1,2 м + полка</small></td><td class="n" data-l="Кол-во">2&nbsp;лист</td><td class="n" data-l="Цена">18,83</td><td class="n" data-l="Сумма">37,66</td></tr>
+<tr><td><b>Профиль ПП 60×27×0,6×3000 WUNDER</b><small>стойки и перемычки короба</small></td><td class="n" data-l="Кол-во">3&nbsp;шт</td><td class="n" data-l="Цена">9,23</td><td class="n" data-l="Сумма">27,69</td></tr>
+<tr><td><b>Профиль ПНП 28×27×0,6×3000 WUNDER</b><small>направляющие по полу и стене</small></td><td class="n" data-l="Кол-во">2&nbsp;шт</td><td class="n" data-l="Цена">5,83</td><td class="n" data-l="Сумма">11,66</td></tr>
+<tr class="est"><td><b>Саморезы, дюбели, лента-уплотнитель</b><small>набор</small></td><td class="n" data-l="Кол-во">1&nbsp;компл.</td><td class="n" data-l="Цена">≈15,00</td><td class="n" data-l="Сумма">≈15,00</td></tr>
+</tbody><tfoot><tr><td colspan="3">Итого по этапу</td><td class="n">92,01</td></tr></tfoot></table></div></section>
+
+<section class="card" id="smeta">
+  <div class="sh"><span class="eyebrow">УЖЕ В СМЕТЕ ПРОЕКТА</span><h2>Плитка и сантехника</h2><p class="muted">Эти позиции посчитаны в <a href="dom-11x9.html">смете проекта</a>, здесь только для полноты списка.</p></div>
+  <div class="tbl"><table class="mat"><thead><tr><th>Позиция</th><th class="r">Кол-во</th><th class="r">Цена, BYN</th><th class="r">Сумма, BYN</th></tr></thead><tbody>
+    <tr><td><b>Плитка 30×60 под белый мрамор, стены</b><small>Beryoza Ceramica Statuario (ОМА); 174 шт + 3 %, 30 уп. по 6 шт</small></td><td class="n" data-l="Кол-во">32,4&nbsp;м²</td><td class="n" data-l="Цена">24,44</td><td class="n" data-l="Сумма">791,86</td></tr>
+    <tr><td><b>Керамогранит Cersanit City Line светло-серый 30×60, пол</b><small>ceramy.by, арт. 17673, R12; 6 уп. по 8 шт</small></td><td class="n" data-l="Кол-во">8,53&nbsp;м²</td><td class="n" data-l="Цена">42,97</td><td class="n" data-l="Сумма">366,53</td></tr>
+    <tr><td><b>Инсталляция и подвесной унитаз, поддон и ограждение душа, ванна, смесители, трап</b><small>подбор и цены — в смете проекта</small></td><td class="n" data-l="Сумма" style="grid-column:3">см. смету</td></tr>
+  </tbody></table></div>
+</section>
+
+<section class="card" id="instr">
+<div class="sh"><span class="eyebrow">ЭТАП 6</span><h2>Инструмент (если нет своего)</h2><p class="muted">Не входит в итог материалов.</p></div>
+<div class="tbl"><table class="mat"><thead><tr><th>Материал и расход</th><th class="r">Кол-во</th><th class="r">Цена, BYN</th><th class="r">Сумма, BYN</th></tr></thead><tbody>
+<tr class="est"><td><b>Гребёнка 8 мм и 10 мм</b><small>стены и пол</small></td><td class="n" data-l="Кол-во">2&nbsp;шт</td><td class="n" data-l="Цена">≈15,00</td><td class="n" data-l="Сумма">≈30,00</td></tr>
+<tr class="est"><td><b>Кисть-макловица / валик для мастики</b></td><td class="n" data-l="Кол-во">1&nbsp;шт</td><td class="n" data-l="Цена">≈10,00</td><td class="n" data-l="Сумма">≈10,00</td></tr>
+<tr class="est"><td><b>Правило 2 м</b><small>штукатурка по маякам</small></td><td class="n" data-l="Кол-во">1&nbsp;шт</td><td class="n" data-l="Цена">≈35,00</td><td class="n" data-l="Сумма">≈35,00</td></tr>
+<tr><td><b>Терка для эпоксидной затирки</b><small>OMA</small></td><td class="n" data-l="Кол-во">1&nbsp;шт</td><td class="n" data-l="Цена">11,96</td><td class="n" data-l="Сумма">11,96</td></tr>
+</tbody><tfoot><tr><td colspan="3">Итого по этапу</td><td class="n">86,96</td></tr></tfoot></table></div></section>
+
+<section class="card" id="svod">
+  <div class="sh"><span class="eyebrow">СВОДКА</span><h2>Сколько стоит черновая часть</h2></div>
+  <div class="tbl"><table class="sum"><tbody>
+    <tr><td><a href="#kladka">1. Кладка перегородок из газоблока</a></td><td class="n">780,97</td></tr><tr><td><a href="#steny">2. Подготовка стен: грунт, штукатурка, сетка</a></td><td class="n">367,16</td></tr><tr><td><a href="#gidro">3. Гидроизоляция</a></td><td class="n">959,48</td></tr><tr><td><a href="#plitka">4. Укладка плитки: клей, затирка, расходники</a></td><td class="n">611,83</td></tr><tr><td><a href="#korob">5. Короб инсталляции</a></td><td class="n">92,01</td></tr>
+    <tr class="big"><td>Черновые материалы, всего</td><td>2 811,45 BYN</td></tr>
+    <tr><td>в т.ч. позиции с оценочной ценой (≈)</td><td class="n">944,40</td></tr>
+    <tr><td>Плитка стен и пола (уже в смете проекта)</td><td class="n">1 158,39</td></tr>
+    <tr><td>Инструмент, если нет своего</td><td class="n">86,96</td></tr>
+  </tbody></table></div>
+  <p class="foot">Цены — ОМА, Минск, 26.11.2026, без доставки и скидок по карте. Оранжевые суммы со знаком ≈ — оценка: этих позиций в ОМА нет или нет нужного размера, цену уточнить на месте. Запас на подрезку и потери уже заложен в количество.</p>
+</section>
+
+<section class="card">
+  <div class="sh"><span class="eyebrow">НЕ ЗАБЫТЬ</span><h2>Мелочи, которые потом дорого переделывать</h2></div>
+  <ul class="chk">
+    <li>Опрессовка водопровода до штукатурки</li>
+    <li>Уклон стяжки 1–2 % к линейному трапу</li>
+    <li>Ревизионный люк или съёмная клавиша к бачку инсталляции</li>
+    <li>Датчик протечки у трапа и под ванной (рядом спальня)</li>
+    <li>Закладные под полотенцесушитель и подвесную тумбу</li>
+    <li>Выход вентиляции и зазор 1–2 см под дверью для притока</li>
+    <li>Отдельная линия с УЗО 30 мА, розетки IP44 вне зоны душа</li>
+    <li>Тест заливом 24 ч до плитки</li>
+    <li>Деформационный шов по периметру стяжки — демпферная лента</li>
+    <li>Фото всех труб в стенах с рулеткой до штукатурки</li>
+  </ul>
+</section>
+</div>
+<!--PNAV--><style id="pnav-css">
+#pnav{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:2147483000;display:flex;gap:2px;align-items:center;max-width:calc(100vw - 24px);overflow-x:auto;
+  padding:4px;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid rgba(0,0,0,.14);box-shadow:0 4px 16px rgba(0,0,0,.18);
+  font:500 13px/1.2 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);scrollbar-width:none}
+#pnav::-webkit-scrollbar{display:none}
+#pnav b{padding:7px 10px 7px 12px;color:#6b6b6b;font-weight:600;white-space:nowrap}
+#pnav a,#pnav span{padding:7px 12px;border-radius:999px;white-space:nowrap;text-decoration:none;color:#1f2a33}
+#pnav a:hover{background:rgba(0,0,0,.07)}
+#pnav span{background:#1f2a33;color:#fff}
+@media (max-width:640px){#pnav b{display:none}#pnav{font-size:12px}#pnav a,#pnav span{padding:7px 9px}}
+@media print{#pnav{display:none}}
+</style><style id="polish-css">
+#pnav{font-family:inherit;border-color:rgba(0,0,0,.1);box-shadow:0 8px 24px -8px rgba(20,28,34,.32),0 1px 2px rgba(20,28,34,.08)}
+#pnav a,#pnav span{transition:background-color .15s ease-out,color .15s ease-out}
+#pnav a:active{background:rgba(0,0,0,.12)}
+#pnav a:focus-visible{outline:2px solid #1f2a33;outline-offset:-2px}
+#pnav.dk{background:rgba(34,38,40,.94);border-color:rgba(255,255,255,.12);box-shadow:0 8px 24px -8px rgba(0,0,0,.6)}
+#pnav.dk b{color:#9da1a5}#pnav.dk a{color:#ecedeb}#pnav.dk a:hover{background:rgba(255,255,255,.08)}
+#pnav.dk span{background:#ecedeb;color:#1f2a33}#pnav.dk a:focus-visible{outline-color:#ecedeb}
+@media (prefers-reduced-motion:reduce){#pnav a,#pnav span{transition:none}}
+</style><div aria-hidden="true" style="height:64px"></div><nav id="pnav" aria-label="Страницы проекта"><b>Дом 11×9</b><a href="./">3D-модель</a><a href="dom-11x9.html">План и проект</a><a href="potolki-shtukaturka.html">Потолки</a><span aria-current="page">Санузел</span><a href="ventilyaciya.html">Вентиляция</a><a href="kuhnya-chertezh.html">Кухня</a><a href="sloboda/">Генплан участка</a></nav><!--/PNAV--><script id="polish-js">(function(){var n=document.getElementById("pnav");if(!n)return;
+function fade(){var l=n.scrollLeft>2,r=n.scrollLeft+n.clientWidth<n.scrollWidth-2,m=(l||r)?"linear-gradient(90deg,"+(l?"transparent,#000 28px":"#000,#000")+","+(r?"#000 calc(100% - 28px),transparent":"#000,#000")+")":"";n.style.webkitMaskImage=m;n.style.maskImage=m}
+function dark(){var c=getComputedStyle(document.body).backgroundColor.match(/\d+(\.\d+)?/g);if(!c)return;var a=c.length>3?+c[3]:1,y=(.2126*c[0]+.7152*c[1]+.0722*c[2])/255;n.classList.toggle("dk",a>.5&&y<.4)}
+var cur=n.querySelector("[aria-current]");if(cur&&n.scrollWidth>n.clientWidth)n.scrollLeft=cur.offsetLeft-(n.clientWidth-cur.offsetWidth)/2;
+n.addEventListener("scroll",fade,{passive:true});addEventListener("resize",fade);fade();dark();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){setTimeout(dark,50)})}catch(e){}
+new MutationObserver(function(){setTimeout(dark,50)}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme","class"]});})();</script>
+</body>
+</html>
